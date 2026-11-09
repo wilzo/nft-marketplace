@@ -43,6 +43,7 @@ Prefixo `/api`. Autenticação por `Authorization: Bearer <token>`; carrinho de 
 | --- | --- |
 | Catálogo | `GET /nfts?q&category[]&network[]&minPrice&maxPrice&tab&sort&page&pageSize` (paginado), `GET /nfts/:id`, `GET /nfts/:id/related`, `GET /highlights` |
 | Autenticação | `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/session` |
+| Login social (simulado) | `POST /auth/oauth/:provider/authorize` → `OAuthAuthorization` (pedido de consentimento: `requestId`, contas, escopos, `expiresAt`); `POST /auth/oauth/:provider` `{ requestId, decision: 'allow', subject }` ou `{ requestId, decision: 'deny' }` → `OAuthSession` (`Session` + `created`) |
 | Favoritos | `GET /favorites`, `PUT /favorites/:nftId`, `DELETE /favorites/:nftId` (idempotentes) |
 | Carrinho | `GET /cart`, `POST /cart/items`, `PATCH /cart/items/:id`, `DELETE /cart/items/:id`, `POST /cart/acknowledge`, `PUT /cart/coupon`, `DELETE /cart/coupon`, `POST /cart/merge` |
 | Cotação | `POST /quotes` `{ network }` → itens, subtotal, desconto, taxas, total, avisos, `expiresAt` |
@@ -59,7 +60,7 @@ Prefixo `/api`. Autenticação por `Authorization: Bearer <token>`; carrinho de 
 
 Códigos: `VALIDATION_ERROR`, `INVALID_CREDENTIALS`, `UNAUTHENTICATED`, `SESSION_EXPIRED`, `FORBIDDEN`, `NOT_FOUND`,
 `CONFLICT`, `AVAILABILITY_CONFLICT`, `QUOTE_STALE`, `IDEMPOTENCY_CONFLICT`, `COUPON_INVALID`, `COUPON_EXPIRED`,
-`WALLET_REJECTED`, `SERVICE_UNAVAILABLE`, `INTERNAL_ERROR`.
+`WALLET_REJECTED`, `OAUTH_DENIED`, `OAUTH_PROVIDER_ERROR`, `ACCOUNT_EXISTS`, `SERVICE_UNAVAILABLE`, `INTERNAL_ERROR`.
 
 O interceptor do Axios converte qualquer falha em `ApiError` (`lib/api-error.ts`) com `kind` (`network`, `timeout`,
 `http`, `invalid-response`, `canceled`), `status`, `code`, `fieldErrors`, `retryable` e `isSessionLoss`. Uma resposta 2xx fora do
@@ -95,6 +96,25 @@ Todo evento é validado com zod (`RealtimeEvent`); eventos inválidos são desca
 - **Troca de usuário:** dados privados ficam sob `['private', <userId>, …]`; o login remove o escopo anterior e
   rascunhos de outra conta. Nenhum dado de um usuário aparece para outro, nem por cache.
 - O Socket.IO reconecta com o novo token sempre que a sessão muda (`use-session-sync.ts`).
+
+### Login social (simulado)
+
+Google e Facebook **não são integrados**: o provedor é simulado pelo MSW (`mocks/handlers/auth.ts`, contas fictícias em
+`mocks/fixtures/oauth.ts`), seguindo o desenho de um fluxo OAuth:
+
+1. `POST /auth/oauth/:provider/authorize` — o "provedor" devolve o pedido de consentimento (uso único, expira em 5 min).
+2. A UI (`features/auth/social-login.tsx`) exibe um diálogo acessível com o que a API devolveu: título "Entrar com
+   Google", aviso de simulação, contas (rádios, foco inicial na 1ª), dados compartilhados, **Cancelar**/**Continuar**.
+   Fechar (Esc, clique fora) equivale a cancelar; o foco volta ao botão do provedor.
+3. `POST /auth/oauth/:provider` com a decisão. `allow`: identidade já vinculada → entra (200, `created: false`);
+   e-mail livre → cria a conta sem senha e vincula a identidade (201, `created: true`); e-mail de uma conta com senha →
+   409 `ACCOUNT_EXISTS` (`details.email`) e a UI oferece **Entrar com senha** (`/entrar?email=…`, foco na senha).
+   `deny` → 403 `OAUTH_DENIED`. Pedido inexistente/expirado/reutilizado → 400.
+4. Sessão aberta segue exatamente o caminho do login comum (`startSession`: limpa dados privados, incorpora o carrinho
+   do visitante, reconecta o Socket.IO).
+
+Cenário `oauth-falha`: `authorize` responde 502 `OAUTH_PROVIDER_ERROR` (regra de falha do cenário). Contas criadas pelo
+provedor não entram por senha; a troca de senha do perfil pede a senha atual, então não se aplica a elas.
 
 ## 5. Carrinho e cotação
 

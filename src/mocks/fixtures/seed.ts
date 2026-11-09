@@ -2,7 +2,7 @@ import { hashPassword } from '../lib/crypto'
 import type { DbState, UserRecord } from '../db/types'
 import { createNftFixtures } from './nfts'
 
-export const DB_SCHEMA_VERSION = 4
+export const DB_SCHEMA_VERSION = 5
 
 /** Credenciais fictícias documentadas no README. */
 export const FIXTURE_PASSWORD = 'Kurio2026!'
@@ -96,6 +96,8 @@ export async function createSeed(): Promise<DbState> {
     orders: [],
     idempotency: [],
     walletConnections: [],
+    oauthIdentities: [],
+    oauthRequests: [],
     counters: {},
   }
 }

@@ -118,6 +118,18 @@ export const SCENARIO_PRESETS: Record<string, Preset> = {
   },
   'pagamento-recusado': { description: 'Pagamento simulado é recusado.', checkout: { paymentOutcome: 'declined' } },
   'carteira-recusada': { description: 'Conexão com a carteira é recusada pelo usuário.', wallet: { connectOutcome: 'rejected' } },
+  'oauth-falha': {
+    description: 'Provedor do login social (Google/Facebook simulados) fora do ar.',
+    failures: [
+      {
+        method: 'POST',
+        path: '/auth/oauth/*/authorize',
+        status: 502,
+        code: 'OAUTH_PROVIDER_ERROR',
+        message: 'O provedor de login não respondeu. Tente novamente mais tarde ou entre com e-mail e senha.',
+      },
+    ],
+  },
   'tempo-real-fora': { description: 'Servidor Socket.IO recusa conexões.', realtime: { down: true } },
 }
 

@@ -9,7 +9,8 @@ import { toCatalogQuery } from '@/features/catalog/search'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 import { SESSION_EXPIRED_MESSAGE } from '@/features/session/session'
-import { LoginForm, RegisterForm, SocialLogin } from './auth-forms'
+import { LoginForm, RegisterForm } from './auth-forms'
+import { SocialLogin } from './social-login'
 
 type Mode = 'login' | 'register'
 
@@ -28,20 +29,37 @@ const COPY = {
  * Login/Cadastro. Desktop: modal 500px sobre a home (frames "Desktop / Login" e "Desktop / Cadastro").
  * Mobile: tela cheia (frames "Mobile / Login" e "Mobile / Cadastro").
  */
-export function AuthScreen({ mode, redirect, expired = false }: { mode: Mode; redirect?: string; expired?: boolean }) {
+export function AuthScreen({
+  mode,
+  redirect,
+  expired = false,
+  email,
+}: {
+  mode: Mode
+  redirect?: string
+  expired?: boolean
+  /** E-mail pré-preenchido no login (conflito do login social → "Entrar com senha"). */
+  email?: string
+}) {
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const navigate = useNavigate()
   const router = useRouter()
   const done = () => void navigate({ href: redirect ?? '/', replace: true })
   const close = () => (router.history.canGoBack() ? router.history.back() : void navigate({ to: '/' }))
   const otherSearch = { redirect }
+  // Login social com conflito: leva ao login por senha com o e-mail preenchido.
+  const goToPasswordLogin = (address: string) => void navigate({ to: '/entrar', search: { redirect, email: address }, replace: true })
+  const social = (v: 'dialog' | 'page') => <SocialLogin variant={v} onSuccess={done} onUsePassword={goToPasswordLogin} />
 
   const notice = expired && (
     <p role="status" className="mb-4 rounded-md border border-amber/50 bg-surface-raised px-3 py-2 text-sm text-amber">
       {SESSION_EXPIRED_MESSAGE}
     </p>
   )
-  const form = mode === 'login' ? <LoginForm variant={isDesktop ? 'dialog' : 'page'} onSuccess={done} /> : <RegisterForm variant={isDesktop ? 'dialog' : 'page'} onSuccess={done} />
+  const form =
+    mode === 'login' ? (
+      <LoginForm key={email ?? ''} variant={isDesktop ? 'dialog' : 'page'} onSuccess={done} defaultEmail={email} />
+    ) : <RegisterForm variant={isDesktop ? 'dialog' : 'page'} onSuccess={done} />
 
   if (isDesktop) {
     return (
@@ -55,7 +73,7 @@ export function AuthScreen({ mode, redirect, expired = false }: { mode: Mode; re
             onOpenAutoFocus={(e) => {
               // Foco inicial no primeiro campo (não no botão fechar)
               e.preventDefault()
-              ;(e.currentTarget as HTMLElement).querySelector<HTMLInputElement>('form input')?.focus()
+              ;(e.currentTarget as HTMLElement).querySelector<HTMLInputElement>(email ? 'form input[type=password]' : 'form input')?.focus()
             }}
             className="w-[500px] max-w-[500px] gap-0 overflow-hidden rounded-lg border-0 bg-surface-card p-0 sm:max-w-[500px]"
           >
@@ -92,7 +110,7 @@ export function AuthScreen({ mode, redirect, expired = false }: { mode: Mode; re
               {form}
             </div>
             <div className="px-20 pt-6 pb-10">
-              <SocialLogin variant="dialog" />
+              {social('dialog')}
             </div>
             <div aria-hidden className="h-2.5 bg-brand" />
           </DialogContent>
@@ -110,7 +128,7 @@ export function AuthScreen({ mode, redirect, expired = false }: { mode: Mode; re
       {notice}
       {form}
       <div className="mt-10">
-        <SocialLogin variant="page" />
+        {social('page')}
       </div>
       <p className="mt-12 text-center text-base text-sand">
         {mode === 'login' ? (

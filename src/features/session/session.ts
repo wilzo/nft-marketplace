@@ -55,6 +55,8 @@ export const redirectSearchSchema = z.object({
     .catch(undefined),
   /** Chegou ao login porque a sessão expirou (exibe aviso persistente na tela de login). */
   expirada: z.literal(1).optional().catch(undefined),
+  /** E-mail a pré-preencher no login (ex.: conflito do login social). */
+  email: z.email().optional().catch(undefined),
 })
 
 /** Guarda das rotas privadas (beforeLoad): sem sessão → /entrar?redirect=<rota atual com busca>. */

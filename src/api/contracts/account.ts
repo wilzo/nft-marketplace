@@ -62,6 +62,42 @@ export const LoginInput = z.object({
 })
 export type LoginInput = z.infer<typeof LoginInput>
 
+// ---------- Login social (provedor simulado pela API de demonstração) ----------
+
+export const OAUTH_PROVIDERS = ['google', 'facebook'] as const
+export const OAuthProvider = z.enum(OAUTH_PROVIDERS)
+export type OAuthProvider = z.infer<typeof OAuthProvider>
+
+/** Conta do provedor que o usuário pode escolher na tela de consentimento. */
+export const OAuthAccount = z.object({ subject: z.string(), name: z.string(), email: Email })
+export type OAuthAccount = z.infer<typeof OAuthAccount>
+
+/** Resposta de `POST /auth/oauth/:provider/authorize`: pedido de consentimento a exibir ao usuário. */
+export const OAuthAuthorization = z.object({
+  requestId: z.string(),
+  provider: OAuthProvider,
+  providerName: z.string(),
+  /** Dados que o provedor compartilhará com a Kurio. */
+  scopes: z.array(z.string()).min(1),
+  accounts: z.array(OAuthAccount).min(1),
+  expiresAt: IsoDateTime,
+})
+export type OAuthAuthorization = z.infer<typeof OAuthAuthorization>
+
+/** Corpo de `POST /auth/oauth/:provider`: decisão do usuário na tela de consentimento. */
+export const OAuthCallbackInput = z.discriminatedUnion('decision', [
+  z.object({ requestId: z.string(), decision: z.literal('allow'), subject: z.string() }),
+  z.object({ requestId: z.string(), decision: z.literal('deny') }),
+])
+export type OAuthCallbackInput = z.infer<typeof OAuthCallbackInput>
+
+/** Sessão aberta pelo login social; `created` indica conta nova (cadastro) ou já vinculada (login). */
+export const OAuthSession = Session.extend({ created: z.boolean() })
+export type OAuthSession = z.infer<typeof OAuthSession>
+
+/** `details` do erro 409 ACCOUNT_EXISTS. */
+export const AccountExistsDetails = z.object({ email: Email })
+
 export const RegisterInput = z
   .object({
     username: Username,

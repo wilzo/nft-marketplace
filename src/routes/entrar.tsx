@@ -10,7 +10,7 @@ export const Route = createFileRoute('/entrar')({
     if (session) throw redirect({ href: search.redirect ?? '/', replace: true })
   },
   component: function AuthRoute() {
-    const { redirect, expirada } = Route.useSearch()
-    return <AuthScreen mode="login" redirect={redirect} expired={expirada === 1} />
+    const { redirect, expirada, email } = Route.useSearch()
+    return <AuthScreen mode="login" redirect={redirect} expired={expirada === 1} email={email} />
   },
 })

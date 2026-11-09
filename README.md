@@ -88,6 +88,21 @@ Para rodar um teste específico: `npx playwright test e2e/checkout.spec.ts --pro
 
 Também é possível criar conta em **/cadastro**. Cupons: `KURIO10` (10%), `LANCAMENTO` (15%), `EXPIRADO` (expirado).
 
+### Login social (simulado)
+
+**Continuar com Google** e **Continuar com Facebook** funcionam, mas **não acessam o Google nem o Facebook**: o provedor
+é simulado pela API de demonstração (MSW). Ao clicar, a API devolve um pedido de consentimento com contas fictícias,
+exibido num diálogo (escolha da conta, dados compartilhados, **Cancelar**/**Continuar**):
+
+| Provedor | Conta fictícia | Resultado |
+| --- | --- | --- |
+| Google | Carla Nunes — `carla.nunes@gmail.example` | 1º acesso cria a conta; depois entra na mesma conta (vinculada). |
+| Google | Ana Colecionadora — `ana@kurio.dev` | Conflito: o e-mail já tem conta com senha → mensagem e botão **Entrar com senha**. |
+| Facebook | Diego Rocha — `diego.rocha@facebook.example` | Igual à Carla. |
+| Facebook | Bruno Mendes — `bruno@kurio.dev` | Conflito, como a Ana. |
+
+Contas criadas pelo provedor não têm senha (só entram pelo login social).
+
 ## Cenários da simulação e reset
 
 O estado do mock (catálogo, usuários, sessões, carrinhos, pedidos) fica em `localStorage` (`kurio:mock-db`) e sobrevive
@@ -126,6 +141,7 @@ ou apagar o *site data* do navegador.
 | `timeout-pedido` | O pedido é criado, mas a 1ª resposta demora 15 s (timeout do cliente em 10 s). |
 | `pagamento-recusado` | O pagamento simulado é recusado. |
 | `carteira-recusada` | O usuário recusa a conexão da carteira. |
+| `oauth-falha` | O provedor do login social (Google/Facebook simulados) não responde. |
 | `tempo-real-fora` | O servidor Socket.IO recusa conexões. |
 
 ### API de controle (testes e demonstração)
@@ -171,6 +187,10 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | Timeout com idempotência | `/?cenario=timeout-pedido`, confirme o pedido | Após 10 s o botão vira **Tentar novamente**; o reenvio usa a mesma `Idempotency-Key` e abre **o mesmo pedido** (sem duplicar). |
 | Pagamento recusado | `/?cenario=pagamento-recusado`, confirme | O pedido passa de pendente a recusado em tempo real, com o motivo. |
 | Carteira recusada | `/?cenario=carteira-recusada`, escolha um provedor no pagamento | A recusa aparece abaixo das opções de carteira e a confirmação fica bloqueada; é possível tentar de novo. |
+| Login social — sucesso | `/cadastro` → **Continuar com Google** → Carla Nunes → **Continuar** | Conta criada e sessão aberta; repetir em `/entrar` entra na mesma conta. |
+| Login social — cancelamento | **Continuar com Facebook** → **Cancelar** (ou Esc) | "Você cancelou o acesso pelo Facebook"; nenhuma conta ou sessão criada; foco volta ao botão. |
+| Login social — conflito | **Continuar com Google** → Ana Colecionadora → **Continuar** | Mensagem de conta existente com **Entrar com senha** (e-mail preenchido, foco na senha). |
+| Login social — provedor fora | `/entrar?cenario=oauth-falha` → **Continuar com Google** | "O provedor de login não respondeu…"; nenhum diálogo nem sessão. |
 | Tempo real fora | `/?cenario=tempo-real-fora`, faça um pedido | Sem Socket.IO, o pedido é acompanhado por *polling* (5 s) até confirmar. |
 | Preço em tempo real | Abra `/nft/emerald-ape-042` e rode o `PATCH` do exemplo acima | Preço atualizado na tela com aviso; carrinho e cotação revalidados. |
 | Evento duplicado/antigo | `POST /api/__mock/realtime/replay` com `duplicate` ou `stale` | Ignorado (dedupe por `eventId` e por versão). |

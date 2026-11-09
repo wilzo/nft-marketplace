@@ -10,6 +10,10 @@ import {
   IDEMPOTENCY_HEADER,
   type LoginInput,
   NftDetail,
+  OAuthAuthorization,
+  type OAuthCallbackInput,
+  type OAuthProvider,
+  OAuthSession,
   Order,
   OrderList,
   type OrderStatus,
@@ -46,6 +50,11 @@ export const authApi = {
   login: (data: LoginInput) => call(Session, { method: 'POST', url: '/auth/login', data }),
   session: ({ signal }: Opts = {}) => call(Session, { method: 'GET', url: '/auth/session', signal }),
   logout: () => callVoid({ method: 'POST', url: '/auth/logout' }),
+  /** Login social simulado: inicia a autorização no provedor (fictício) e recebe o pedido de consentimento. */
+  oauthAuthorize: (provider: OAuthProvider) => call(OAuthAuthorization, { method: 'POST', url: `/auth/oauth/${provider}/authorize`, data: {} }),
+  /** Login social simulado: envia a decisão do usuário; abre sessão (conta nova ou vinculada). */
+  oauthComplete: (provider: OAuthProvider, data: OAuthCallbackInput) =>
+    call(OAuthSession, { method: 'POST', url: `/auth/oauth/${provider}`, data }),
 }
 
 export const favoritesApi = {

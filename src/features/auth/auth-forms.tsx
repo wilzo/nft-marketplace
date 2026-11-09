@@ -1,8 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { LoginInput, RegisterInput } from '@/api/contracts'
-import FacebookIcon from '@/assets/icons/social-facebook.svg?react'
-import GoogleIcon from '@/assets/icons/social-google.svg?react'
 import { FormAlert, FormField, PasswordField } from '@/components/form/form-field'
 import { Button } from '@/components/ui/button'
 import { useLogin, useRegister } from '@/features/session/mutations'
@@ -15,10 +13,11 @@ type Variant = 'dialog' | 'page'
 const fieldClass = (v: Variant) => (v === 'page' ? '[&_input]:h-[50px] [&_input]:rounded-[10px] [&_input]:px-4' : '[&_input]:rounded-[5px] [&_input]:px-4')
 const submitClass = (v: Variant) => cn('w-full rounded-[5px] text-base', v === 'page' ? 'h-[60px] rounded-[10px]' : 'h-[45px]')
 
-export function LoginForm({ variant, onSuccess }: { variant: Variant; onSuccess: () => void }) {
+/** `defaultEmail`: vindo do login social com conflito ("Entrar com senha") — o foco vai direto para a senha. */
+export function LoginForm({ variant, onSuccess, defaultEmail }: { variant: Variant; onSuccess: () => void; defaultEmail?: string }) {
   const login = useLogin()
   const [alert, setAlert] = useFormAlert()
-  const form = useForm<LoginInput>({ resolver: zodResolver(LoginInput), mode: 'onSubmit', defaultValues: { email: '', password: '' } })
+  const form = useForm<LoginInput>({ resolver: zodResolver(LoginInput), mode: 'onSubmit', defaultValues: { email: defaultEmail ?? '', password: '' } })
   const { errors } = form.formState
 
   const submit = form.handleSubmit((values) => {
@@ -38,13 +37,14 @@ export function LoginForm({ variant, onSuccess }: { variant: Variant; onSuccess:
         type="email"
         autoComplete="email"
         placeholder="contato@email.com"
-        autoFocus
+        autoFocus={!defaultEmail}
         className={fieldClass(variant)}
         error={errors.email?.message}
         {...form.register('email')}
       />
       <PasswordField
         label="Senha"
+        autoFocus={!!defaultEmail}
         hideLabel
         autoComplete="current-password"
         placeholder="Senha"
@@ -126,27 +126,5 @@ export function RegisterForm({ variant, onSuccess }: { variant: Variant; onSucce
         {register.isPending ? 'Criando…' : variant === 'page' ? 'Criar perfil' : 'Criar conta'}
       </Button>
     </form>
-  )
-}
-
-/** "Ou continue com" + Google/Facebook (login social real está fora do escopo). */
-export function SocialLogin({ variant }: { variant: Variant }) {
-  const button = 'flex h-10 w-full items-center justify-center gap-3 rounded-[5px] border border-line text-sm text-sand hover:border-brand'
-  return (
-    <div className="flex flex-col gap-4">
-      <div className={cn('flex items-center gap-3 text-[13px]', variant === 'dialog' && '-mx-20')}>
-        <span aria-hidden className="h-px flex-1 bg-line" />
-        Ou continue com
-        <span aria-hidden className="h-px flex-1 bg-line" />
-      </div>
-      <button type="button" className={button} onClick={() => notAvailable('O login com Google')}>
-        <GoogleIcon aria-hidden className="size-5" />
-        Continuar com Google
-      </button>
-      <button type="button" className={button} onClick={() => notAvailable('O login com Facebook')}>
-        <FacebookIcon aria-hidden className="h-5 w-auto" />
-        Continuar com Facebook
-      </button>
-    </div>
   )
 }

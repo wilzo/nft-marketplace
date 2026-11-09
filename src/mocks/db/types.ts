@@ -43,7 +43,7 @@ export interface UserRecord {
   ensName: string | null
   walletNickname: string | null
   avatarUrl: string | null
-  /** PBKDF2-SHA256 (base64). A senha nunca é armazenada em claro. */
+  /** PBKDF2-SHA256 (base64). A senha nunca é armazenada em claro. Vazio = conta criada só por login social. */
   passwordHash: string
   passwordSalt: string
   updatedAt: string
@@ -141,6 +141,21 @@ export interface WalletConnectionRecord {
   connectedAt: string
 }
 
+/** Conta de um provedor social (simulado) vinculada a um usuário. */
+export interface OAuthIdentityRecord {
+  provider: 'google' | 'facebook'
+  subject: string
+  userId: string
+  linkedAt: string
+}
+
+/** Pedido de autorização em andamento (uso único, expira em 5 min). */
+export interface OAuthRequestRecord {
+  id: string
+  provider: 'google' | 'facebook'
+  expiresAt: string
+}
+
 export interface DbState {
   schemaVersion: number
   nfts: NftRecord[]
@@ -154,6 +169,8 @@ export interface DbState {
   orders: OrderRecord[]
   idempotency: IdempotencyRecord[]
   walletConnections: WalletConnectionRecord[]
+  oauthIdentities: OAuthIdentityRecord[]
+  oauthRequests: OAuthRequestRecord[]
   /** Contadores para ids determinísticos. */
   counters: Record<string, number>
 }

@@ -18,7 +18,7 @@ let state: DbState | null = null
 let lastRaw: string | null = null
 let syncing = false
 
-const ARRAY_KEYS = ['nfts', 'users', 'sessions', 'wallets', 'carts', 'coupons', 'quotes', 'orders', 'idempotency', 'walletConnections'] as const
+const ARRAY_KEYS = ['nfts', 'users', 'sessions', 'wallets', 'carts', 'coupons', 'quotes', 'orders', 'idempotency', 'walletConnections', 'oauthIdentities', 'oauthRequests'] as const
 
 /** Banco salvo por outra versão do seed, parcial ou corrompido → descartado (recriado a partir do seed). */
 export function parseDb(raw: string | null): DbState | null {

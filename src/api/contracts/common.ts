@@ -43,6 +43,12 @@ export const API_ERROR_CODES = [
   'COUPON_INVALID',
   'COUPON_EXPIRED',
   'WALLET_REJECTED',
+  /** Login social: o usuário negou o acesso na tela de consentimento do provedor (simulado). */
+  'OAUTH_DENIED',
+  /** Login social: o provedor (simulado) não respondeu. */
+  'OAUTH_PROVIDER_ERROR',
+  /** Login social: o e-mail do provedor já pertence a uma conta criada com senha. */
+  'ACCOUNT_EXISTS',
   'SERVICE_UNAVAILABLE',
   'INTERNAL_ERROR',
 ] as const
