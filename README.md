@@ -191,6 +191,8 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | --- | --- | --- |
 | Carregamento lento | `/?cenario=lento` | Skeletons no catálogo, destaques e detalhe; layout sem saltos. |
 | Respostas fora de ordem | `/?cenario=latencia-variavel`, troque filtros rapidamente | A lista final corresponde aos filtros atuais (requisições antigas são canceladas). |
+| Filtros do catálogo | Na home (ou **Mercado**), marque coleções, redes, faixa de preço (**Aplicar**), aba e ordenação; troque de página e filtre de novo | Filtros combinam; cada mudança volta à página 1 e grava na URL; voltar/avançar e refresh restauram o estado; total anunciado = total da API. |
+| Filtros pela URL | Abra `/?category=arte-digital`, `/?category=arte-digital&category=fotografia`, `/?network=polygon` ou `/?minPrice=5&maxPrice=1` | Filtros aplicados e marcados no painel (faixa invertida é corrigida). Valores inválidos (`/?category=xx&page=abc&sort=zzz`) caem no padrão, sem erro. |
 | Catálogo vazio | `/?cenario=vazio` | Estado vazio com ação de limpar filtros/busca. |
 | Erro de servidor | `/?cenario=erro-servidor` | Mensagem de erro com **Tentar novamente**. |
 | Falha transitória | `/?cenario=falha-transitoria` | O catálogo aparece após retentativas automáticas. |
@@ -207,6 +209,7 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | Item esgotado | `/?cenario=esgotado`, mesmo caminho | Conflito de disponibilidade; a revisão oferece **Revisar carrinho**, onde o item aparece como esgotado e a finalização fica bloqueada até removê-lo. |
 | Timeout com idempotência | `/?cenario=timeout-pedido`, confirme o pedido | Após 10 s o botão vira **Tentar novamente**; o reenvio usa a mesma `Idempotency-Key` e abre **o mesmo pedido** (sem duplicar). |
 | Pagamento recusado | `/?cenario=pagamento-recusado`, confirme | O pedido passa de pendente a recusado em tempo real, com o motivo. |
+| Carteira não conectada (409) | Pagamento sem escolher a carteira → **Confirmar compra** (a UI bloqueia); ou, pelo console, `POST /api/orders` sem `POST /api/wallet-connections` antes | A API recusa com 409 `WALLET_NOT_CONNECTED` ("Conecte a carteira na rede escolhida…"); se a conexão some durante a revisão, a tela volta a pedir a conexão. |
 | Desconexão da carteira | Pagamento → escolha **MetaMask** → **Desconectar** | A conexão é removida na API (`DELETE /wallet-connections/:id`); confirmar exige reconectar e um pedido sem conexão é recusado (409 `WALLET_NOT_CONNECTED`). |
 | Carteira recusada | `/?cenario=carteira-recusada`, escolha um provedor no pagamento | A recusa aparece abaixo das opções de carteira e a confirmação fica bloqueada; é possível tentar de novo. |
 | Login social — sucesso | `/cadastro` → **Continuar com Google** → Carla Nunes → **Continuar** | Conta criada e sessão aberta; repetir em `/entrar` entra na mesma conta. |

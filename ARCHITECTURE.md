@@ -178,8 +178,11 @@ usuário, sempre com a mesma chave.
 | Chaves | `qk.*` em `lib/query-keys.ts`; privadas sob `['private', userId, …]` | Logout/troca de usuário removem tudo com um prefixo. |
 | Foco da janela | `refetchOnWindowFocus` | Dados atualizados ao voltar à aba. |
 
-Filtros, busca, ordenação, página e edição selecionada vivem na **URL** (validados por zod com `.catch`), então
-voltar/avançar, refresh e links compartilhados reproduzem a mesma tela.
+Filtros, busca, ordenação, página e edição selecionada vivem na **URL**, então voltar/avançar, refresh e links
+compartilhados reproduzem a mesma tela. O schema da busca (`features/catalog/search.ts`) nunca quebra a página: listas
+aceitam JSON (`["a","b"]`, formato gravado pelo Router), parâmetro repetido (`a&a`, formato da API) ou valor único e
+mantêm só os valores válidos; preço aceita texto ou número; faixa invertida é trocada; página/aba/ordenação inválidas
+caem no padrão. Toda mudança de filtro zera a página.
 
 ## 8. Reconciliação REST × Socket.IO
 
