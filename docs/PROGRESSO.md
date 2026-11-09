@@ -15,7 +15,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 7 | Perfil e carteiras | ✅ Concluída |
 | 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ✅ Concluída (matriz em [docs/TESTES.md](TESTES.md)) |
 | 9 | Auditoria Lighthouse (3 medições, mediana, relatórios) | ✅ Concluída ([lighthouse/ANALISE.md](../lighthouse/ANALISE.md)) |
-| 10 | README.md, ARCHITECTURE.md e deploy final | ⬜ |
+| 10 | README.md, ARCHITECTURE.md e deploy final | ✅ Concluída ([README.md](../README.md), [ARCHITECTURE.md](../ARCHITECTURE.md)) |
 
 ## Etapa 1: o que foi feito
 
@@ -269,11 +269,19 @@ rolagem e o clique no botão se perdia; foco devolvido ao botão da busca ao fec
   `role="img"` nas estrelas, `h2` no painel de detalhes, `robots.txt`.
 - Desvio mínimo do Figma por acessibilidade: espaço entre os pontos dos carrosséis 8 → 16 px (alvos de 24 px, WCAG 2.5.8).
 
-### Próximo passo (etapa 10)
+## Etapa 10: o que foi feito
 
-README.md (setup, variáveis, credenciais, cenários e reset, comandos, como reproduzir falhas) e ARCHITECTURE.md (contratos REST e eventos,
-sessão, carrinho, cache/retries, reconciliação REST × Socket.IO, limitações do binding, decisões de UX e desvios do Figma), deploy final e
-conferência a partir de um checkout limpo.
+- `README.md`: stack, instalação a partir de checkout limpo, variáveis de ambiente, comandos, credenciais, cenários (URL, painel, API de
+  controle), reset e passo a passo de cada fluxo de falha.
+- `ARCHITECTURE.md`: organização, contratos REST e envelope de erro, eventos Socket.IO, sessão, carrinho/cotação, checkout idempotente,
+  cache e retries, reconciliação REST × Socket.IO, boot progressivo, mocks, limitações (binding e performance mobile), decisões de UX e
+  desvios/inconsistências do Figma.
+- Verificação final: typecheck, lint e build sem erros; clone limpo → `npm ci` → typecheck/lint/build OK; suíte Playwright completa;
+  deploy de produção e conferência das rotas diretas.
+- `e2e/account.spec.ts`: o helper `pick` espera o Select fechar antes da próxima ação (instabilidade rara sob carga).
+- Observação: o npm 11 avisa sobre o `postinstall` do `msw` não aprovado; é inofensivo (o worker já está em `public/`).
+
+Pontos a observar numa continuação: Performance mobile do Lighthouse (55/65) — caminhos em `lighthouse/ANALISE.md`.
 
 ## Comandos
 
@@ -284,4 +292,5 @@ npm run preview        # serve o build
 npm run typecheck
 npm run lint
 npm run test:e2e       # Playwright (build + preview)
+npm run lighthouse     # auditoria (3 medições, medianas)
 ```

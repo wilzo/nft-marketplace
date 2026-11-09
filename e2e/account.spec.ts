@@ -6,8 +6,12 @@ import { mockApi, openWithScenario } from './support/mock-api'
 const PNG_1PX = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64')
 
 async function pick(page: Page, label: string, option: string) {
-  await page.getByRole('combobox', { name: label }).click()
+  const combobox = page.getByRole('combobox', { name: label })
+  await combobox.click()
   await page.getByRole('option', { name: option }).click()
+  // O Radix Select fecha com animação e bloqueia ponteiro até lá: espera o fechamento antes da próxima ação.
+  await expect(page.getByRole('listbox')).toBeHidden()
+  await expect(combobox).toContainText(option)
 }
 
 test.describe('perfil e carteiras (etapa 7)', () => {
