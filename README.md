@@ -2,7 +2,9 @@
 
 [![CI](https://github.com/wilzo/nft-marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/wilzo/nft-marketplace/actions/workflows/ci.yml)
 
-SPA em React + TypeScript que implementa o desafio [docs/DESAFIO.md](docs/DESAFIO.md) a partir dos frames do Figma:
+Projeto desenvolvido para o **teste técnico da vaga de Desenvolvedor Frontend Júnior na Jungle Gaming**.
+
+SPA em React + TypeScript que implementa o desafio "Marketplace de NFTs" a partir dos frames do Figma:
 catálogo com filtros na URL, detalhe com edições, autenticação, favoritos, carrinho com cotação da API, pagamento com
 pedidos idempotentes, confirmação em tempo real (Socket.IO), perfil e carteiras.
 
@@ -281,7 +283,7 @@ src/
   routes/       rotas do TanStack Router (uma por tela)
 e2e/            specs Playwright + helpers e baselines visuais
 lighthouse/     configuração, resultados, relatórios e análise
-docs/           enunciado, matriz de testes, tokens do Figma e artes originais (docs/figma)
+docs/           matriz de testes, tokens do Figma e artes originais (docs/figma)
 ```
 
 Detalhes em [ARCHITECTURE.md](ARCHITECTURE.md).
