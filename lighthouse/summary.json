@@ -1,6 +1,6 @@
 {
   "environment": {
-    "date": "2026-11-09T17:49:12.355Z",
+    "date": "2026-11-09T21:01:11.353Z",
     "lighthouse": "13.6.0",
     "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
     "node": "v24.18.0",
@@ -40,13 +40,13 @@
       "path": "/",
       "profile": "mobile",
       "median": {
-        "performance": 55,
+        "performance": 70,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100,
-        "lcpMs": 6005,
+        "lcpMs": 4138,
         "cls": 0,
-        "tbtMs": 987
+        "tbtMs": 673
       },
       "runs": [
         {
@@ -54,15 +54,15 @@
           "profile": "mobile",
           "run": 1,
           "scores": {
-            "performance": 55,
+            "performance": 70,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 6096,
+          "lcpMs": 4138,
           "cls": 0,
-          "tbtMs": 1043,
-          "fcpMs": 914,
+          "tbtMs": 667,
+          "fcpMs": 901,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -80,15 +80,15 @@
           "profile": "mobile",
           "run": 2,
           "scores": {
-            "performance": 53,
+            "performance": 63,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 6005,
+          "lcpMs": 4342,
           "cls": 0,
-          "tbtMs": 987,
-          "fcpMs": 2464,
+          "tbtMs": 1019,
+          "fcpMs": 912,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -106,15 +106,15 @@
           "profile": "mobile",
           "run": 3,
           "scores": {
-            "performance": 59,
+            "performance": 70,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 5601,
+          "lcpMs": 4078,
           "cls": 0,
-          "tbtMs": 661,
-          "fcpMs": 2513,
+          "tbtMs": 673,
+          "fcpMs": 911,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -134,13 +134,13 @@
       "path": "/",
       "profile": "desktop",
       "median": {
-        "performance": 98,
+        "performance": 99,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100,
-        "lcpMs": 1097,
+        "lcpMs": 975,
         "cls": 0.003,
-        "tbtMs": 75
+        "tbtMs": 56
       },
       "runs": [
         {
@@ -148,15 +148,15 @@
           "profile": "desktop",
           "run": 1,
           "scores": {
-            "performance": 98,
+            "performance": 99,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 1074,
+          "lcpMs": 953,
           "cls": 0.003,
-          "tbtMs": 76,
-          "fcpMs": 241,
+          "tbtMs": 17,
+          "fcpMs": 245,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -174,15 +174,15 @@
           "profile": "desktop",
           "run": 2,
           "scores": {
-            "performance": 97,
+            "performance": 99,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 1157,
+          "lcpMs": 975,
           "cls": 0.003,
-          "tbtMs": 75,
-          "fcpMs": 255,
+          "tbtMs": 56,
+          "fcpMs": 251,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -200,15 +200,15 @@
           "profile": "desktop",
           "run": 3,
           "scores": {
-            "performance": 98,
+            "performance": 97,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 1097,
+          "lcpMs": 1054,
           "cls": 0.003,
-          "tbtMs": 34,
-          "fcpMs": 251,
+          "tbtMs": 112,
+          "fcpMs": 255,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -228,13 +228,13 @@
       "path": "/nft/emerald-ape-042",
       "profile": "mobile",
       "median": {
-        "performance": 65,
+        "performance": 68,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100,
-        "lcpMs": 4717,
+        "lcpMs": 4160,
         "cls": 0,
-        "tbtMs": 747
+        "tbtMs": 766
       },
       "runs": [
         {
@@ -242,15 +242,15 @@
           "profile": "mobile",
           "run": 1,
           "scores": {
-            "performance": 66,
+            "performance": 68,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 4640,
+          "lcpMs": 4184,
           "cls": 0,
-          "tbtMs": 727,
-          "fcpMs": 908,
+          "tbtMs": 766,
+          "fcpMs": 922,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -268,15 +268,15 @@
           "profile": "mobile",
           "run": 2,
           "scores": {
-            "performance": 63,
+            "performance": 70,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 4717,
+          "lcpMs": 3966,
           "cls": 0,
-          "tbtMs": 880,
-          "fcpMs": 915,
+          "tbtMs": 696,
+          "fcpMs": 909,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -294,15 +294,15 @@
           "profile": "mobile",
           "run": 3,
           "scores": {
-            "performance": 65,
+            "performance": 66,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 4720,
+          "lcpMs": 4160,
           "cls": 0,
-          "tbtMs": 747,
-          "fcpMs": 920,
+          "tbtMs": 871,
+          "fcpMs": 918,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -322,11 +322,11 @@
       "path": "/nft/emerald-ape-042",
       "profile": "desktop",
       "median": {
-        "performance": 98,
+        "performance": 99,
         "accessibility": 100,
         "best-practices": 100,
         "seo": 100,
-        "lcpMs": 1047,
+        "lcpMs": 954,
         "cls": 0,
         "tbtMs": 0
       },
@@ -336,15 +336,15 @@
           "profile": "desktop",
           "run": 1,
           "scores": {
-            "performance": 98,
+            "performance": 99,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 1047,
+          "lcpMs": 954,
           "cls": 0,
           "tbtMs": 0,
-          "fcpMs": 242,
+          "fcpMs": 251,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -362,15 +362,15 @@
           "profile": "desktop",
           "run": 2,
           "scores": {
-            "performance": 98,
+            "performance": 99,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 1132,
+          "lcpMs": 908,
           "cls": 0,
-          "tbtMs": 32,
-          "fcpMs": 256,
+          "tbtMs": 54,
+          "fcpMs": 240,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {
@@ -393,10 +393,10 @@
             "best-practices": 100,
             "seo": 100
           },
-          "lcpMs": 1037,
+          "lcpMs": 958,
           "cls": 0,
           "tbtMs": 0,
-          "fcpMs": 252,
+          "fcpMs": 257,
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
           "lighthouseVersion": "13.6.0",
           "throttling": {

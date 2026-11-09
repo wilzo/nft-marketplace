@@ -1,13 +1,13 @@
 # Resultados Lighthouse
 
-Gerado por `npm run lighthouse` em 2026-11-09T17:49:12.355Z.
+Gerado por `npm run lighthouse` em 2026-11-09T21:01:11.353Z.
 
 | Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| inicio (`/`) | mobile | **55** ⚠️ | 100 | 100 | 100 | 6.00 s | 0 | 987 ms |
-| inicio (`/`) | desktop | 98 | 100 | 100 | 100 | 1.10 s | 0.003 | 75 ms |
-| detalhe (`/nft/emerald-ape-042`) | mobile | **65** ⚠️ | 100 | 100 | 100 | 4.72 s | 0 | 747 ms |
-| detalhe (`/nft/emerald-ape-042`) | desktop | 98 | 100 | 100 | 100 | 1.05 s | 0 | 0 ms |
+| inicio (`/`) | mobile | **70** ⚠️ | 100 | 100 | 100 | 4.14 s | 0 | 673 ms |
+| inicio (`/`) | desktop | 99 | 100 | 100 | 100 | 0.97 s | 0.003 | 56 ms |
+| detalhe (`/nft/emerald-ape-042`) | mobile | **68** ⚠️ | 100 | 100 | 100 | 4.16 s | 0 | 766 ms |
+| detalhe (`/nft/emerald-ape-042`) | desktop | 99 | 100 | 100 | 100 | 0.95 s | 0 | 0 ms |
 
 Valores = **mediana de 3 medições**. Metas: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90.
 
@@ -15,18 +15,18 @@ Valores = **mediana de 3 medições**. Metas: Performance ≥ 90, Accessibility 
 
 | Execução | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| inicio-mobile-1 | 55 | 100 | 100 | 100 | 6096 ms | 0 | 1043 ms |
-| inicio-mobile-2 | 53 | 100 | 100 | 100 | 6005 ms | 0 | 987 ms |
-| inicio-mobile-3 | 59 | 100 | 100 | 100 | 5601 ms | 0 | 661 ms |
-| inicio-desktop-1 | 98 | 100 | 100 | 100 | 1074 ms | 0.003 | 76 ms |
-| inicio-desktop-2 | 97 | 100 | 100 | 100 | 1157 ms | 0.003 | 75 ms |
-| inicio-desktop-3 | 98 | 100 | 100 | 100 | 1097 ms | 0.003 | 34 ms |
-| detalhe-mobile-1 | 66 | 100 | 100 | 100 | 4640 ms | 0 | 727 ms |
-| detalhe-mobile-2 | 63 | 100 | 100 | 100 | 4717 ms | 0 | 880 ms |
-| detalhe-mobile-3 | 65 | 100 | 100 | 100 | 4720 ms | 0 | 747 ms |
-| detalhe-desktop-1 | 98 | 100 | 100 | 100 | 1047 ms | 0 | 0 ms |
-| detalhe-desktop-2 | 98 | 100 | 100 | 100 | 1132 ms | 0 | 32 ms |
-| detalhe-desktop-3 | 99 | 100 | 100 | 100 | 1037 ms | 0 | 0 ms |
+| inicio-mobile-1 | 70 | 100 | 100 | 100 | 4138 ms | 0 | 667 ms |
+| inicio-mobile-2 | 63 | 100 | 100 | 100 | 4342 ms | 0 | 1019 ms |
+| inicio-mobile-3 | 70 | 100 | 100 | 100 | 4078 ms | 0 | 673 ms |
+| inicio-desktop-1 | 99 | 100 | 100 | 100 | 953 ms | 0.003 | 17 ms |
+| inicio-desktop-2 | 99 | 100 | 100 | 100 | 975 ms | 0.003 | 56 ms |
+| inicio-desktop-3 | 97 | 100 | 100 | 100 | 1054 ms | 0.003 | 112 ms |
+| detalhe-mobile-1 | 68 | 100 | 100 | 100 | 4184 ms | 0 | 766 ms |
+| detalhe-mobile-2 | 70 | 100 | 100 | 100 | 3966 ms | 0 | 696 ms |
+| detalhe-mobile-3 | 66 | 100 | 100 | 100 | 4160 ms | 0 | 871 ms |
+| detalhe-desktop-1 | 99 | 100 | 100 | 100 | 954 ms | 0 | 0 ms |
+| detalhe-desktop-2 | 99 | 100 | 100 | 100 | 908 ms | 0 | 54 ms |
+| detalhe-desktop-3 | 99 | 100 | 100 | 100 | 958 ms | 0 | 0 ms |
 
 ## Ambiente e condições
 

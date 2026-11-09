@@ -6,6 +6,7 @@ import SearchIcon from '@/assets/icons/header-search.svg?react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import type { ApiError } from '@/lib/api-error'
+import { DESKTOP_QUERY, useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 import { CATALOG_PAGE_SIZE, hasActiveFilters, type CatalogSearch } from '../search'
 import { CatalogFilters } from './catalog-filters'
@@ -65,6 +66,9 @@ export function CatalogSection({ search, data, isPending, isError, error, isRefr
   const page = search.page ?? 1
   const tab = search.tab ?? 'todos'
   const sort = search.sort ?? 'recentes'
+  // Barra lateral (filtros com slider + destaque) e ordenação só existem no desktop: no mobile ficam no drawer.
+  // Não montar a versão escondida evita o custo de render e os reflows forçados do slider (medição de tamanho).
+  const isDesktop = useMediaQuery(DESKTOP_QUERY)
 
   const filters = (
     <CatalogFilters
@@ -82,17 +86,17 @@ export function CatalogSection({ search, data, isPending, isError, error, isRefr
       </h2>
 
       <div className="flex gap-12">
-        <aside aria-label="Filtros do catálogo" className="hidden w-[310px] shrink-0 flex-col gap-6 lg:flex">
-          {filters}
-          {aside}
-        </aside>
+        {isDesktop && (
+          <aside aria-label="Filtros do catálogo" className="flex w-[310px] shrink-0 flex-col gap-6">
+            {filters}
+            {aside}
+          </aside>
+        )}
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <CatalogTabs value={tab} onChange={(t) => onChange({ tab: t === 'todos' ? undefined : t })} />
-            <div className="hidden lg:block">
-              <CatalogSortSelect value={sort} onChange={(s) => onChange({ sort: s === 'recentes' ? undefined : s })} />
-            </div>
+            {isDesktop && <CatalogSortSelect value={sort} onChange={(s) => onChange({ sort: s === 'recentes' ? undefined : s })} />}
           </div>
 
           {search.q && (

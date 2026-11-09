@@ -1,4 +1,3 @@
-import { hashPassword } from '../lib/crypto'
 import type { DbState, UserRecord } from '../db/types'
 import { createNftFixtures } from './nfts'
 
@@ -14,19 +13,27 @@ export const FIXTURE_USERS = {
 
 const SEED_TIME = '2026-07-29T12:00:00.000Z'
 
+/**
+ * Hash PBKDF2-SHA256 (20 000 iterações, 32 bytes, base64) de FIXTURE_PASSWORD com o salt `salt-<id>` de cada usuário,
+ * calculado uma vez fora do navegador (node: crypto.pbkdf2Sync). Evita derivar duas chaves a cada criação do banco;
+ * o login continua verificando com PBKDF2 normalmente (lib/crypto.verifyPassword). Conferido em e2e (login das duas contas).
+ */
+export const FIXTURE_PASSWORD_HASHES: Record<string, string> = {
+  usr_ana: 'jy7iTYMswfc22OYL9iFtBr1X/+ta7D4Ws9IzRODqc5o=',
+  usr_bruno: 'h6UeKjLnfx9sGK5T7tYVooPQFtmY5MzuZrhvMuGyuNw=',
+}
+
 /** Estado inicial conhecido. `resetDb()` sempre restaura exatamente este cenário. */
 export async function createSeed(): Promise<DbState> {
-  const users: UserRecord[] = await Promise.all(
-    Object.values(FIXTURE_USERS).map(async (u) => ({
-      ...u,
-      ensName: u.id === 'usr_ana' ? 'anakurio' : null,
-      walletNickname: u.id === 'usr_ana' ? 'Cofre principal' : null,
-      avatarUrl: null,
-      passwordSalt: `salt-${u.id}`,
-      passwordHash: await hashPassword(FIXTURE_PASSWORD, `salt-${u.id}`),
-      updatedAt: SEED_TIME,
-    })),
-  )
+  const users: UserRecord[] = Object.values(FIXTURE_USERS).map((u) => ({
+    ...u,
+    ensName: u.id === 'usr_ana' ? 'anakurio' : null,
+    walletNickname: u.id === 'usr_ana' ? 'Cofre principal' : null,
+    avatarUrl: null,
+    passwordSalt: `salt-${u.id}`,
+    passwordHash: FIXTURE_PASSWORD_HASHES[u.id]!,
+    updatedAt: SEED_TIME,
+  }))
 
   const nfts = createNftFixtures()
   const price = (nftId: string, kind: string) => nfts.find((n) => n.id === nftId)!.editions.find((e) => e.kind === kind)!.price

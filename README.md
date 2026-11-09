@@ -234,13 +234,15 @@ Análise completa em [lighthouse/ANALISE.md](lighthouse/ANALISE.md); medições 
 
 | Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Início | mobile | 55 | 100 | 100 | 100 | 6,00 s | 0 | 987 ms |
-| Início | desktop | 98 | 100 | 100 | 100 | 1,10 s | 0,003 | 75 ms |
-| Detalhe | mobile | 65 | 100 | 100 | 100 | 4,72 s | 0 | 747 ms |
-| Detalhe | desktop | 98 | 100 | 100 | 100 | 1,05 s | 0 | 0 ms |
+| Início | mobile | 70 | 100 | 100 | 100 | 4,14 s | 0 | 673 ms |
+| Início | desktop | 99 | 100 | 100 | 100 | 0,97 s | 0,003 | 56 ms |
+| Detalhe | mobile | 68 | 100 | 100 | 100 | 4,16 s | 0 | 766 ms |
+| Detalhe | desktop | 99 | 100 | 100 | 100 | 0,95 s | 0 | 0 ms |
 
-A meta de Performance mobile (≥ 90) não é atingida: o MSW e o banco simulado rodam na *thread* principal da página sob
-CPU 4× mais lenta. Causas e caminhos em [lighthouse/ANALISE.md](lighthouse/ANALISE.md).
+Medido no build final desta versão. Antes das otimizações desta rodada: início mobile 59 (LCP 5,79 s), detalhe mobile 69
+(LCP 4,70 s). A meta de Performance mobile (≥ 90) não é atingida: o MSW e o banco simulado rodam na *thread* principal
+da página sob CPU 4× mais lenta e o LCP depende da resposta da API. Profiling, antes/depois de cada otimização e
+justificativa em [lighthouse/ANALISE.md](lighthouse/ANALISE.md).
 
 ## Deploy
 

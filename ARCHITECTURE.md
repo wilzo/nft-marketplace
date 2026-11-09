@@ -205,6 +205,15 @@ nenhuma requisição escapa do MSW e o primeiro conteúdo (header, hero) não es
 `?cenario=`/`?painel=` são lidos e removidos da URL antes de o Router ser criado. `<html data-app="ready">` sinaliza
 aos testes que a rede está pronta.
 
+Carregamento (ver [lighthouse/ANALISE.md](lighthouse/ANALISE.md)):
+- o chunk dos mocks recebe `modulepreload` no `index.html` (plugin em `vite.config.ts`): baixa junto com o bundle
+  principal e executa sob demanda;
+- partes de um único breakpoint (barra lateral de filtros, ordenação, barra mobile, hero) só são montadas no
+  breakpoint em que aparecem — versões escondidas por CSS custavam render e *reflows* forçados do slider;
+- as seções editoriais da home (Promos, Diário) são montadas depois da 1ª resposta do catálogo, no próximo momento
+  ocioso: suas artes não disputam banda com os dados e o LCP, e o render fica em tarefas menores;
+- o seed do banco simulado traz as senhas já em hash (PBKDF2), em vez de derivá-las a cada criação do banco.
+
 ## 10. Camada de mocks
 
 - **Banco** em `localStorage` (`kurio:mock-db`). Ao carregar, o banco salvo só é adotado se tiver o `schemaVersion` atual
@@ -256,8 +265,12 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
 - O "servidor" roda na aba: dados vivem no navegador de cada visitante; abas diferentes compartilham o banco, mas
   eventos só são entregues às conexões da própria aba.
 - Pagamento, conexão de carteira e liquidação são simulados (nenhuma chamada a blockchain).
-- **Performance mobile do Lighthouse (55–65)** abaixo da meta: o MSW e o banco simulado rodam na *thread* principal
-  sob CPU 4× mais lenta. Desktop 98 e as demais categorias 100. Análise em [lighthouse/ANALISE.md](lighthouse/ANALISE.md).
+- **Performance mobile do Lighthouse (68–70)** abaixo da meta: o MSW e o banco simulado rodam na *thread* principal
+  sob CPU 4× mais lenta e o LCP depende da resposta da API. Desktop 99 e as demais categorias 100.
+  Análise em [lighthouse/ANALISE.md](lighthouse/ANALISE.md).
+- O `tldts` (lista de sufixos públicos do `tough-cookie`, usado pelo pote de cookies do MSW) é substituído por uma
+  regra simples (`src/mocks/lib/tldts-lite.ts`): os handlers não usam cookies; se um dia usarem, o escopo de domínio
+  de cookies simulados seria aproximado (dois últimos rótulos).
 - Páginas editoriais (Criadores, Aprenda, Diário da Cunhagem), atividade, ofertas, downloads, suporte, central de
   ajuda e recuperação de senha não fazem parte da entrega: levam à página informativa `/secao-indisponivel` (ver
   Decisões de UX). A newsletter informa que não está disponível. Compartilhar usa links externos reais (LinkedIn,

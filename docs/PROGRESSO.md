@@ -298,6 +298,18 @@ Pontos a observar numa continuação: Performance mobile do Lighthouse (55/65) �
 - **P5 — documentação:** 768 px (`e2e/responsive.spec.ts`), traces, Lighthouse e versões no README; ARCHITECTURE com
   "O que é simulado", transporte Socket.IO, acessibilidade e assets; matriz em `docs/TESTES.md`.
 
+## Revisão pós-entrega (2ª rodada)
+
+- **Filtros:** o erro relatado não foi reproduzido (Chromium e Firefox, dev/preview/produção, desktop/mobile, logado,
+  latência variável). Corrigido o defeito encontrado: filtros vindos da URL em valor único, repetido ou com preço numérico
+  eram ignorados (URL mostrava o filtro, lista vinha completa); valor inválido derrubava a lista toda; faixa invertida.
+  Teste: `e2e/catalog-filters.spec.ts`.
+- **Fora do escopo:** links reais para `/secao-indisponivel?secao=<chave>` (opção "página informativa"). Teste:
+  `e2e/out-of-scope.spec.ts`.
+- **Lighthouse:** início mobile 59 → 70, detalhe mobile 69 → 68 (LCP 5,79 → 4,14 s e 4,70 → 4,16 s), desktop 99.
+  Otimizações: hash do seed pré-calculado, preload do chunk dos mocks, render por breakpoint, seções editoriais adiadas,
+  `tldts` substituído (mocks 176 → 63 KB gzip). Detalhes em `lighthouse/ANALISE.md`.
+
 ## Comandos
 
 ```bash
