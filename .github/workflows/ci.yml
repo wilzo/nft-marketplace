@@ -1,0 +1,64 @@
+# Execução reproduzível em ambiente limpo (Linux): typecheck, lint e suíte Playwright completa com os mocks.
+# Roda dentro da imagem oficial do Playwright (mesma versão do @playwright/test), o que mantém as baselines
+# visuais de Linux estáveis. "Run workflow" com update_snapshots=true regera essas baselines e as publica como artefato.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: Regerar as baselines visuais de Linux (artefato linux-snapshots)
+        type: boolean
+        default: false
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.65.0-noble
+    timeout-minutes: 45
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+      - name: Regerar baselines visuais (Linux)
+        if: ${{ inputs.update_snapshots }}
+        run: npx playwright test e2e/visual.spec.ts --update-snapshots
+
+      - name: Publicar baselines de Linux
+        if: ${{ inputs.update_snapshots }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-snapshots
+          path: e2e/visual.spec.ts-snapshots/*-linux.png
+
+      - name: Testes E2E (Playwright, desktop e mobile)
+        run: npm run test:e2e
+
+      - name: Relatório HTML
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 14
+
+      - name: Traces e screenshots das falhas
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results
+          retention-days: 14
