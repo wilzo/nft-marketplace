@@ -1,13 +1,14 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Loader2, X, XCircle } from 'lucide-react'
 import { NETWORK_LABELS, WALLET_TYPE_LABELS, type Order } from '@/api/contracts'
 import { NftImage } from '@/components/nft-image'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useOrder, useOrderRealtime } from '@/features/orders/queries'
 import { requireAuth } from '@/features/session/session'
 import { shortAddress } from '@/features/wallets/queries'
-import { formatEth } from '@/lib/eth'
+import { formatDiscount, formatEth } from '@/lib/eth'
 
 export const Route = createFileRoute('/pedidos/$orderId')({
   staticData: { private: true },
@@ -90,8 +91,8 @@ function Lines({ order }: { order: Order }) {
       <dl className="ml-auto flex max-w-[320px] flex-col gap-1.5 border-b border-brand/30 pb-3">
         {order.discount !== '0' && (
           <div className="flex justify-between">
-            <dt>Desconto{order.coupon ? ` (${order.coupon.code})` : ''}</dt>
-            <dd>(-) {formatEth(order.discount)} ETH</dd>
+            <dt>Desconto do lançamento</dt>
+            <dd>{formatDiscount(order.discount)}</dd>
           </div>
         )}
         <div className="flex justify-between">
@@ -107,16 +108,28 @@ function Lines({ order }: { order: Order }) {
   )
 }
 
-const dateFmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
-const formatDate = (iso: string) => dateFmt.format(new Date(iso)).replace(/\./g, '').replace(/ de /g, ' ')
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+/** Formato do Figma: "29 Jul, 2026". */
+const formatDate = (iso: string) => {
+  const d = new Date(iso)
+  return `${String(d.getDate()).padStart(2, '0')} ${MONTHS[d.getMonth()]}, ${d.getFullYear()}`
+}
 
 /** Recibo do pedido confirmado (frame "Desktop / Confirmação de Pedido"). */
 function Receipt({ order }: { order: Order }) {
+  const navigate = useNavigate()
   return (
-    <article aria-labelledby="receipt-title" className="relative overflow-hidden rounded-lg bg-surface-card pb-10">
-      <Link to="/" aria-label="Fechar e voltar ao início" className="absolute top-4 right-4 grid size-7 place-items-center text-brand hover:text-brand-accent">
+    // Figma "Confirmação de Pedido": modal 578px sobre fundo sólido (Color/Ink)
+    <Dialog open onOpenChange={(open) => !open && void navigate({ to: '/' })}>
+      <DialogContent
+        showCloseButton={false}
+        overlayClassName="bg-ink"
+        aria-describedby={undefined}
+        className="max-h-[96dvh] w-[578px] max-w-[calc(100%-2rem)] gap-0 overflow-y-auto rounded-none border-0 bg-surface-card p-0 pb-10 ring-0 sm:max-w-[578px]"
+      >
+      <DialogClose aria-label="Fechar e voltar ao início" className="absolute top-4 right-4 grid size-7 place-items-center text-brand hover:text-brand-accent">
         <X aria-hidden className="size-5" />
-      </Link>
+      </DialogClose>
       <header className="flex flex-col items-center gap-4 px-6 pt-6 pb-5">
         <svg aria-hidden viewBox="0 0 64 80" className="h-20 w-16 text-brand" fill="none" stroke="currentColor" strokeWidth="2.5">
           <rect x="8" y="6" width="48" height="40" rx="3" />
@@ -125,14 +138,14 @@ function Receipt({ order }: { order: Order }) {
           <path d="M2 38v38h60V38L32 58 2 38Z" />
           <path d="m2 76 22-22M62 76 40 54" />
         </svg>
-        <h1 id="receipt-title" className="text-center text-base font-bold text-sand">
+        <DialogTitle id="receipt-title" className="text-center text-base font-bold text-sand">
           Seus NFTs agora estão na sua carteira
-        </h1>
+        </DialogTitle>
         <p role="status" className="sr-only">
           Pedido {order.number} confirmado.
         </p>
       </header>
-      <dl className="grid grid-cols-2 gap-y-3 border-y border-brand px-6 py-3 text-sm sm:grid-cols-4 sm:divide-x sm:divide-brand">
+      <dl className="grid grid-cols-2 gap-y-3 border-y border-brand px-6 py-3 text-sm whitespace-nowrap sm:grid-cols-[auto_auto_auto_auto] sm:justify-between sm:divide-x sm:divide-brand">
         <div className="sm:pr-4">
           <dt className="font-bold text-sand">ID da transação</dt>
           <dd className="text-sand" title={order.txHash ?? undefined}>
@@ -167,10 +180,11 @@ function Receipt({ order }: { order: Order }) {
             </a>
           </Button>
         )}
-        <p className="text-xs text-khaki">Referência de transação e link de exploração simulados.</p>
+        <span className="sr-only">Referência de transação e link de exploração simulados.</span>
       </div>
       <div aria-hidden className="absolute inset-x-0 bottom-0 h-2.5 bg-brand" />
-    </article>
+      </DialogContent>
+    </Dialog>
   )
 }
 

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCurrentUser } from '@/features/session/use-viewer'
 import type { ApiError } from '@/lib/api-error'
-import { formatEth } from '@/lib/eth'
+import { formatDiscount, formatEth } from '@/lib/eth'
 import { cn } from '@/lib/utils'
 import { useApplyCoupon, useRemoveCoupon } from '../mutations'
 
@@ -147,7 +147,7 @@ export function CartSummary({
           quote && (
             <dl className={cn('flex flex-col gap-3 transition-opacity', quoteRefreshing && 'opacity-60')}>
               <Row label="Subtotal" value={`${formatEth(quote.subtotal)} ETH`} />
-              <Row label={quote.coupon ? `Desconto (${quote.coupon.code})` : 'Desconto do lançamento'} value={`(-) ${formatEth(quote.discount)} ETH`} />
+              <Row label="Desconto do lançamento" value={formatDiscount(quote.discount)} />
               <Row label="Taxa de rede" value={`${formatEth(quote.networkFee)} ETH`} note="Taxa estimada" />
               <Row label="Total" value={`${formatEth(quote.total)} ETH`} strong />
             </dl>

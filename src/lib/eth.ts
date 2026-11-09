@@ -70,3 +70,8 @@ export function formatEth(value: string, { minDecimals = 2, maxDecimals = 4 } = 
   const out = `${int}.${frac.padEnd(minDecimals, '0')}`.replace(/\.$/, '')
   return negative && wei !== 0n ? `-${out}` : out
 }
+
+/** Desconto como no Figma: "(-) 00.00" quando não há desconto; "(-) 2.683 ETH" caso contrário. */
+export function formatDiscount(value: string) {
+  return toWei(value) === 0n ? '(-) 00.00' : `(-) ${formatEth(value)} ETH`
+}

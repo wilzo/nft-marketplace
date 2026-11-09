@@ -27,12 +27,15 @@ export function toNftSummary(n: NftRecord): NftSummary {
 export function toNftDetail(n: NftRecord): NftDetail {
   return {
     ...toNftSummary(n),
-    summary: `Um colecionável digital finalizado à mão da coleção ${n.collection}, verificado na ${NETWORK_LABELS[n.network]}, com arte desbloqueável e acesso para colecionadores.`,
+    // Textos exatamente como no frame "Desktop / Detalhes do NFT" (inclusive "Kurio Editions").
+    summary: `Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na ${NETWORK_LABELS[n.network]}, com arte desbloqueável e acesso para colecionadores.`,
     description:
-      `${n.name} é uma obra digital finalizada à mão da coleção ${n.collection}. Cada atributo fica armazenado nos metadados do token e verificado na ${NETWORK_LABELS[n.network]}. ` +
-      `A obra explora identidade, movimento e luz em um mundo digital sem fronteiras. A propriedade inclui a arte em alta resolução, lançamentos exclusivos ` +
-      `para colecionadores e um registro permanente de procedência registrada na rede. ${n.creator} recebe ${n.royaltyPercent}% de direitos autorais nas ` +
-      `vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.`,
+      `${n.name} é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e ` +
+      `verificado na ${NETWORK_LABELS[n.network]}. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.
+
+` +
+      `A propriedade inclui a arte em alta resolução, lançamentos exclusivos para colecionadores e um registro permanente de procedência registrada ` +
+      `na rede. ${n.creator} recebe ${n.royaltyPercent}% de direitos autorais nas vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.`,
     attributes: n.attributes,
     contractAddress: n.contractAddress,
     standard: n.standard,
@@ -63,8 +66,12 @@ export function toWallet(w: WalletRecord): Wallet {
     displayName: w.displayName,
     nickname: w.nickname,
     network: w.network,
+    profileName: w.profileName,
     address: w.address,
+    secondaryAddress: w.secondaryAddress,
     walletType: w.walletType,
+    referralCode: w.referralCode,
+    email: w.email,
     ensName: w.ensName,
     updatedAt: w.updatedAt,
   }

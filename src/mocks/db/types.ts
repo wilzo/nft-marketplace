@@ -61,11 +61,15 @@ export interface WalletRecord {
   userId: string
   slot: WalletSlot
   displayName: string
-  nickname: string | null
+  nickname: string
   network: Network
+  profileName: string
   address: string
+  secondaryAddress: string | null
   walletType: WalletType
-  ensName: string | null
+  referralCode: string
+  email: string
+  ensName: string
   updatedAt: string
 }
 

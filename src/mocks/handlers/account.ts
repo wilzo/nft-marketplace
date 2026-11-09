@@ -115,11 +115,15 @@ export const walletHandlers = [
       const existing = db.wallets.find((w) => w.userId === user.id && w.slot === slot.data)
       const data = {
         displayName: input.displayName,
-        nickname: input.nickname ?? null,
+        nickname: input.nickname,
         network: input.network,
+        profileName: input.profileName,
         address: input.address,
+        secondaryAddress: input.secondaryAddress ?? null,
         walletType: input.walletType,
-        ensName: input.ensName ?? null,
+        referralCode: input.referralCode,
+        email: input.email,
+        ensName: input.ensName,
         updatedAt: nowIso(),
       }
       if (existing) Object.assign(existing, data)

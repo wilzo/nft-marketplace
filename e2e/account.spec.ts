@@ -56,11 +56,11 @@ test.describe('perfil e carteiras (etapa 7)', () => {
   })
 
   test('alteração de senha: senha atual incorreta, confirmação e sucesso', async ({ page }) => {
-    await loginViaUi(page, 'bruno@kurio.dev', '/perfil')
+    await loginViaUi(page, 'ana@kurio.dev', '/perfil')
     const current = page.getByLabel('Senha atual', { exact: true })
     const next = page.getByLabel('Nova senha', { exact: true })
     const confirm = page.getByLabel('Confirmar nova senha', { exact: true })
-    const submit = page.getByRole('button', { name: 'Alterar senha' })
+    const submit = page.getByRole('button', { name: 'Salvar', exact: true })
 
     await current.fill('Kurio2026!')
     await next.fill('NovaSenha123')
@@ -76,11 +76,11 @@ test.describe('perfil e carteiras (etapa 7)', () => {
 
     await current.fill('Kurio2026!')
     await submit.click()
-    await expect(page.getByText('Senha alterada com sucesso.')).toBeVisible()
+    await expect(page.getByRole('status').filter({ hasText: 'Dados salvos e senha alterada.' })).toBeVisible()
 
     // A nova senha passa a valer; a antiga não.
-    expect((await mockApi(page, 'POST', '/auth/login', { body: { email: 'bruno@kurio.dev', password: 'Kurio2026!' } })).status).toBe(401)
-    expect((await mockApi(page, 'POST', '/auth/login', { body: { email: 'bruno@kurio.dev', password: 'NovaSenha123' } })).status).toBe(200)
+    expect((await mockApi(page, 'POST', '/auth/login', { body: { email: 'ana@kurio.dev', password: 'Kurio2026!' } })).status).toBe(401)
+    expect((await mockApi(page, 'POST', '/auth/login', { body: { email: 'ana@kurio.dev', password: 'NovaSenha123' } })).status).toBe(200)
   })
 
   test('carteiras: cadastro da principal e da secundária com validação e conflito', async ({ page }) => {
@@ -96,8 +96,13 @@ test.describe('perfil e carteiras (etapa 7)', () => {
     await expect(primary.getByText('Informe um endereço 0x com 40 caracteres hexadecimais')).toBeVisible()
 
     await primary.getByLabel('Nome de exibição').fill('Bruno Mendes')
+    await primary.getByLabel('Apelido da carteira').fill('Principal')
     await pick(page, 'Rede', 'Polygon')
+    await primary.getByLabel('Nome do perfil').fill('Cofre do Bruno')
     await pick(page, 'Tipo de carteira', 'Coinbase Wallet')
+    await primary.getByLabel('Código de indicação').fill('KURIO-BRUNO')
+    await primary.getByRole('textbox', { name: 'E-mail', exact: true }).fill('bruno@kurio.dev')
+    await primary.getByRole('textbox', { name: 'Nome ENS', exact: true }).fill('brunomendes')
     await primary.getByLabel('Endereço da carteira').fill('0xabc')
     await primary.getByRole('button', { name: 'Salvar carteira' }).click()
     await expect(primary.getByText('Informe um endereço 0x com 40 caracteres hexadecimais')).toBeVisible()

@@ -21,6 +21,19 @@ const NEW_WINDOW_MS = 10 * DAY
 /** "Em alta": pontuação de tendência mínima. */
 const TRENDING_MIN = 600
 
+/** Lista exibida no Figma em "Mais desta coleção" e "Colecionadores também viram". */
+const CURATED_RELATED = ['cosmic-bloom-118', 'violet-nomad-314', 'ivory-baron-088', 'golden-beat-207', 'golden-signal-160']
+const RELATED_SIZE = 15 // 3 páginas de 5 (indicadores do carrossel no Figma)
+
+function relatedTo(all: NftRecord[], excludeId: string | null) {
+  const byId = new Map(all.map((n) => [n.id, n]))
+  const curated = CURATED_RELATED.filter((id) => id !== excludeId).flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []))
+  const rest = [...all]
+    .filter((n) => n.id !== excludeId && !CURATED_RELATED.includes(n.id) && n.editions.some((e) => e.available > 0))
+    .sort((a, b) => b.trendingScore - a.trendingScore)
+  return [...curated, ...rest].slice(0, RELATED_SIZE)
+}
+
 const normalize = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 
 type Query = ReturnType<typeof CatalogQuery.parse>
@@ -112,10 +125,7 @@ export const catalogHandlers = [
     const db = getDb()
     const nft = db.nfts.find((n) => n.id === params.id)
     if (!nft) return apiError(404, 'NOT_FOUND', 'NFT não encontrado')
-    const items: NftSummary[] = db.nfts
-      .filter((n) => n.id !== nft.id && n.collection === nft.collection)
-      .slice(0, 5)
-      .map(toNftSummary)
+    const items: NftSummary[] = relatedTo(db.nfts, nft.id).map(toNftSummary)
     return HttpResponse.json({ items })
   }),
 
@@ -125,10 +135,7 @@ export const catalogHandlers = [
     const body: Highlights = {
       hero: byId('emerald-ape-042'),
       spotlight: byId('sage-nomad-009'),
-      related: [...db.nfts]
-        .sort((a, b) => b.trendingScore - a.trendingScore)
-        .slice(0, 4)
-        .map(toNftSummary),
+      related: relatedTo(db.nfts, null).map(toNftSummary),
     }
     return HttpResponse.json(body)
   }),

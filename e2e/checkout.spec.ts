@@ -7,9 +7,15 @@ async function goToCheckout(page: Page) {
   await expect(page.getByTestId('checkout-total')).toHaveText('26.846 ETH')
 }
 
+/** "Carteira e rede": escolher o provedor conecta a carteira cadastrada (simulação). */
 async function connectWallet(page: Page) {
-  await page.getByRole('button', { name: 'Conectar', exact: true }).click()
-  await expect(page.getByText('Conectada', { exact: true })).toBeVisible()
+  await page.getByRole('radio', { name: 'MetaMask' }).check()
+  await expect(page.getByText('Carteira conectada via MetaMask.')).toBeVisible()
+}
+
+/** Mobile: os dados do colecionador ficam recolhidos (estado não desenhado no frame). */
+async function openCollector(page: Page) {
+  if (isMobile(page)) await page.getByText('Dados do colecionador').click()
 }
 
 async function openReview(page: Page) {
@@ -61,6 +67,7 @@ test.describe('pagamento, pedidos e tempo real (etapa 6)', () => {
 
   test('validação do formulário e exigência de carteira conectada', async ({ page }) => {
     await goToCheckout(page)
+    await openCollector(page)
     await page.getByLabel('Nome do perfil').fill('')
     await page.getByRole('button', { name: 'Confirmar compra' }).click()
     await expect(page.getByText('Informe o nome do perfil')).toBeVisible()
@@ -68,19 +75,21 @@ test.describe('pagamento, pedidos e tempo real (etapa 6)', () => {
 
     await page.getByLabel('Nome do perfil').fill('Cofre principal')
     await page.getByRole('button', { name: 'Confirmar compra' }).click()
-    await expect(page.getByRole('alert').filter({ hasText: 'Conecte a carteira para continuar.' })).toBeVisible()
+    await expect(page.getByRole('alert').filter({ hasText: 'Escolha uma opção em "Carteira e rede" para conectar a carteira.' })).toBeVisible()
   })
 
   test('carteira: recusa da conexão e desconexão', async ({ page }) => {
     await goToCheckout(page)
     await mockApi(page, 'PUT', '/__mock/scenario', { body: { name: 'carteira-recusada', overrides: { latency: { mode: 'none' } } } })
-    await page.getByRole('button', { name: 'Conectar', exact: true }).click()
+    await page.getByRole('radio', { name: 'MetaMask' }).check()
     await expect(page.getByRole('alert').filter({ hasText: 'A conexão foi recusada na carteira' })).toBeVisible()
+    await expect(page.getByRole('radio', { name: 'MetaMask' })).not.toBeChecked()
 
     await mockApi(page, 'PUT', '/__mock/scenario', { body: { name: 'sem-latencia' } })
     await connectWallet(page)
     await page.getByRole('button', { name: 'Desconectar' }).click()
-    await expect(page.getByText('Não conectada')).toBeVisible()
+    await expect(page.getByText('Carteira conectada via MetaMask.')).toBeHidden()
+    await expect(page.getByRole('radio', { name: 'MetaMask' })).not.toBeChecked()
   })
 
   test('pagamento recusado preserva os itens do carrinho', async ({ page }) => {

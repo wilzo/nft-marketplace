@@ -14,7 +14,17 @@ export interface RouterContext {
   queryClient: QueryClient
 }
 
-// Painel de cenários do mock: carregado sob demanda e só quando os mocks estão ativos.
+/**
+ * Painel de cenários do mock: não faz parte do layout do Figma, então fica oculto por padrão.
+ * Ativado por `?painel=1` (preferência salva em localStorage), carregado sob demanda e só com mocks ativos.
+ */
+function panelEnabled() {
+  try {
+    return localStorage.getItem('kurio:scenario-panel') === '1'
+  } catch {
+    return false
+  }
+}
 const ScenarioPanel = env.mocksEnabled ? lazy(() => import('@/features/dev/scenario-panel')) : null
 
 export const Route = createRootRouteWithContext<RouterContext>()({
@@ -50,7 +60,7 @@ function RootLayout() {
       {!hideTabBar && <MobileTabBar />}
       {/* No mobile, abaixo da barra superior (voltar/favoritar) para não encobrir controles. */}
       <Toaster position="top-center" richColors closeButton mobileOffset={{ top: 76 }} />
-      {ScenarioPanel && (
+      {ScenarioPanel && panelEnabled() && (
         <Suspense fallback={null}>
           <ScenarioPanel />
         </Suspense>

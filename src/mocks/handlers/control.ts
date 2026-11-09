@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { EthAmount } from '@/api/contracts'
 import { getDb, nowIso, resetDb, transact } from '../db/store'
 import { bumpNft, clearSettlementTimers, settle } from '../domain/commerce'
+import { defaultEdition } from '../fixtures/nfts'
 import { api, apiError, parseBody } from '../lib/http'
 import { disconnectAll, publishNftUpdated, realtimeStats, replayLastEvent, replayStaleEvent } from '../realtime'
 import { buildScenario, DEFAULT_SCENARIO, getScenario, SCENARIO_PRESETS, setScenario } from '../scenarios'
@@ -19,7 +20,7 @@ const ScenarioInput = z.object({
 })
 
 const NftPatch = z.object({
-  /** Edição alvo (padrão: edição aberta, cujo preço é o exibido no card). */
+  /** Edição alvo (padrão: a edição padrão do NFT — 1/50 —, cujo preço é o exibido no card). */
   editionId: z.string().optional(),
   price: EthAmount.optional(),
   available: z.number().int().min(0).optional(),
@@ -55,7 +56,7 @@ export const controlHandlers = [
     const event = transact((db) => {
       const nft = db.nfts.find((n) => n.id === params.id)
       if (!nft) throw apiError(404, 'NOT_FOUND', 'NFT não encontrado')
-      const edition = input.editionId ? nft.editions.find((e) => e.id === input.editionId) : nft.editions.find((e) => e.kind === 'aberta')
+      const edition = input.editionId ? nft.editions.find((e) => e.id === input.editionId) : defaultEdition(nft)
       if (!edition) throw apiError(404, 'NOT_FOUND', 'Edição não encontrada')
       if (input.price !== undefined) edition.price = input.price
       if (input.available !== undefined) edition.available = input.available

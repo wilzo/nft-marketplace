@@ -55,9 +55,8 @@ function DetailView({ nft }: { nft: NftDetail }) {
   const router = useRouter()
   const addToCart = useAddToCart()
 
-  // Edição: a da URL ou a mais barata disponível (mesmo preço exibido no catálogo).
-  const fallback =
-    [...nft.editions].filter((e) => e.available > 0).sort((a, b) => compareEth(a.price, b.price))[0] ?? nft.editions[0]
+  // Edição: a da URL ou a padrão da API (1/50, como selecionada no Figma — mesmo preço do card).
+  const fallback = nft.editions.find((e) => e.id === nft.defaultEditionId) ?? nft.editions[0]
   const edition = nft.editions.find((e) => e.kind === search.edicao) ?? fallback
   const limit = editionLimit(edition)
   const unavailable = edition.available === 0
@@ -184,7 +183,11 @@ function DetailView({ nft }: { nft: NftDetail }) {
 
           <div className="flex flex-col gap-3">
             <h2 className="hidden text-[15px] leading-4 font-bold lg:block">Sobre este NFT:</h2>
-            <p className="text-sm leading-6 text-sand">{nft.summary}</p>
+            <p className="hidden text-sm leading-6 text-sand lg:block">{nft.summary}</p>
+            {/* Texto do frame mobile */}
+            <p className="text-sm leading-6 text-sand lg:hidden">
+              Um colecionável digital {edition.label} finalizado à mão da coleção Kurio Editions, verificado na {NETWORK_LABELS[nft.network]}.
+            </p>
           </div>
 
           <EditionPicker editions={nft.editions} value={edition.id} onChange={selectEdition} />
@@ -215,7 +218,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
             </div>
           </dl>
 
-          <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 lg:flex">
             <p className="text-[15px] leading-4 font-bold">Compartilhar este NFT:</p>
             <a
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`}
@@ -261,15 +264,26 @@ function DetailView({ nft }: { nft: NftDetail }) {
           ))}
         </TabsList>
         <TabsContent value="detalhes" className="mt-3 flex flex-col gap-3 text-sm leading-6 text-sand">
-          <p>{nft.description}</p>
-          <h3 className="mt-2 font-bold text-cream">Rede:</h3>
-          <p>Cunhado na {NETWORK_LABELS[nft.network]} com procedência imutável e metadados armazenados no IPFS.</p>
-          <h3 className="mt-2 font-bold text-cream">Contrato:</h3>
-          <p>
-            {shortContract} • Contrato inteligente {nft.standard} verificado.
-          </p>
-          <h3 className="mt-2 font-bold text-cream">Direitos autorais:</h3>
-          <p>Direitos autorais do criador: {nft.royaltyPercent}% nas vendas secundárias, pagos automaticamente pelos mercados compatíveis.</p>
+          {nft.description.split('\n\n').map((paragraph, i) => (
+            <p key={i} className={i > 0 ? 'mt-3' : undefined}>
+              {paragraph}
+            </p>
+          ))}
+          {/* Rótulos e conteúdos exatamente como no Figma */}
+          <div>
+            <h3 className="font-bold text-cream">Rede:</h3>
+            <p>Cunhado na {NETWORK_LABELS[nft.network]} com procedência imutável e metadados armazenados no IPFS.</p>
+          </div>
+          <div>
+            <h3 className="font-bold text-cream">Contrato:</h3>
+            <p>Direitos autorais do criador: {nft.royaltyPercent}% nas vendas secundárias, pagos automaticamente pelos mercados compatíveis.</p>
+          </div>
+          <div>
+            <h3 className="font-bold text-cream">Direitos autorais:</h3>
+            <p>
+              {shortContract} • Contrato inteligente {nft.standard} verificado.
+            </p>
+          </div>
         </TabsContent>
         <TabsContent value="avaliacoes" className="mt-3 text-sm leading-6 text-sand">
           <p>

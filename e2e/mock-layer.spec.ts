@@ -41,7 +41,7 @@ test.describe('camada de mocks', () => {
 
   test('listagem: paginação, filtros combinados, facetas e cenário vazio', async ({ page }) => {
     const all = await mockApi(page, 'GET', '/nfts')
-    expect(all.body).toMatchObject({ total: 54, totalPages: 6, page: 1, pageSize: 9 })
+    expect(all.body).toMatchObject({ total: 239, totalPages: 27, page: 1, pageSize: 9 })
     expect(all.body.items).toHaveLength(9)
 
     const filtered = await mockApi(page, 'GET', '/nfts?category=musica&category=jogos&network=ethereum&sort=preco-asc')
@@ -72,7 +72,7 @@ test.describe('camada de mocks', () => {
       quoteId: quote.body.id,
       walletId: 'wal_ana_primary',
       network: 'ethereum',
-      collector: { displayName: 'Ana Colecionadora', username: 'ana.kurio', email: 'ana@kurio.dev' },
+      collector: { displayName: 'Ana Colecionadora', username: 'ana.kurio', email: 'ana@kurio.dev', profileName: 'Cofre principal', ensName: 'anakurio', referralCode: 'KURIO-ANA' },
     }
     const headers = { 'Idempotency-Key': 'teste-chave-1' }
     const first = await mockApi(page, 'POST', '/orders', { token, body, headers })
@@ -107,7 +107,7 @@ test.describe('camada de mocks', () => {
       quoteId: quote.body.id,
       walletId: 'wal_ana_primary',
       network: 'ethereum',
-      collector: { displayName: 'Ana', username: 'ana.kurio', email: 'ana@kurio.dev' },
+      collector: { displayName: 'Ana', username: 'ana.kurio', email: 'ana@kurio.dev', profileName: 'Cofre principal', ensName: 'anakurio', referralCode: 'KURIO-ANA' },
     }
     const headers = { 'Idempotency-Key': 'teste-timeout' }
     const timedOut = await mockApi(page, 'POST', '/orders', { token, body, headers, timeoutMs: 500 })
@@ -128,7 +128,7 @@ test.describe('camada de mocks', () => {
       quoteId: quote.body.id,
       walletId: 'wal_ana_primary',
       network: 'ethereum',
-      collector: { displayName: 'Ana', username: 'ana.kurio', email: 'ana@kurio.dev' },
+      collector: { displayName: 'Ana', username: 'ana.kurio', email: 'ana@kurio.dev', profileName: 'Cofre principal', ensName: 'anakurio', referralCode: 'KURIO-ANA' },
     }
     const stale = await mockApi(page, 'POST', '/orders', { token, body, headers: { 'Idempotency-Key': 'k1' } })
     expect(stale.status).toBe(409)

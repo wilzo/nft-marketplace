@@ -77,7 +77,8 @@ export function CartItemRow({ item }: { item: CartItem }) {
               </Link>
             </h3>
             <p className="text-sm leading-6 text-khaki">
-              <span className="hidden lg:inline">ID do token: {item.tokenId} · </span>Edição: {item.editionLabel}
+              <span className="hidden lg:inline">ID do token: {item.tokenId}</span>
+              <span className="lg:hidden">Edição: {item.editionLabel}</span>
             </p>
             {/* Mobile: total da linha + quantidade (Figma) */}
             <p className="mt-1 text-lg font-bold text-brand-accent lg:hidden">{formatEth(item.lineTotal)} ETH</p>

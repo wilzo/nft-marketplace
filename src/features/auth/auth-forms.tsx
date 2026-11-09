@@ -12,13 +12,13 @@ import { cn } from '@/lib/utils'
 
 type Variant = 'dialog' | 'page'
 
-const fieldClass = (v: Variant) => (v === 'page' ? '[&_input]:h-[50px] [&_input]:rounded-[10px]' : undefined)
+const fieldClass = (v: Variant) => (v === 'page' ? '[&_input]:h-[50px] [&_input]:rounded-[10px] [&_input]:px-4' : '[&_input]:rounded-[5px] [&_input]:px-4')
 const submitClass = (v: Variant) => cn('w-full rounded-[5px] text-base', v === 'page' ? 'h-[60px] rounded-[10px]' : 'h-[45px]')
 
 export function LoginForm({ variant, onSuccess }: { variant: Variant; onSuccess: () => void }) {
   const login = useLogin()
   const [alert, setAlert] = useFormAlert()
-  const form = useForm<LoginInput>({ resolver: zodResolver(LoginInput), mode: 'onTouched', defaultValues: { email: '', password: '' } })
+  const form = useForm<LoginInput>({ resolver: zodResolver(LoginInput), mode: 'onSubmit', defaultValues: { email: '', password: '' } })
   const { errors } = form.formState
 
   const submit = form.handleSubmit((values) => {
@@ -66,7 +66,7 @@ export function RegisterForm({ variant, onSuccess }: { variant: Variant; onSucce
   const [alert, setAlert] = useFormAlert()
   const form = useForm<RegisterInput>({
     resolver: zodResolver(RegisterInput),
-    mode: 'onTouched',
+    mode: 'onSubmit',
     defaultValues: { username: '', email: '', password: '', confirmPassword: '' },
   })
   const { errors } = form.formState

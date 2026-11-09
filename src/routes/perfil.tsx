@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { ChangePasswordInput, ProfileInput, type User } from '@/api/contracts'
 import ImageIcon from '@/assets/icons/curved-image-2.svg?react'
-import { FormAlert, FormField, PasswordField } from '@/components/form/form-field'
+import { EnsField, FieldLabel, FormAlert, FormField, PasswordField } from '@/components/form/form-field'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AccountLayout } from '@/features/account/account-layout'
@@ -38,22 +38,28 @@ function ProfilePage() {
           </Button>
         </div>
       ) : (
-        <div className="flex flex-col gap-12">
-          <ProfileForm user={profile.data} />
-          <PasswordForm />
-        </div>
+        <ProfileForms user={profile.data} />
       )}
     </AccountLayout>
   )
 }
 
-function ProfileForm({ user }: { user: User }) {
+const PROFILE_FIELDS = ['displayName', 'username', 'email', 'ensName', 'walletNickname'] as const
+const PASSWORD_FIELDS = ['currentPassword', 'newPassword', 'confirmPassword'] as const
+
+/**
+ * Frame "Perfil do colecionador": dados + avatar + "Alterar senha" com um único "Salvar".
+ * O Salvar grava os dados e, se algum campo de senha foi preenchido, também altera a senha.
+ */
+function ProfileForms({ user }: { user: User }) {
   const update = useUpdateProfile()
+  const change = useChangePassword()
   const [alert, setAlert] = useState<string | null>(null)
-  const [saved, setSaved] = useState(false)
-  const form = useForm<ProfileInput>({
+  const [saved, setSaved] = useState<string | null>(null)
+
+  const profileForm = useForm<ProfileInput>({
     resolver: zodResolver(ProfileInput),
-    mode: 'onTouched',
+    mode: 'onSubmit',
     values: {
       displayName: user.displayName,
       username: user.username,
@@ -63,41 +69,75 @@ function ProfileForm({ user }: { user: User }) {
     },
     resetOptions: { keepDirtyValues: true },
   })
-  const { errors } = form.formState
-
-  const submit = form.handleSubmit((values) => {
-    setAlert(null)
-    setSaved(false)
-    update.mutate(values, {
-      onSuccess: () => {
-        setSaved(true)
-        toast.success('Dados do perfil salvos.')
-      },
-      onError: (e) => setAlert(applyApiError(e, form.setError, ['displayName', 'username', 'email', 'ensName', 'walletNickname'])),
-    })
+  const passwordForm = useForm<ChangePasswordInput>({
+    resolver: zodResolver(ChangePasswordInput),
+    mode: 'onSubmit',
+    defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
   })
+  const pe = profileForm.formState.errors
+  const we = passwordForm.formState.errors
+  const busy = update.isPending || change.isPending
+
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setAlert(null)
+    setSaved(null)
+    const pw = passwordForm.getValues()
+    const wantsPassword = PASSWORD_FIELDS.some((k) => pw[k])
+    const profileOk = await profileForm.trigger(undefined, { shouldFocus: true })
+    const passwordOk = wantsPassword ? await passwordForm.trigger(undefined, { shouldFocus: profileOk }) : true
+    if (!profileOk || !passwordOk) return
+
+    try {
+      await update.mutateAsync(ProfileInput.parse(profileForm.getValues()))
+    } catch (err) {
+      return setAlert(applyApiError(err, profileForm.setError, PROFILE_FIELDS))
+    }
+    if (wantsPassword) {
+      try {
+        await change.mutateAsync(ChangePasswordInput.parse(pw))
+        passwordForm.reset()
+      } catch (err) {
+        return setAlert(applyApiError(err, passwordForm.setError, PASSWORD_FIELDS))
+      }
+    }
+    const message = wantsPassword ? 'Dados salvos e senha alterada.' : 'Dados salvos.'
+    setSaved(message)
+    toast.success(message)
+  }
 
   return (
-    <form noValidate onSubmit={submit} aria-labelledby="profile-data" className="flex flex-col gap-5">
-      <h2 id="profile-data" className="sr-only">
-        Dados do perfil
-      </h2>
+    <form noValidate onSubmit={(e) => void save(e)} aria-label="Perfil do colecionador" className="flex flex-col gap-10">
       {alert && <FormAlert>{alert}</FormAlert>}
-      <div className="grid gap-x-7 gap-y-5 lg:grid-cols-2">
-        <FormField label="Nome de exibição" required autoComplete="name" error={errors.displayName?.message} {...form.register('displayName')} />
-        <FormField label="Nome de usuário" required autoComplete="username" error={errors.username?.message} {...form.register('username')} />
-        <FormField label="E-mail" required type="email" autoComplete="email" error={errors.email?.message} {...form.register('email')} />
-        <FormField label="Nome ENS (opcional)" suffix=".eth" error={errors.ensName?.message} {...form.register('ensName')} />
-        <FormField label="Apelido da carteira (opcional)" error={errors.walletNickname?.message} {...form.register('walletNickname')} />
+      <div className="grid gap-x-7 gap-y-6 lg:grid-cols-2">
+        <FormField label="Nome de exibição" required autoComplete="name" error={pe.displayName?.message} {...profileForm.register('displayName')} />
+        <FormField label="Nome de usuário" required autoComplete="username" error={pe.username?.message} {...profileForm.register('username')} />
+        <FormField label="E-mail" required type="email" autoComplete="email" error={pe.email?.message} {...profileForm.register('email')} />
+        <EnsField error={pe.ensName?.message} {...profileForm.register('ensName')} />
+        <FormField label="Apelido da carteira" required error={pe.walletNickname?.message} {...profileForm.register('walletNickname')} />
         <AvatarField user={user} />
       </div>
+
+      <fieldset className="flex flex-col gap-5 lg:max-w-[417px]">
+        <legend className="mb-5 text-base font-bold">Alterar senha</legend>
+        <PasswordField label="Senha atual" autoComplete="current-password" error={we.currentPassword?.message} {...passwordForm.register('currentPassword')} />
+        <PasswordField
+          label="Nova senha"
+          autoComplete="new-password"
+          hint="Mínimo de 8 caracteres, com letras e números."
+          error={we.newPassword?.message}
+          {...passwordForm.register('newPassword')}
+        />
+        <PasswordField label="Confirmar nova senha" autoComplete="new-password" error={we.confirmPassword?.message} {...passwordForm.register('confirmPassword')} />
+      </fieldset>
+
       <div className="flex items-center gap-4">
-        <Button type="submit" size="cta" className="w-[131px] text-sm" disabled={update.isPending}>
-          {update.isPending ? 'Salvando…' : 'Salvar'}
+        <Button type="submit" size="cta" className="w-[131px] text-sm" disabled={busy}>
+          {busy ? 'Salvando…' : 'Salvar'}
         </Button>
-        {saved && !form.formState.isDirty && (
+        {saved && (
           <p role="status" className="text-sm text-success">
-            Dados salvos.
+            {saved}
           </p>
         )}
       </div>
@@ -124,11 +164,9 @@ function AvatarField({ user }: { user: User }) {
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <span id="avatar-label" className="text-sm font-medium">
-        Avatar
-      </span>
-      <div className="flex items-center gap-6" role="group" aria-labelledby="avatar-label">
+    <div className="flex flex-col gap-2.5">
+      <FieldLabel htmlFor="avatar-input">Avatar</FieldLabel>
+      <div className="flex items-center gap-6">
         {user.avatarUrl ? (
           <img src={user.avatarUrl} alt="Seu avatar" className="size-[50px] rounded-full border border-line object-cover" />
         ) : (
@@ -165,47 +203,10 @@ function AvatarField({ user }: { user: User }) {
           {error}
         </p>
       ) : (
-        <p id="avatar-hint" className="text-xs text-sand">
+        <span id="avatar-hint" className="sr-only">
           PNG, JPEG ou WebP, até 2 MB.
-        </p>
+        </span>
       )}
     </div>
-  )
-}
-
-function PasswordForm() {
-  const change = useChangePassword()
-  const [alert, setAlert] = useState<string | null>(null)
-  const form = useForm<ChangePasswordInput>({
-    resolver: zodResolver(ChangePasswordInput),
-    mode: 'onTouched',
-    defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
-  })
-  const { errors } = form.formState
-
-  const submit = form.handleSubmit((values) => {
-    setAlert(null)
-    change.mutate(values, {
-      onSuccess: () => {
-        form.reset()
-        toast.success('Senha alterada com sucesso.')
-      },
-      onError: (e) => setAlert(applyApiError(e, form.setError, ['currentPassword', 'newPassword', 'confirmPassword'])),
-    })
-  })
-
-  return (
-    <form noValidate onSubmit={submit} aria-labelledby="password-title" className="flex flex-col gap-5 lg:max-w-[417px]">
-      <h2 id="password-title" className="text-base font-bold">
-        Alterar senha
-      </h2>
-      {alert && <FormAlert>{alert}</FormAlert>}
-      <PasswordField label="Senha atual" autoComplete="current-password" error={errors.currentPassword?.message} {...form.register('currentPassword')} />
-      <PasswordField label="Nova senha" autoComplete="new-password" hint="Mínimo de 8 caracteres, com letras e números." error={errors.newPassword?.message} {...form.register('newPassword')} />
-      <PasswordField label="Confirmar nova senha" autoComplete="new-password" error={errors.confirmPassword?.message} {...form.register('confirmPassword')} />
-      <Button type="submit" size="cta" className="w-[160px] text-sm" disabled={change.isPending}>
-        {change.isPending ? 'Alterando…' : 'Alterar senha'}
-      </Button>
-    </form>
   )
 }

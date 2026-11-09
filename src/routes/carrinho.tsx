@@ -5,7 +5,7 @@ import { CART_GRID, CartItemRow, CartItemSkeleton } from '@/features/cart/compon
 import { CartSummary } from '@/features/cart/components/cart-summary'
 import { useAcknowledgePrices, useRemoveCoupon } from '@/features/cart/mutations'
 import { useCart, useQuote } from '@/features/cart/queries'
-import { useCatalog } from '@/features/catalog/queries'
+import { useHighlights } from '@/features/catalog/queries'
 import { NftCarousel } from '@/features/nft-detail/components/related'
 import { useViewerScope } from '@/features/session/use-viewer'
 import { cn } from '@/lib/utils'
@@ -18,7 +18,7 @@ function CartPage() {
   const scope = useViewerScope()
   const cart = useCart(scope)
   const quote = useQuote(scope, cart.data)
-  const suggestions = useCatalog({ tab: 'em-alta', sort: 'recentes', page: 1, pageSize: 5 })
+  const suggestions = useHighlights()
   const acknowledge = useAcknowledgePrices()
   const removeCoupon = useRemoveCoupon()
   const navigate = useNavigate()
@@ -141,7 +141,7 @@ function CartPage() {
       )}
 
       <div className="mt-16 lg:mt-24">
-        <NftCarousel id="suggestions-title" title="Colecionadores também viram" items={suggestions.data?.items} />
+        <NftCarousel id="suggestions-title" title="Colecionadores também viram" items={suggestions.data?.related} />
       </div>
     </main>
   )

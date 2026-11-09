@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { DisplayName, Email, EnsName, Username, WalletType } from './account'
+import { DisplayName, Email, EnsName, ProfileName, ReferralCode, Username, WalletType } from './account'
 import { EthAmount, IsoDateTime, Network, optionalText } from './common'
 import { NftImage } from './nfts'
 
@@ -124,9 +124,10 @@ export const CollectorInput = z.object({
   displayName: DisplayName,
   username: Username,
   email: Email,
-  profileName: optionalText(z.string().trim().max(40, 'Use no máximo 40 caracteres')),
-  ensName: optionalText(EnsName),
-  referralCode: optionalText(z.string().trim().max(24, 'Use no máximo 24 caracteres')),
+  // Obrigatórios como no layout (asterisco no Figma)
+  profileName: ProfileName,
+  ensName: EnsName,
+  referralCode: ReferralCode,
   note: optionalText(z.string().trim().max(280, 'Use no máximo 280 caracteres')),
 })
 export type CollectorInput = z.input<typeof CollectorInput>

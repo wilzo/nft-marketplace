@@ -2,7 +2,7 @@ import { hashPassword } from '../lib/crypto'
 import type { DbState, UserRecord } from '../db/types'
 import { createNftFixtures } from './nfts'
 
-export const DB_SCHEMA_VERSION = 3
+export const DB_SCHEMA_VERSION = 4
 
 /** Credenciais fictícias documentadas no README. */
 export const FIXTURE_PASSWORD = 'Kurio2026!'
@@ -38,15 +38,36 @@ export async function createSeed(): Promise<DbState> {
     sessions: [],
     wallets: [
       {
+        // Endereços do Figma (Pagamento mobile / Confirmação): 0xA91F…E82C
         id: 'wal_ana_primary',
         userId: 'usr_ana',
         slot: 'primary',
         displayName: 'Ana Colecionadora',
-        nickname: 'Cofre principal',
+        nickname: 'Principal',
         network: 'ethereum',
-        address: '0x7a42c0ffee5d1b2e8f3a9c4d6e7f8091a2b319e8',
+        profileName: 'Cofre principal',
+        address: '0xA91F7c3e5d1b2e8f3a9c4d6e7f8091a2b3c4E82C',
+        secondaryAddress: null,
         walletType: 'metamask',
+        referralCode: 'KURIO-ANA',
+        email: 'ana@kurio.dev',
         ensName: 'anakurio',
+        updatedAt: SEED_TIME,
+      },
+      {
+        id: 'wal_ana_secondary',
+        userId: 'usr_ana',
+        slot: 'secondary',
+        displayName: 'Ana Colecionadora',
+        nickname: 'Reserva',
+        network: 'polygon',
+        profileName: 'Reserva',
+        address: '0x5B2D9e4f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0C71',
+        secondaryAddress: null,
+        walletType: 'coinbase',
+        referralCode: 'KURIO-ANA',
+        email: 'ana@kurio.dev',
+        ensName: 'nova.kurio',
         updatedAt: SEED_TIME,
       },
     ],
@@ -60,9 +81,9 @@ export async function createSeed(): Promise<DbState> {
         version: 1,
         updatedAt: SEED_TIME,
         items: [
-          { id: 'item_ana_1', nftId: 'emerald-ape-042', editionId: 'emerald-ape-042--aberta', quantity: 2, seenUnitPrice: price('emerald-ape-042', 'aberta') },
-          { id: 'item_ana_2', nftId: 'violet-nomad-314', editionId: 'violet-nomad-314--aberta', quantity: 6, seenUnitPrice: price('violet-nomad-314', 'aberta') },
-          { id: 'item_ana_3', nftId: 'ivory-baron-088', editionId: 'ivory-baron-088--aberta', quantity: 9, seenUnitPrice: price('ivory-baron-088', 'aberta') },
+          { id: 'item_ana_1', nftId: 'emerald-ape-042', editionId: 'emerald-ape-042--1-50', quantity: 2, seenUnitPrice: price('emerald-ape-042', '1-50') },
+          { id: 'item_ana_2', nftId: 'violet-nomad-314', editionId: 'violet-nomad-314--1-50', quantity: 6, seenUnitPrice: price('violet-nomad-314', '1-50') },
+          { id: 'item_ana_3', nftId: 'ivory-baron-088', editionId: 'ivory-baron-088--1-50', quantity: 9, seenUnitPrice: price('ivory-baron-088', '1-50') },
         ],
       },
     ],

@@ -14,6 +14,11 @@ export const Username = z
 
 export const DisplayName = z.string().trim().min(2, 'Use pelo menos 2 caracteres').max(40, 'Use no máximo 40 caracteres')
 
+/** Campos obrigatórios do layout (asterisco no Figma). */
+export const WalletNickname = z.string().trim().min(2, 'Informe o apelido da carteira').max(32, 'Use no máximo 32 caracteres')
+export const ProfileName = z.string().trim().min(2, 'Informe o nome do perfil').max(40, 'Use no máximo 40 caracteres')
+export const ReferralCode = z.string().trim().min(3, 'Informe o código de indicação').max(24, 'Use no máximo 24 caracteres')
+
 export const Password = z
   .string()
   .min(8, 'A senha deve ter pelo menos 8 caracteres')
@@ -26,7 +31,8 @@ export const EnsName = z
   .string()
   .trim()
   .toLowerCase()
-  .regex(/^[a-z0-9-]{3,32}$/, 'Use de 3 a 32 letras, números ou hífens')
+  .min(1, 'Informe o nome ENS')
+  .regex(/^(?=.{3,40}$)[a-z0-9-]+(.[a-z0-9-]+)*$/, 'Use de 3 a 40 letras, números, hífens ou pontos')
 
 // ---------- Usuário e sessão ----------
 
@@ -75,8 +81,8 @@ export const ProfileInput = z.object({
   displayName: DisplayName,
   username: Username,
   email: Email,
-  ensName: optionalText(EnsName),
-  walletNickname: optionalText(z.string().trim().max(32, 'Use no máximo 32 caracteres')),
+  ensName: EnsName,
+  walletNickname: WalletNickname,
 })
 export type ProfileInput = z.input<typeof ProfileInput>
 
@@ -121,26 +127,36 @@ export const WALLET_SLOTS = ['primary', 'secondary'] as const
 export const WalletSlot = z.enum(WALLET_SLOTS)
 export type WalletSlot = z.infer<typeof WalletSlot>
 
+/** Carteira cadastrada (frame "Carteiras": todos os campos do layout). */
 export const Wallet = z.object({
   id: z.string(),
   slot: WalletSlot,
   displayName: z.string(),
-  nickname: z.string().nullable(),
+  nickname: z.string(),
   network: Network,
+  profileName: z.string(),
   address: z.string(),
+  /** "ENS ou carteira secundária (opcional)" */
+  secondaryAddress: z.string().nullable(),
   walletType: WalletType,
-  ensName: z.string().nullable(),
+  referralCode: z.string(),
+  email: z.string(),
+  ensName: z.string(),
   updatedAt: IsoDateTime,
 })
 export type Wallet = z.infer<typeof Wallet>
 
 export const WalletInput = z.object({
   displayName: DisplayName,
-  nickname: optionalText(z.string().trim().max(32, 'Use no máximo 32 caracteres')),
+  nickname: WalletNickname,
   network: Network,
+  profileName: ProfileName,
   address: WalletAddress,
+  secondaryAddress: optionalText(z.string().trim().max(64, 'Use no máximo 64 caracteres')),
   walletType: WalletType,
-  ensName: optionalText(EnsName),
+  referralCode: ReferralCode,
+  email: Email,
+  ensName: EnsName,
 })
 export type WalletInput = z.input<typeof WalletInput>
 

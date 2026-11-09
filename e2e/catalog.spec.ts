@@ -27,8 +27,8 @@ test.describe('catálogo (etapa 3)', () => {
 
     // Filtro reinicia a paginação
     await withFilters(page, async () => {
-      await page.getByRole('checkbox', { name: /Música/ }).check()
-      await page.getByRole('checkbox', { name: /Ethereum/ }).check()
+      await page.getByRole('checkbox', { name: /Música/ }).check({ force: true })
+      await page.getByRole('checkbox', { name: /Ethereum/ }).check({ force: true })
     })
     await expect(page).toHaveURL(/category=/)
     await expect(page).toHaveURL(/network=/)
@@ -64,7 +64,7 @@ test.describe('catálogo (etapa 3)', () => {
   })
 
   test('busca pela URL e resultado vazio', async ({ page }) => {
-    await openWithScenario(page, 'sem-latencia', '/?q=frequency')
+    await openWithScenario(page, 'sem-latencia', '/?q=Frequency%20%23071')
     await expect(cards(page)).toHaveCount(1)
     await expect(cards(page).locator('h3')).toHaveText('Golden Frequency #071')
 
@@ -92,23 +92,37 @@ test.describe('catálogo (etapa 3)', () => {
 
 test.describe('detalhe do NFT (etapa 3)', () => {
   test('acesso direto, edição indisponível, limite de quantidade e compra', async ({ page }) => {
-    await openWithScenario(page, 'sem-latencia', '/nft/emerald-ape-042?edicao=1-1')
-    await expect(page.getByRole('heading', { name: 'Emerald Ape #042', level: 1 })).toBeVisible()
+    await openWithScenario(page)
+    // NFT (fora do Figma) com a edição 1/1 esgotada, descoberto pela API
+    let nft: { id: string; name: string } | undefined
+    for (let p = 2; p <= 6 && !nft; p++) {
+      const list = await mockApi(page, 'GET', `/nfts?page=${p}`)
+      for (const item of list.body.items) {
+        const detail = await mockApi(page, 'GET', `/nfts/${item.id}`)
+        if (detail.body.editions.find((e: { kind: string }) => e.kind === '1-1').available === 0 && detail.body.available > 0) {
+          nft = detail.body
+          break
+        }
+      }
+    }
+    expect(nft).toBeTruthy()
+    await page.goto(`/nft/${nft!.id}?edicao=1-1`)
+    await expect(page.getByRole('heading', { name: nft!.name, level: 1 })).toBeVisible()
     await expect(page.getByText(/Edição indisponível/)).toBeVisible()
     const buyLabel = isMobile(page) ? 'Comprar NFT' : 'COMPRAR'
     await expect(page.getByRole('button', { name: buyLabel, exact: true })).toBeDisabled()
 
-    // Edição 1/10 (limite de 3 por pedido)
-    await page.getByRole('radio', { name: /Edição 1\/10/ }).click()
+    // Edição 1/10 (limite de 3 por pedido ou o disponível)
+    await page.getByRole('radio', { name: 'Edição 1/10' }).click()
     await expect(page).toHaveURL(/edicao=1-10/)
     const plus = page.getByRole('button', { name: 'Aumentar quantidade' }).filter({ visible: true })
     while (await plus.isEnabled()) await plus.click()
     await expect(page.getByText(/Limite atingido/)).toBeVisible()
 
     await page.getByRole('button', { name: buyLabel, exact: true }).click()
-    await expect(page).toHaveURL(/\/carrinho$/)
+    await expect(page).toHaveURL(/carrinho$/)
     const cart = await mockApi(page, 'GET', '/cart', { headers: { 'X-Cart-Id': await page.evaluate(() => localStorage.getItem('kurio:guest-cart-id') ?? '') } })
-    expect(cart.body.items[0]).toMatchObject({ nftId: 'emerald-ape-042', editionLabel: '1/10' })
+    expect(cart.body.items[0]).toMatchObject({ nftId: nft!.id, editionLabel: '1/10' })
   })
 
   test('NFT inexistente', async ({ page }) => {

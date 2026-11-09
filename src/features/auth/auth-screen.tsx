@@ -2,7 +2,10 @@ import { Link, useNavigate, useRouter } from '@tanstack/react-router'
 import { X } from 'lucide-react'
 import LogoKurio from '@/assets/icons/logo-kurio.svg?react'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { Hero } from '@/features/catalog/components/home-sections'
+import { CatalogSection } from '@/features/catalog/components/catalog-section'
+import { FeaturedBanner, Hero } from '@/features/catalog/components/home-sections'
+import { useCatalog, useHighlights } from '@/features/catalog/queries'
+import { toCatalogQuery } from '@/features/catalog/search'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 import { SESSION_EXPIRED_MESSAGE } from '@/features/session/session'
@@ -43,12 +46,17 @@ export function AuthScreen({ mode, redirect, expired = false }: { mode: Mode; re
   if (isDesktop) {
     return (
       <main id="conteudo" className="mx-auto w-full max-w-(--container-content) pt-8">
-        <div aria-hidden inert>
-          <Hero highlights={undefined} />
-        </div>
+        {/* Figma: a home inteira aparece atrás do modal, sem escurecimento */}
+        <HomeBackdrop />
         <Dialog open onOpenChange={(open) => !open && close()}>
           <DialogContent
             showCloseButton={false}
+            overlayClassName="bg-transparent"
+            onOpenAutoFocus={(e) => {
+              // Foco inicial no primeiro campo (não no botão fechar)
+              e.preventDefault()
+              ;(e.currentTarget as HTMLElement).querySelector<HTMLInputElement>('form input')?.focus()
+            }}
             className="w-[500px] max-w-[500px] gap-0 overflow-hidden rounded-lg border-0 bg-surface-card p-0 sm:max-w-[500px]"
           >
             <DialogClose className="absolute top-[13px] right-[13px] grid size-7 place-items-center rounded-sm text-brand hover:text-brand-accent" aria-label="Fechar">
@@ -122,5 +130,28 @@ export function AuthScreen({ mode, redirect, expired = false }: { mode: Mode; re
         )}
       </p>
     </main>
+  )
+}
+
+/** Home (hero + catálogo) atrás do modal de login/cadastro, como nos frames do Figma. Inerte. */
+function HomeBackdrop() {
+  const catalog = useCatalog(toCatalogQuery({}))
+  const highlights = useHighlights()
+  return (
+    <div aria-hidden inert className="flex flex-col gap-24">
+      <Hero highlights={highlights.data} />
+      <CatalogSection
+        search={{}}
+        data={catalog.data}
+        isPending={catalog.isPending}
+        isError={false}
+        error={null}
+        isRefreshing={false}
+        onRetry={() => undefined}
+        onChange={() => undefined}
+        onClear={() => undefined}
+        aside={<FeaturedBanner highlights={highlights.data} />}
+      />
+    </div>
   )
 }

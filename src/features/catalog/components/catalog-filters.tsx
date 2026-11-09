@@ -87,17 +87,18 @@ function FacetList({
                 <label
                   htmlFor={`${id}-${value}`}
                   className={cn(
-                    'flex h-10 cursor-pointer items-center justify-between gap-2 rounded-sm px-1 text-[15px] text-brand-accent hover:bg-surface-raised has-focus-visible:outline-2 has-focus-visible:outline-ring',
+                    // Figma: lista 15/40 sem caixas de seleção; selecionado em Text/Accent e negrito (não só cor)
+                    '-mx-2 flex h-10 cursor-pointer items-center justify-between gap-2 rounded-sm px-2 text-[15px] text-brand-accent transition-colors hover:bg-surface-raised/60 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring',
                     checked && 'bg-surface-raised font-bold',
                   )}
                 >
-                  <span className="flex items-center gap-2.5">
+                  <span>
                     <input
                       id={`${id}-${value}`}
                       type="checkbox"
                       checked={checked}
                       onChange={() => onToggle(value)}
-                      className="size-4 accent-brand"
+                      className="sr-only"
                     />
                     {labels[value]}
                   </span>
