@@ -38,6 +38,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 - **MSW fixado em 2.x**: `@mswjs/socket.io-binding@0.2.0` tem peer `msw@^2.10.2`; o MSW 3 é incompatível.
 - npm 11 bloqueia scripts de postinstall; o worker do MSW é gerado com `npx msw init public --save`.
 - `cn` (pacote oficial `shadcn-ui/cn`) substitui `clsx` + `tailwind-merge` em `src/lib/utils.ts`.
+- **Deploy (Vercel):** projeto `wilzos-projects/nft-marketplace`, produção em https://nft-marketplace-xi-self.vercel.app (MSW e rewrite de SPA verificados). Deploy: `vercel deploy --prod --yes`.
 - CLI da Vercel está em `%APPDATA%\npm\vercel.cmd` (fora do PATH do Git Bash).
 
 ### Figma
