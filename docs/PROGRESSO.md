@@ -10,7 +10,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 2 | Contratos tipados + camada de mocks (banco simulado, cenários, reset, rede, Socket.IO) | ✅ Concluída (inclui painel de cenários) |
 | 3 | Catálogo e detalhe do NFT | ✅ Concluída (favoritos entram na etapa 4) |
 | 4 | Autenticação e sessão | ✅ Concluída (inclui favoritos com atualização otimista) |
-| 5 | Carrinho e cotação | ⬜ |
+| 5 | Carrinho e cotação | ✅ Concluída |
 | 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ⬜ |
 | 7 | Perfil e carteiras | ⬜ |
 | 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ⬜ |
@@ -38,7 +38,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 - **MSW fixado em 2.x**: `@mswjs/socket.io-binding@0.2.0` tem peer `msw@^2.10.2`; o MSW 3 é incompatível.
 - npm 11 bloqueia scripts de postinstall; o worker do MSW é gerado com `npx msw init public --save`.
 - `cn` (pacote oficial `shadcn-ui/cn`) substitui `clsx` + `tailwind-merge` em `src/lib/utils.ts`.
-- **GitHub:** https://github.com/wilzo/nft-marketplace (criado **privado**; tornar público antes da entrega).
+- **GitHub:** https://github.com/wilzo/nft-marketplace (**público**).
 - Ícones SVG viram componentes via `vite-plugin-svgr` (`?react`); imagens otimizadas com `sharp`.
 - **Deploy (Vercel):** projeto `wilzos-projects/nft-marketplace`, produção em https://nft-marketplace-xi-self.vercel.app (MSW e rewrite de SPA verificados). Deploy: `vercel deploy --prod --yes`.
 - CLI da Vercel está em `%APPDATA%\npm\vercel.cmd` (fora do PATH do Git Bash).
@@ -166,11 +166,35 @@ Decisões e armadilhas:
 - Playwright: 2 workers, timeout 45 s, expect 10 s (execução estável nesta máquina; sem retries locais).
 - Logout no mobile fica no Perfil (etapa 7); o teste de logout roda só no desktop por enquanto.
 
-### Próximo passo (etapa 5)
+## Etapa 5: o que foi feito
 
-Tela de carrinho (desktop e mobile do Figma): itens com quantidade (limites da edição), remoção, cupom (aplicar/remover, inválido/expirado),
-resumo (subtotal, desconto, taxa de rede, total) a partir de `POST /quotes`, skeleton do resumo, avisos de preço/disponibilidade
-alterados via `nft.updated` (status por item + `/cart/acknowledge`), persistência após refresh/login, "Conectar e finalizar" → /pagamento.
+| Parte | Arquivos |
+| --- | --- |
+| Tela | `src/routes/carrinho.tsx` (trilha/título, avisos de preço alterado e cupom inválido, vazio, erro, "Colecionadores também viram") |
+| Itens | `src/features/cart/components/cart-item.tsx` (linha da tabela no desktop, card no mobile, status por item em texto) |
+| Resumo | `src/features/cart/components/cart-summary.tsx` (cupom, valores da cotação, skeleton, "Conectar e finalizar" bloqueado com motivo) |
+| Regras | `src/features/cart/checkout-rules.ts` (`blockingReason`: esgotado, acima do limite, preço não aceito, cupom inválido) |
+| Queries | `src/features/cart/queries.ts` (`quoteQuery` com assinatura do carrinho; pausada durante mutations) |
+| Mutations | `src/features/cart/mutations.ts` (scope serial `cart:<usuário>`, `mutationKey [cart]`, quantidade/remoção otimistas com rollback, cupom, aceitar preços) |
+| Carrossel | `NftCarousel` genérico em `src/features/nft-detail/components/related.tsx` |
+| Testes | `e2e/cart.spec.ts` |
+
+Decisões:
+- Valores do resumo vêm sempre da cotação da API (`POST /quotes`); o cliente nunca recalcula totais.
+- A chave da cotação inclui versão do carrinho + preços/disponibilidade por item: `nft.updated` (que invalida o carrinho) gera nova cotação.
+- Mutations do carrinho rodam em série (scope do TanStack Query): sem respostas fora de ordem nos cliques rápidos.
+- Preço alterado exige "Aceitar novos preços" (`POST /cart/acknowledge`) antes de finalizar.
+- Desktop mostra "ID do token · Edição" sob o nome (o Figma mostra só o ID). No mobile o carrinho é tela cheia, sem tab bar (como no Figma).
+
+### Próximo passo (etapa 6)
+
+Pagamento (frames "Desktop / Pagamento" e "Mobile / Pagamento"): formulário do colecionador validado (contrato `CollectorInput`),
+seleção de carteira cadastrada + rede, conexão simulada (`POST /wallet-connections`, recusa no cenário `carteira-recusada`, desconexão),
+revisão antes do envio (diálogo de confirmação com a cotação), revalidação no envio (409 `QUOTE_STALE`/`AVAILABILITY_CONFLICT` →
+mostra a nova cotação e exige nova confirmação), `Idempotency-Key` persistida em sessionStorage por tentativa (reenvio após timeout recupera o mesmo pedido;
+botão desabilitado contra clique repetido), estado pendente com `order.updated` via Socket.IO, recuperação após refresh/reconexão
+(`GET /orders?status=pending` + `GET /orders/:id`), confirmação (`/pedidos/$orderId`, frame "Confirmação de Pedido") só para pedido confirmado,
+recusa preservando o carrinho, contexto do checkout preservado em expiração de sessão.
 
 ## Comandos
 

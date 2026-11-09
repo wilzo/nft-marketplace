@@ -29,7 +29,7 @@ function RootLayout() {
   // Login/cadastro no mobile são telas cheias (sem navegação e rodapé, como no Figma).
   const isAuth = pathname === '/entrar' || pathname === '/cadastro'
   // O detalhe no mobile tem barra de compra própria no lugar da navegação inferior.
-  const hideTabBar = isAuth || pathname.startsWith('/nft/')
+  const hideTabBar = isAuth || pathname.startsWith('/nft/') || pathname === '/carrinho'
 
   return (
     <div className="flex min-h-dvh flex-col bg-background px-4 pt-6 text-foreground sm:px-6">

@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
+import type { NftSummary } from '@/api/contracts'
 import { NftCard, NftCardSkeleton } from '@/features/catalog/components/nft-card'
 import { useRelated } from '@/features/catalog/queries'
 import { cn } from '@/lib/utils'
 
-/** "Mais desta coleção": carrossel com scroll-snap e indicadores de página (Figma "Related Products"). */
-export function RelatedNfts({ nftId }: { nftId: string }) {
-  const related = useRelated(nftId)
+/**
+ * Carrossel de NFTs com scroll-snap e indicadores de página
+ * (Figma: "Mais desta coleção" no detalhe e "Colecionadores também viram" no carrinho).
+ */
+export function NftCarousel({ title, items, id }: { title: string; items: NftSummary[] | undefined; id: string }) {
   const scroller = useRef<HTMLUListElement>(null)
   const [pages, setPages] = useState(1)
   const [page, setPage] = useState(0)
@@ -24,24 +27,24 @@ export function RelatedNfts({ nftId }: { nftId: string }) {
       el.removeEventListener('scroll', measure)
       window.removeEventListener('resize', measure)
     }
-  }, [related.data])
+  }, [items])
 
-  if (related.isSuccess && related.data.items.length === 0) return null
+  if (items && items.length === 0) return null
 
   return (
-    <section aria-labelledby="related-title" className="flex flex-col gap-8">
-      <h2 id="related-title" className="border-b border-brand/30 pb-3 text-lg leading-4 font-bold text-brand-accent">
-        Mais desta coleção
+    <section aria-labelledby={id} className="flex flex-col gap-8">
+      <h2 id={id} className="border-b border-brand/30 pb-3 text-lg leading-4 font-bold text-brand-accent">
+        {title}
       </h2>
       <ul ref={scroller} className="-mx-1 flex snap-x snap-mandatory gap-7 overflow-x-auto scroll-smooth px-1 pb-2 [scrollbar-width:none]">
-        {(related.data?.items ?? Array.from({ length: 5 }, () => null)).map((nft, i) => (
+        {(items ?? Array.from({ length: 5 }, () => null)).map((nft, i) => (
           <li key={nft?.id ?? i} className="w-[min(60vw,219px)] shrink-0 snap-start">
             {nft ? <NftCard nft={nft} /> : <NftCardSkeleton />}
           </li>
         ))}
       </ul>
       {pages > 1 && (
-        <div role="group" aria-label="Páginas de NFTs relacionados" className="flex justify-center gap-2">
+        <div role="group" aria-label={`Páginas de ${title}`} className="flex justify-center gap-2">
           {Array.from({ length: pages }, (_, i) => (
             <button
               key={i}
@@ -56,4 +59,10 @@ export function RelatedNfts({ nftId }: { nftId: string }) {
       )}
     </section>
   )
+}
+
+/** "Mais desta coleção" do detalhe. */
+export function RelatedNfts({ nftId }: { nftId: string }) {
+  const related = useRelated(nftId)
+  return <NftCarousel id="related-title" title="Mais desta coleção" items={related.data?.items} />
 }
