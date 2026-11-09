@@ -29,7 +29,7 @@ function RootLayout() {
   // Login/cadastro no mobile são telas cheias (sem navegação e rodapé, como no Figma).
   const isAuth = pathname === '/entrar' || pathname === '/cadastro'
   // O detalhe no mobile tem barra de compra própria no lugar da navegação inferior.
-  const hideTabBar = isAuth || pathname.startsWith('/nft/') || pathname === '/carrinho'
+  const hideTabBar = isAuth || pathname.startsWith('/nft/') || pathname === '/carrinho' || pathname === '/pagamento'
 
   return (
     <div className="flex min-h-dvh flex-col bg-background px-4 pt-6 text-foreground sm:px-6">
@@ -43,7 +43,8 @@ function RootLayout() {
       <div className="flex-1">
         <Outlet />
       </div>
-      <div className={cn(isAuth && 'max-lg:hidden')}>
+      {/* Login, cadastro, carrinho e pagamento são telas cheias no mobile (Figma): sem rodapé. */}
+      <div className={cn((isAuth || pathname === '/carrinho' || pathname === '/pagamento') && 'max-lg:hidden')}>
         <SiteFooter />
       </div>
       {!hideTabBar && <MobileTabBar />}

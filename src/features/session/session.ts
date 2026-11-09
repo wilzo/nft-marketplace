@@ -72,6 +72,14 @@ export async function requireAuth({ context, location }: { context: { queryClien
 export async function startSession(client: QueryClient, session: Session) {
   const guestId = guestCartId.get()
   sessionToken.set(session.token)
+  // Troca de usuário: rascunhos de checkout de outra conta não ficam disponíveis nesta aba.
+  try {
+    for (const key of Object.keys(sessionStorage)) {
+      if (key.startsWith('kurio:checkout') && !key.endsWith(`:${session.user.id}`)) sessionStorage.removeItem(key)
+    }
+  } catch {
+    // sessionStorage indisponível
+  }
   client.removeQueries({ queryKey: qk.private.all })
   if (guestId) {
     try {
@@ -85,10 +93,21 @@ export async function startSession(client: QueryClient, session: Session) {
   client.setQueryData(sessionQuery.queryKey, session)
 }
 
-/** Encerra a sessão localmente (logout, expiração, troca de usuário). */
-export function clearSession(client: QueryClient) {
+/**
+ * Encerra a sessão localmente (logout, expiração, troca de usuário).
+ * `keepDrafts`: na expiração, o rascunho do checkout é mantido para a retomada após novo login;
+ * no logout ele é apagado (dados privados não ficam no navegador).
+ */
+export function clearSession(client: QueryClient, { keepDrafts = false } = {}) {
   sessionToken.set(null)
   guestCartId.set(null)
+  if (!keepDrafts) {
+    try {
+      for (const key of Object.keys(sessionStorage)) if (key.startsWith('kurio:checkout')) sessionStorage.removeItem(key)
+    } catch {
+      // sessionStorage indisponível
+    }
+  }
   client.removeQueries({ queryKey: qk.private.all })
   client.setQueryData(sessionQuery.queryKey, null)
 }

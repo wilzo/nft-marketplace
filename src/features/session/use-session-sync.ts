@@ -27,7 +27,7 @@ export function useSessionSync() {
 
   useEffect(() => {
     const expire = () => {
-      clearSession(client)
+      clearSession(client, { keepDrafts: true })
       const isPrivate = router.state.matches.some((m) => m.staticData?.private)
       if (isPrivate) {
         void router.navigate({ to: '/entrar', search: { redirect: router.state.location.href, expirada: 1 }, replace: true })

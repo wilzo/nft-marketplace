@@ -11,7 +11,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 3 | Catálogo e detalhe do NFT | ✅ Concluída (favoritos entram na etapa 4) |
 | 4 | Autenticação e sessão | ✅ Concluída (inclui favoritos com atualização otimista) |
 | 5 | Carrinho e cotação | ✅ Concluída |
-| 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ⬜ |
+| 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ✅ Concluída |
 | 7 | Perfil e carteiras | ⬜ |
 | 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ⬜ |
 | 9 | Auditoria Lighthouse (3 medições, mediana, relatórios) | ⬜ |
@@ -186,15 +186,35 @@ Decisões:
 - Preço alterado exige "Aceitar novos preços" (`POST /cart/acknowledge`) antes de finalizar.
 - Desktop mostra "ID do token · Edição" sob o nome (o Figma mostra só o ID). No mobile o carrinho é tela cheia, sem tab bar (como no Figma).
 
-### Próximo passo (etapa 6)
+## Etapa 6: o que foi feito
 
-Pagamento (frames "Desktop / Pagamento" e "Mobile / Pagamento"): formulário do colecionador validado (contrato `CollectorInput`),
-seleção de carteira cadastrada + rede, conexão simulada (`POST /wallet-connections`, recusa no cenário `carteira-recusada`, desconexão),
-revisão antes do envio (diálogo de confirmação com a cotação), revalidação no envio (409 `QUOTE_STALE`/`AVAILABILITY_CONFLICT` →
-mostra a nova cotação e exige nova confirmação), `Idempotency-Key` persistida em sessionStorage por tentativa (reenvio após timeout recupera o mesmo pedido;
-botão desabilitado contra clique repetido), estado pendente com `order.updated` via Socket.IO, recuperação após refresh/reconexão
-(`GET /orders?status=pending` + `GET /orders/:id`), confirmação (`/pedidos/$orderId`, frame "Confirmação de Pedido") só para pedido confirmado,
-recusa preservando o carrinho, contexto do checkout preservado em expiração de sessão.
+| Parte | Arquivos |
+| --- | --- |
+| Tela de pagamento | `src/routes/pagamento.tsx` (formulário + rascunho, carteira/rede, conexão simulada, revisão, envio, aviso de pedido pendente) |
+| Painéis | `src/features/checkout/components/checkout-panels.tsx` (CollectorFields, QuoteLines, QuoteTotals, WalletConnectionPanel) |
+| Revisão | `src/features/checkout/components/review-dialog.tsx` (cotação congelada; problemas: changed/price/availability/retry/error) |
+| Formulário | `src/features/checkout/checkout-form.ts` (`CollectorInput` + rede + carteira secundária) |
+| Idempotência / rascunho | `src/features/checkout/storage.ts` (sessionStorage: `kurio:checkout-draft:<user>`, `kurio:checkout-attempt:<user>`) |
+| Envio | `src/features/checkout/use-place-order.ts` (`retry: false`, chave reaproveitada para o mesmo conteúdo, `staleQuoteFrom`) |
+| Pedido | `src/routes/pedidos.$orderId.tsx` (pendente / recibo confirmado / recusado), `src/features/orders/queries.ts` (`useOrderRealtime`, polling 5 s só enquanto pendente) |
+| Carteiras | `src/features/wallets/queries.ts` (`useWallets`, `shortAddress`) |
+| Regras | `src/features/cart/checkout-rules.ts` (`sameQuoteValues`) |
+| Testes | `e2e/checkout.spec.ts` |
+
+Decisões:
+- Revisão obrigatória antes do envio; se a cotação ao vivo mudar (ex.: `nft.updated`) a revisão é invalidada e exige "Revisar novos valores".
+- 409 `QUOTE_STALE` traz a nova cotação em `details.quote`; com `PRICE_CHANGED` o usuário aceita os preços (`/cart/acknowledge`) e confirma de novo.
+- Timeout/rede: o botão vira "Tentar novamente" e reenvia o MESMO corpo com a MESMA `Idempotency-Key` (servidor devolve o mesmo pedido).
+- Logout apaga rascunhos do checkout; expiração os mantém (`clearSession(client, { keepDrafts: true })`); login de outro usuário apaga rascunhos alheios.
+- "Código de indicação" e "Nome ENS" opcionais (no Figma têm asterisco) — decisão de UX; dados da carteira vêm da carteira cadastrada (somente leitura).
+- Mobile: ordem resumo → formulário → carteira/confirmar; carrinho e pagamento sem rodapé e sem tab bar (telas cheias, como no Figma).
+
+### Próximo passo (etapa 7)
+
+Perfil do colecionador (frame "Desktop / Perfil do Colecionador"): menu lateral (Dados do perfil, Carteiras, Sair; demais itens fora do escopo),
+edição de dados (`PATCH /profile`, conflitos por campo), avatar (`PUT/DELETE /profile/avatar`, validação de tipo/tamanho), alteração de senha
+(`POST /profile/password`); Carteiras (frame "Desktop / Carteiras"): cadastro/edição da principal e secundária (`PUT /wallets/:slot`, "Igual à carteira principal",
+estado vazio "Você ainda não adicionou uma carteira secundária."); versões mobile; "Sair" no mobile (destrava o teste de logout mobile).
 
 ## Comandos
 
