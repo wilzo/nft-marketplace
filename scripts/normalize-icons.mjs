@@ -8,7 +8,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const DIR = 'src/assets/icons'
-const KEEP = new Set(['social-google.svg', 'social-facebook.svg', 'header-cart.svg'])
+const KEEP = new Set(['social-google.svg', 'social-facebook.svg'])
 const COLOR = /(fill|stroke)="#[0-9A-Fa-f]{3,8}"/g
 
 for (const file of fs.readdirSync(DIR).filter((f) => f.endsWith('.svg'))) {

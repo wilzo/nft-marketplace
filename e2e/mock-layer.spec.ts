@@ -11,14 +11,14 @@ test.describe('camada de mocks', () => {
   })
 
   test('nft.updated chega pelo Socket.IO e atualiza a interface, ignorando duplicatas e eventos antigos', async ({ page }) => {
-    const hero = page.getByTestId('hero')
-    await expect(hero).toHaveText('Emerald Ape #042 — 1.19 ETH')
+    const card = (price: string) => page.getByRole('link', { name: `Emerald Ape #042, ${price} ETH` })
+    await expect(card('1.19')).toBeVisible()
 
     await mockApi(page, 'PATCH', '/__mock/nfts/emerald-ape-042', { body: { price: '2.5' } })
-    await expect(hero).toHaveText('Emerald Ape #042 — 2.50 ETH')
+    await expect(card('2.50')).toBeVisible()
 
     await mockApi(page, 'PATCH', '/__mock/nfts/emerald-ape-042', { body: { price: '3.125' } })
-    await expect(hero).toHaveText('Emerald Ape #042 — 3.125 ETH')
+    await expect(card('3.125')).toBeVisible()
 
     // Reentrega o evento antigo (versão menor) e o último (mesmo eventId): o estado não regride.
     const stale = await mockApi(page, 'POST', '/__mock/realtime/replay', { body: { mode: 'stale', resourceId: 'emerald-ape-042' } })
@@ -26,17 +26,16 @@ test.describe('camada de mocks', () => {
     const dup = await mockApi(page, 'POST', '/__mock/realtime/replay', { body: { mode: 'duplicate' } })
     expect(dup.status).toBe(200)
     await page.waitForTimeout(300)
-    await expect(hero).toHaveText('Emerald Ape #042 — 3.125 ETH')
+    await expect(card('3.125')).toBeVisible()
   })
 
   test('reconecta após desconexão do servidor e volta a receber eventos', async ({ page }) => {
-    const hero = page.getByTestId('hero')
-    await expect(hero).toContainText('1.19 ETH')
+    await expect(page.getByRole('link', { name: 'Emerald Ape #042, 1.19 ETH' })).toBeVisible()
     await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length).toBe(1)
     await mockApi(page, 'POST', '/__mock/realtime/disconnect')
     await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length, { timeout: 10_000 }).toBe(1)
     await mockApi(page, 'PATCH', '/__mock/nfts/emerald-ape-042', { body: { price: '1.5' } })
-    await expect(hero).toContainText('1.50 ETH')
+    await expect(page.getByRole('link', { name: 'Emerald Ape #042, 1.50 ETH' })).toBeVisible()
   })
 
   test('listagem: paginação, filtros combinados, facetas e cenário vazio', async ({ page }) => {
@@ -134,7 +133,7 @@ test.describe('camada de mocks', () => {
     expect(stale.body.error.code).toBe('QUOTE_STALE')
     expect(stale.body.error.details.quote.issues[0].type).toBe('PRICE_CHANGED')
     // A interface (visitante) também recebeu o novo preço pelo Socket.IO.
-    await expect(page.getByTestId('hero')).toHaveText('Emerald Ape #042 — 1.24 ETH')
+    await expect(page.getByRole('link', { name: 'Emerald Ape #042, 1.24 ETH' })).toBeVisible()
   })
 
   test('cupons, persistência após refresh e reset do cenário', async ({ page }) => {

@@ -7,8 +7,8 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | # | Etapa | Status |
 | --- | --- | --- |
 | 1 | Leitura do Figma + setup | ✅ Concluída |
-| 2 | Contratos tipados + camada de mocks (banco simulado, cenários, reset, rede, Socket.IO) | ✅ Concluída (painel visual de cenários fica para a etapa 3/10) |
-| 3 | Catálogo e detalhe do NFT | ⬜ |
+| 2 | Contratos tipados + camada de mocks (banco simulado, cenários, reset, rede, Socket.IO) | ✅ Concluída (inclui painel de cenários) |
+| 3 | Catálogo e detalhe do NFT | ✅ Concluída (favoritos entram na etapa 4) |
 | 4 | Autenticação e sessão | ⬜ |
 | 5 | Carrinho e cotação | ⬜ |
 | 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ⬜ |
@@ -119,11 +119,38 @@ Cenários: `padrao`, `sem-latencia`, `vazio`, `lento`, `latencia-variavel`, `off
 - Testes devem esperar `document.documentElement.dataset.app === 'ready'` (helper `waitForApp`) após `goto`/`reload`.
 - Bundle inicial ~425 KB (133 KB gzip): revisar na etapa 9 (zod, devtools, code-splitting).
 
-### Próximo passo (etapa 3)
+## Etapa 3: o que foi feito
 
-Home real (header, hero, filtros, catálogo com estado na URL, paginação, skeletons) e detalhe do NFT,
-substituindo o placeholder de `src/routes/index.tsx`. Integrar `realtime.on('nft.updated')` ao cache do Query
-(`setQueryData` nas listas/detalhe + `noteVersion` com a versão vinda do REST) e `onReconnect` → `invalidateQueries`.
+| Parte | Arquivos |
+| --- | --- |
+| Layout | `src/routes/__root.tsx` (skip link, header, footer, tab bar mobile, Toaster, painel de cenários lazy), `src/components/layout/{site-header,site-footer,mobile-tab-bar}.tsx` |
+| Home | `src/routes/index.tsx` (validateSearch + prefetch no loader), `src/features/catalog/components/{home-sections,catalog-section,catalog-filters,catalog-toolbar,catalog-pagination,nft-card}.tsx` |
+| Estado na URL | `src/features/catalog/search.ts` (schema com `.catch`, defaults omitidos, `withFilters` zera a página) |
+| Queries | `src/features/catalog/queries.ts` (keepPreviousData, AbortSignal, `noteVersion`), `src/lib/query-keys.ts` (privados sob `[private, scope]`) |
+| Detalhe | `src/routes/nft.$nftId.tsx` (`?edicao=`, NFT inexistente, edição indisponível, limite, aviso de preço em tempo real, barra de compra mobile), `src/features/nft-detail/*` |
+| Tempo real → cache | `src/features/realtime/use-realtime-sync.ts` (`nft.updated` em listas/destaques/relacionados/detalhe; invalida carrinho; `onReconnect` reconcilia) |
+| Carrinho (mínimo) | `src/features/cart/{queries,mutations}.ts` (contador no header, "COMPRAR" adiciona e leva a /carrinho) |
+| Fora do escopo | `src/lib/out-of-scope.ts` (toast "não está disponível nesta demonstração") |
+| Painel de cenários | `src/features/dev/scenario-panel.tsx` + `src/api/mock-control.ts` (aplicar cenário / restaurar tudo) |
+| Testes | `e2e/catalog.spec.ts` (filtros+histórico, busca/vazio, skeleton, erro+retry, detalhe, tempo real) |
+
+Rotas provisórias (`PendingScreen`): /entrar, /cadastro, /favoritos, /carrinho, /pagamento, /perfil, /carteiras.
+
+Decisões/desvios a documentar no ARCHITECTURE.md:
+- Hero com arte estática (não espera a API) para não atrasar o LCP; links apontam aos destaques da API.
+- Edição padrão no detalhe = a mais barata disponível (o Figma mostra 1/50 selecionada com o preço do card).
+- "Contrato" e "Direitos autorais" do Figma estavam trocados; corrigido o conteúdo.
+- Checkboxes visíveis nos filtros (acessibilidade); "Limpar filtros" e chip "Resultados para" não existem no Figma.
+- Ícones de coração e "scan" da tab bar vêm do lucide (não foram exportados do Figma).
+- Header desktop a partir de lg (1024); abaixo disso, layout mobile com tab bar e filtros em drawer.
+
+### Próximo passo (etapa 4)
+
+Sessão (`useSession` com Query em `qk.private.session`, token em `client-storage`), login/cadastro com validação e erros da API,
+retorno ao fluxo anterior (`?redirect=`), proteção de rotas privadas (`beforeLoad`), expiração via `onSessionLoss`,
+logout/troca de usuário limpando `[private]` e reconectando o Socket.IO (`realtime.connect({token,userId})`),
+`useViewerScope` derivado do usuário, merge do carrinho do visitante (`cartApi.merge`) e favoritos com atualização otimista + rollback
+(botão no detalhe e coração nos cards mobile).
 
 ## Comandos
 

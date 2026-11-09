@@ -13,6 +13,7 @@ const HOUR = 3_600_000
 
 type Seed = {
   name: string
+  rating?: { average: number; count: number }
   image: NftImage
   price: string
   previousPrice?: string
@@ -21,7 +22,7 @@ type Seed = {
 
 /** Nomes e preços exatamente como no Figma (Início / Cadastro). */
 const FIGMA_SEEDS: Seed[] = [
-  { name: 'Emerald Ape #042', image: 'emerald-ape', price: '1.19' },
+  { name: 'Emerald Ape #042', image: 'emerald-ape', price: '1.19', rating: { average: 4.8, count: 19 } },
   { name: 'Sage Nomad #009', image: 'sage-nomad', price: '1.69' },
   { name: 'Neon Vessel #552', image: 'neon-vessel', price: '1.99', previousPrice: '2.29', rare: true },
   { name: 'Cosmic Bloom #118', image: 'sage-nomad', price: '1.29' },
@@ -37,7 +38,8 @@ const SUFFIXES = ['Ape', 'Nomad', 'Baron', 'Signal', 'Bloom', 'Vessel', 'Pilot',
 const IMAGES: NftImage[] = ['emerald-ape', 'sage-nomad', 'neon-vessel', 'golden-beat']
 const CATEGORIES: Category[] = ['arte-digital', 'fotografia', 'musica', 'arte-3d', 'colecionaveis', 'generativa', 'jogos', 'assinaturas', 'utilidade']
 const NETWORKS: Network[] = ['ethereum', 'ethereum', 'polygon', 'solana']
-const COLLECTIONS = ['Kurio Apes', 'Kurio Editions', 'Golden Sounds', 'Nomad Club']
+// Uma coleção por arte (mesma ordem de IMAGES)
+const COLLECTIONS = ['Kurio Apes', 'Nomad Club', 'Neon Society', 'Golden Sounds']
 const CREATORS = ['Nova Sato', 'Iris Moreau', 'Kenji Ward', 'Lia Okafor']
 const ATTRIBUTES = [['Óculos', 'Esmeralda', 'Raro'], ['Chapéu', 'Moletom', 'Comum'], ['Blazer', 'Gola alta', 'Épico'], ['Fones', 'Jaqueta', 'Incomum']]
 
@@ -97,7 +99,7 @@ function buildNft(index: number, seed: Seed, random: () => number): NftRecord {
     name: seed.name,
     tokenId: `#${number.padStart(4, '0')}`,
     image: seed.image,
-    gallery: [seed.image, IMAGES[(imageIndex + 1) % 4], IMAGES[(imageIndex + 2) % 4]],
+    gallery: [0, 1, 2, 3].map((k) => IMAGES[(imageIndex + k) % 4]),
     collection: COLLECTIONS[imageIndex],
     creator: CREATORS[index % CREATORS.length],
     category: CATEGORIES[index % CATEGORIES.length],
@@ -107,7 +109,7 @@ function buildNft(index: number, seed: Seed, random: () => number): NftRecord {
     listedAt: new Date(BASE_DATE - index * 7 * HOUR).toISOString(),
     trendingScore: Math.round(random() * 1000),
     attributes: ATTRIBUTES[imageIndex],
-    rating: { average: Math.round((3.8 + random() * 1.2) * 10) / 10, count: 5 + Math.floor(random() * 40) },
+    rating: seed.rating ?? { average: Math.round((3.8 + random() * 1.2) * 10) / 10, count: 5 + Math.floor(random() * 40) },
     royaltyPercent: 5,
     contractAddress: `0x7A42${(index * 7919).toString(16).padStart(6, '0').toUpperCase()}${'0'.repeat(26)}19E8`,
     standard: 'ERC-721',

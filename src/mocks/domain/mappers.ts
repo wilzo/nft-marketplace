@@ -1,4 +1,4 @@
-import type { NftDetail, NftSummary, User, Wallet } from '@/api/contracts'
+import { NETWORK_LABELS, type NftDetail, type NftSummary, type User, type Wallet } from '@/api/contracts'
 import { displayPrice } from '../fixtures/nfts'
 import type { NftRecord, UserRecord, WalletRecord } from '../db/types'
 
@@ -26,9 +26,9 @@ export function toNftSummary(n: NftRecord): NftSummary {
 export function toNftDetail(n: NftRecord): NftDetail {
   return {
     ...toNftSummary(n),
-    summary: `Um colecionável digital finalizado à mão da coleção ${n.collection}, verificado na rede, com arte desbloqueável e acesso para colecionadores.`,
+    summary: `Um colecionável digital finalizado à mão da coleção ${n.collection}, verificado na ${NETWORK_LABELS[n.network]}, com arte desbloqueável e acesso para colecionadores.`,
     description:
-      `${n.name} é uma obra digital finalizada à mão da coleção ${n.collection}. Cada atributo fica armazenado nos metadados do token e verificado na rede. ` +
+      `${n.name} é uma obra digital finalizada à mão da coleção ${n.collection}. Cada atributo fica armazenado nos metadados do token e verificado na ${NETWORK_LABELS[n.network]}. ` +
       `A obra explora identidade, movimento e luz em um mundo digital sem fronteiras. A propriedade inclui a arte em alta resolução, lançamentos exclusivos ` +
       `para colecionadores e um registro permanente de procedência registrada na rede. ${n.creator} recebe ${n.royaltyPercent}% de direitos autorais nas ` +
       `vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.`,
