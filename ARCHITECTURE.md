@@ -60,7 +60,7 @@ Prefixo `/api`. Autenticação por `Authorization: Bearer <token>`; carrinho de 
 
 Códigos: `VALIDATION_ERROR`, `INVALID_CREDENTIALS`, `UNAUTHENTICATED`, `SESSION_EXPIRED`, `FORBIDDEN`, `NOT_FOUND`,
 `CONFLICT`, `AVAILABILITY_CONFLICT`, `QUOTE_STALE`, `IDEMPOTENCY_CONFLICT`, `COUPON_INVALID`, `COUPON_EXPIRED`,
-`WALLET_REJECTED`, `OAUTH_DENIED`, `OAUTH_PROVIDER_ERROR`, `ACCOUNT_EXISTS`, `SERVICE_UNAVAILABLE`, `INTERNAL_ERROR`.
+`WALLET_REJECTED`, `WALLET_NOT_CONNECTED`, `OAUTH_DENIED`, `OAUTH_PROVIDER_ERROR`, `ACCOUNT_EXISTS`, `SERVICE_UNAVAILABLE`, `INTERNAL_ERROR`.
 
 O interceptor do Axios converte qualquer falha em `ApiError` (`lib/api-error.ts`) com `kind` (`network`, `timeout`,
 `http`, `invalid-response`, `canceled`), `status`, `code`, `fieldErrors`, `retryable` e `isSessionLoss`. Uma resposta 2xx fora do
@@ -93,6 +93,9 @@ Todo evento é validado com zod (`RealtimeEvent`); eventos inválidos são desca
 - **Retomada:** após novo login o usuário volta à URL de origem e o rascunho do pagamento (sessionStorage) é restaurado.
 - **Logout:** `POST /auth/logout`, remove todas as queries sob `['private']`, apaga rascunhos de checkout e o id do
   carrinho de visitante, e reconecta o Socket.IO sem token.
+- **Isolamento entre usuários no servidor:** pedidos, carrinho, carteiras, favoritos e perfil são sempre resolvidos pelo
+  usuário da sessão. `GET /orders/:id` de outro usuário → 403 `FORBIDDEN`; a tela mostra "Acesso negado" sem nenhum
+  dado do pedido. `order.updated` só é entregue à conexão do dono (e o cliente descarta `userId` diferente).
 - **Troca de usuário:** dados privados ficam sob `['private', <userId>, …]`; o login remove o escopo anterior e
   rascunhos de outra conta. Nenhum dado de um usuário aparece para outro, nem por cache.
 - O Socket.IO reconecta com o novo token sempre que a sessão muda (`use-session-sync.ts`).
@@ -139,7 +142,9 @@ provedor não entram por senha; a troca de senha do perfil pede a senha atual, e
 3. `POST /orders` leva o corpo e uma **`Idempotency-Key`** gerada por tentativa e guardada em `sessionStorage`
    (`kurio:checkout-attempt:<usuário>`). A mesma chave é reaproveitada enquanto o conteúdo não muda; reenviar após
    timeout ou queda de rede devolve **o mesmo pedido**. Mesma chave com corpo diferente → `IDEMPOTENCY_CONFLICT`.
-4. O servidor revalida preços e estoque: `QUOTE_STALE` (409) traz a nova cotação em `details.quote`;
+4. O servidor exige uma **conexão ativa da carteira na rede do pedido** (`POST /wallet-connections`; desconectar remove a
+   conexão): sem ela, 409 `WALLET_NOT_CONNECTED` e a UI volta a pedir a conexão — a regra não fica só na interface.
+   Em seguida revalida preços e estoque: `QUOTE_STALE` (409) traz a nova cotação em `details.quote`;
    `AVAILABILITY_CONFLICT` leva à revisão do carrinho.
 5. Criado o pedido (`pending`), a tela `/pedidos/:id` acompanha o status por `order.updated` e, como rede de
    segurança, por *polling* de 5 s enquanto pendente. Confirmado → recibo; recusado → motivo e opção de tentar de novo.

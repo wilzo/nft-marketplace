@@ -34,10 +34,14 @@ function OrderPage() {
     )
   }
   if (order.isError) {
-    const notFound = order.error.code === 'NOT_FOUND' || order.error.code === 'FORBIDDEN'
+    // 403: pedido de outro usuário — nenhum dado do pedido é exibido.
+    const forbidden = order.error.code === 'FORBIDDEN'
+    const notFound = order.error.code === 'NOT_FOUND' || forbidden
     return (
       <main id="conteudo" className="mx-auto flex max-w-xl flex-col items-center gap-4 px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold">{notFound ? 'Pedido não encontrado' : 'Não foi possível carregar o pedido'}</h1>
+        <h1 className="text-2xl font-bold">
+          {forbidden ? 'Acesso negado' : notFound ? 'Pedido não encontrado' : 'Não foi possível carregar o pedido'}
+        </h1>
         <p className="text-sand">{order.error.message}</p>
         {notFound ? (
           <Button asChild size="cta">

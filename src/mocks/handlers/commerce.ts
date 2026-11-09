@@ -259,6 +259,9 @@ export const orderHandlers = [
         if (!cart || !cart.items.length) throw apiError(422, 'VALIDATION_ERROR', 'Seu carrinho está vazio')
         const wallet = db.wallets.find((w) => w.id === input.walletId && w.userId === user.id)
         if (!wallet) throw apiError(422, 'VALIDATION_ERROR', 'Selecione uma carteira cadastrada', { fieldErrors: { walletId: ['Selecione uma carteira cadastrada'] } })
+        // O pagamento é assinado pela carteira: exige conexão ativa (simulada) desta carteira na rede do pedido.
+        const connected = db.walletConnections.some((c) => c.userId === user.id && c.walletId === wallet.id && c.network === input.network)
+        if (!connected) throw apiError(409, 'WALLET_NOT_CONNECTED', 'Conecte a carteira na rede escolhida antes de confirmar o pagamento.')
 
         if (quote) applyCheckoutScenario(db, quote)
         const fresh = computeQuote(db, cart, input.network)

@@ -135,5 +135,17 @@ test.describe('perfil e carteiras (etapa 7)', () => {
     await expect(page.getByRole('form', { name: 'Carteira secundária' }).getByLabel('Endereço da carteira')).toHaveValue(
       '0x2222222222222222222222222222222222222222',
     )
+
+    // Edição da principal: erro de validação da API (endereço já usado na secundária) e persistência após refresh.
+    const editPrimary = page.getByRole('form', { name: 'Carteira principal' })
+    await editPrimary.getByLabel('Endereço da carteira').fill('0x2222222222222222222222222222222222222222')
+    await editPrimary.getByRole('button', { name: 'Salvar carteira' }).click()
+    await expect(editPrimary.getByText('Este endereço já está cadastrado na outra carteira')).toBeVisible()
+    await editPrimary.getByLabel('Endereço da carteira').fill(address)
+    await editPrimary.getByLabel('Apelido da carteira').fill('Cofre editado')
+    await editPrimary.getByRole('button', { name: 'Salvar carteira' }).click()
+    await expect(page.getByText('Carteira principal salva.')).toBeVisible()
+    await page.reload()
+    await expect(page.getByRole('form', { name: 'Carteira principal' }).getByLabel('Apelido da carteira')).toHaveValue('Cofre editado')
   })
 })

@@ -40,10 +40,14 @@ test.describe('carrinho e cotação (etapa 5)', () => {
     await page.getByRole('button', { name: 'Aplicar', exact: true }).click()
     await expect(page.getByRole('alert').filter({ hasText: 'Código promocional inválido' })).toBeVisible()
     await expect(coupon).toHaveAttribute('aria-invalid', 'true')
+    // Cupom recusado não altera o resumo.
+    await expect(summary(page, /^Total$/)).toHaveText('1.996 ETH')
 
     await coupon.fill('EXPIRADO')
     await page.getByRole('button', { name: 'Aplicar', exact: true }).click()
     await expect(page.getByRole('alert').filter({ hasText: 'Este código promocional expirou' })).toBeVisible()
+    await expect(page.getByRole('alert').filter({ hasText: 'Código promocional inválido' })).toHaveCount(0)
+    await expect(summary(page, /^Total$/)).toHaveText('1.996 ETH')
 
     await coupon.fill('kurio10')
     await page.getByRole('button', { name: 'Aplicar', exact: true }).click()

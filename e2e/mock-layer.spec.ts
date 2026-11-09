@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login, mockApi, openWithScenario, waitForApp, waitForRealtime } from './support/mock-api'
+import { connectWalletApi, login, mockApi, openWithScenario, waitForApp, waitForRealtime } from './support/mock-api'
 
 /**
  * Valida a camada de mocks (etapa 2): contratos REST nos handlers MSW e eventos via socket.io-client.
@@ -63,6 +63,7 @@ test.describe('camada de mocks', () => {
 
   test('pedido idempotente: mesma chave recupera o pedido; conteúdo diferente gera conflito', async ({ page }) => {
     const token = await login(page)
+    await connectWalletApi(page, token)
     const quote = await mockApi(page, 'POST', '/quotes', { token, body: { network: 'ethereum' } })
     expect(quote.status).toBe(201)
     // Carrinho da Ana reproduz o Figma: 26.83 + 0.016 = 26.846 ETH
@@ -102,6 +103,7 @@ test.describe('camada de mocks', () => {
   test('timeout após criação: o reenvio com a mesma chave recupera o mesmo pedido', async ({ page }) => {
     await mockApi(page, 'PUT', '/__mock/scenario', { body: { name: 'sem-latencia', overrides: { checkout: { orderResponseDelayMs: 2_000 } } } })
     const token = await login(page)
+    await connectWalletApi(page, token)
     const quote = await mockApi(page, 'POST', '/quotes', { token, body: {} })
     const body = {
       quoteId: quote.body.id,
@@ -123,6 +125,7 @@ test.describe('camada de mocks', () => {
     await mockApi(page, 'PUT', '/__mock/scenario', { body: { name: 'preco-alterado', overrides: { latency: { mode: 'none' } } } })
     await waitForRealtime(page)
     const token = await login(page)
+    await connectWalletApi(page, token)
     const quote = await mockApi(page, 'POST', '/quotes', { token, body: {} })
     const body = {
       quoteId: quote.body.id,
@@ -167,6 +170,7 @@ test.describe('camada de mocks', () => {
     expect(conflict.body.error.fieldErrors.email).toBeTruthy()
 
     const token = await login(page)
+
     await mockApi(page, 'POST', '/__mock/sessions/expire')
     const expired = await mockApi(page, 'GET', '/favorites', { token })
     expect(expired.status).toBe(401)

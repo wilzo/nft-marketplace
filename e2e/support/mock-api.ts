@@ -64,3 +64,10 @@ export async function waitForApp(page: Page) {
 export async function waitForRealtime(page: Page, connections = 1) {
   await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length).toBeGreaterThanOrEqual(connections)
 }
+
+/** Conecta (simulação) a carteira na rede: exigido pelo servidor para criar pedidos. */
+export async function connectWalletApi(page: Page, token: string, walletId = 'wal_ana_primary', network = 'ethereum') {
+  const res = await mockApi(page, 'POST', '/wallet-connections', { token, body: { walletId, network } })
+  if (res.status !== 201) throw new Error(`conexão da carteira falhou: ${res.status}`)
+  return res.body as { id: string }
+}

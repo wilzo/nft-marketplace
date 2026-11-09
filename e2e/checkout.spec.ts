@@ -81,7 +81,8 @@ test.describe('pagamento, pedidos e tempo real (etapa 6)', () => {
   test('carteira: recusa da conexão e desconexão', async ({ page }) => {
     await goToCheckout(page)
     await mockApi(page, 'PUT', '/__mock/scenario', { body: { name: 'carteira-recusada', overrides: { latency: { mode: 'none' } } } })
-    await page.getByRole('radio', { name: 'MetaMask' }).check()
+    // click (e não check): a recusa desmarca o rádio antes de o Playwright conferir a marcação.
+    await page.getByRole('radio', { name: 'MetaMask' }).click()
     await expect(page.getByRole('alert').filter({ hasText: 'A conexão foi recusada na carteira' })).toBeVisible()
     await expect(page.getByRole('radio', { name: 'MetaMask' })).not.toBeChecked()
 

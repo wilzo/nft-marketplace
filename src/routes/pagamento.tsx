@@ -170,6 +170,13 @@ function Checkout({ user, wallets }: { user: User; wallets: Wallets }) {
               message: 'Não recebemos a confirmação do pedido. Tentar novamente reenvia a mesma solicitação e não cria um pedido duplicado.',
             })
           }
+          if (error.code === 'WALLET_NOT_CONNECTED') {
+            // A conexão não existe mais no servidor (ex.: desconectada em outra aba): volta a pedir a conexão.
+            setReview(null)
+            setConnection(null)
+            setProvider(null)
+            return setWalletError(error.message)
+          }
           const fresh = staleQuoteFrom(error)
           if (error.code === 'AVAILABILITY_CONFLICT') {
             if (fresh) setReview((r) => r && { ...r, quote: fresh })

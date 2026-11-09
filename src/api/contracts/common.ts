@@ -43,6 +43,8 @@ export const API_ERROR_CODES = [
   'COUPON_INVALID',
   'COUPON_EXPIRED',
   'WALLET_REJECTED',
+  /** Pedido sem conexão ativa da carteira na rede escolhida (conexão simulada em /wallet-connections). */
+  'WALLET_NOT_CONNECTED',
   /** Login social: o usuário negou o acesso na tela de consentimento do provedor (simulado). */
   'OAUTH_DENIED',
   /** Login social: o provedor (simulado) não respondeu. */
