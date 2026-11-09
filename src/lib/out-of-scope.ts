@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-
 /**
  * Seções que aparecem no Figma, mas não fazem parte desta entrega (editoriais, suporte, atividade, ofertas...).
  * Decisão (ARCHITECTURE.md → Decisões de UX): os links continuam visíveis, como no Figma, e levam a uma página única
@@ -23,8 +21,3 @@ export const OUT_OF_SCOPE_SECTIONS = {
 } as const
 
 export type OutOfScopeSection = keyof typeof OUT_OF_SCOPE_SECTIONS
-
-/** Ações que não são navegação (ex.: envio da newsletter): aviso, sem aparentar sucesso. */
-export function notAvailable(label: string) {
-  toast.info(`${label} não está disponível nesta demonstração.`, { id: `oos-${label}` })
-}

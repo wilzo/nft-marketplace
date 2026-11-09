@@ -222,6 +222,7 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | Chave de idempotência com outro conteúdo | No console: `POST /api/orders` duas vezes com o mesmo header `Idempotency-Key` e corpos diferentes (ver `e2e/mock-layer.spec.ts`) | A 2ª resposta é 409 `IDEMPOTENCY_CONFLICT`; a mesma chave com o mesmo corpo devolve o mesmo pedido. |
 | Evento duplicado/antigo | `POST /api/__mock/realtime/replay` com `duplicate` ou `stale` | Ignorado (dedupe por `eventId` e por versão). |
 | Refresh durante pedido | Confirme um pedido e recarregue `/pedidos/<id>` | O pedido continua pendente e confirma sozinho (liquidação retomada). |
+| Newsletter | Rodapé → **Antecipe-se ao próximo lançamento**: envie um e-mail inválido, depois um válido e depois o mesmo de novo | "Informe um e-mail válido" no campo; "Inscrição confirmada: …" (registrada na API simulada, nenhum e-mail é enviado); "Este e-mail já está inscrito na newsletter." (409). |
 | Seções fora do escopo | Clique em **Criadores** ou **Aprenda** (header), **Central de ajuda** (rodapé), **Suporte** (menu da conta), **Esqueceu a senha?** ou **Ler mais** (Diário) | Página "<Seção> não faz parte desta versão" com **Voltar ao catálogo** — sem 404, sem página em branco e sem simular a seção. |
 | Várias abas abertas | Abra o site em duas abas, entre numa delas e use a outra | A sessão continua válida nas duas (o banco simulado é sincronizado entre abas). |
 

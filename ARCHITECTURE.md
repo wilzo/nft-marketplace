@@ -49,6 +49,7 @@ Prefixo `/api`. Autenticação por `Authorization: Bearer <token>`; carrinho de 
 | Cotação | `POST /quotes` `{ network }` → itens, subtotal, desconto, taxas, total, avisos, `expiresAt` |
 | Pedidos | `POST /orders` (header **`Idempotency-Key`** obrigatório), `GET /orders?status=`, `GET /orders/:id` |
 | Perfil | `GET /profile`, `PATCH /profile`, `PUT /profile/avatar`, `DELETE /profile/avatar`, `POST /profile/password` |
+| Newsletter | `POST /newsletter` `{ email }` → 201 `NewsletterSubscription`; e-mail já inscrito → 409 `CONFLICT` com `fieldErrors.email` |
 | Carteiras | `GET /wallets`, `PUT /wallets/:slot` (`primary`/`secondary`), `POST /wallet-connections`, `DELETE /wallet-connections/:id` |
 | Controle (mock) | `/__mock/*` — ver README |
 
@@ -246,6 +247,7 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
 | Login social | Provedores Google/Facebook fictícios: pedido de consentimento de uso único, contas fictícias, criação/vínculo de conta, recusa (403), conflito com conta de senha (409), falha do provedor (`oauth-falha`, 502). Nenhuma chamada ao Google/Facebook. |
 | Carteiras | Cadastro principal/secundária validado no servidor (endereço 0x, ENS, mesmo endereço nas duas → erro de campo). Conexão por carteira + rede em `/wallet-connections` (recusa no cenário `carteira-recusada`), desconexão remove a conexão. Nenhuma extensão de carteira é acessada. |
 | Pagamento | Pedido idempotente criado como `pending` só com carteira conectada; liquidação após `settleDelayMs` (3 s no padrão) ou pela API de controle; resultado `confirmed` (remove do carrinho só os itens/quantidades comprados) ou `declined` (devolve o estoque reservado). Estados terminais não mudam. |
+| Newsletter | Inscrição registrada no banco simulado (`newsletter`), e-mail validado pelo mesmo contrato e repetido recusado (409). Nenhum e-mail é enviado. |
 | Transações | `txHash` determinístico (SHA-256 do id do pedido) e link de explorador gerados pelo servidor simulado na confirmação; a UI só exibe o que veio na resposta, marcado como referência simulada. Nenhuma blockchain é consultada. |
 | Catálogo e eventos | 239 NFTs persistidos; preço/estoque mudam pela API de controle ou pelos cenários de checkout e publicam `nft.updated` com versão. |
 
@@ -273,7 +275,7 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
   de cookies simulados seria aproximado (dois últimos rótulos).
 - Páginas editoriais (Criadores, Aprenda, Diário da Cunhagem), atividade, ofertas, downloads, suporte, central de
   ajuda e recuperação de senha não fazem parte da entrega: levam à página informativa `/secao-indisponivel` (ver
-  Decisões de UX). A newsletter informa que não está disponível. Compartilhar usa links externos reais (LinkedIn,
+  Decisões de UX). Compartilhar usa links externos reais (LinkedIn,
   Twitter, e-mail).
 
 ## 13. Decisões de UX
@@ -298,8 +300,7 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
   realizada e botão **Voltar ao catálogo**. Escolhida em vez de "Em breve" com `aria-disabled` porque não altera o
   visual dos frames, funciona igual com mouse, toque, teclado e leitor de tela (é um link comum, com destino
   anunciado), nunca leva a 404/página em branco e não aparenta sucesso. Mapa único em `src/lib/out-of-scope.ts`;
-  teste em `e2e/out-of-scope.spec.ts`. A newsletter (envio de formulário, não navegação) mostra um aviso de
-  indisponibilidade. "Lista de interesse" leva aos favoritos (equivalente existente).
+  teste em `e2e/out-of-scope.spec.ts`. "Lista de interesse" leva aos favoritos (equivalente existente).
 - **Painel de cenários** fica oculto por padrão (`?painel=1`), para não interferir no layout do Figma.
 
 ## 14. Acessibilidade (ajustes)

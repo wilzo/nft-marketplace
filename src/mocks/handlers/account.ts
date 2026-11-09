@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import {
   AvatarInput,
   ChangePasswordInput,
+  NewsletterInput,
   ProfileInput,
   WalletConnectionInput,
   WalletInput,
@@ -22,6 +23,21 @@ function walletsOf(userId: string): Wallets {
   const secondary = bySlot('secondary')
   return { primary: primary ? toWallet(primary) : null, secondary: secondary ? toWallet(secondary) : null }
 }
+
+/** Newsletter do rodapé: inscrição simulada (nenhum e-mail é enviado); e-mail repetido → 409 no campo. */
+export const newsletterHandlers = [
+  http.post(api('/newsletter'), async ({ request }) => {
+    const input = await parseBody(request, NewsletterInput)
+    if (getDb().newsletter.some((s) => s.email === input.email)) {
+      return apiError(409, 'CONFLICT', 'Este e-mail já está inscrito na newsletter.', {
+        fieldErrors: { email: ['Este e-mail já está inscrito na newsletter.'] },
+      })
+    }
+    const subscription = { email: input.email, subscribedAt: nowIso() }
+    transact((db) => db.newsletter.push(subscription))
+    return HttpResponse.json(subscription, { status: 201 })
+  }),
+]
 
 export const profileHandlers = [
   http.get(api('/profile'), ({ request }) => HttpResponse.json(toUser(requireUser(request)))),

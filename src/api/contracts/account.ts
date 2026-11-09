@@ -62,6 +62,16 @@ export const LoginInput = z.object({
 })
 export type LoginInput = z.infer<typeof LoginInput>
 
+// ---------- Newsletter (rodapé) ----------
+
+/** Corpo de `POST /newsletter`. */
+export const NewsletterInput = z.object({ email: Email })
+export type NewsletterInput = z.infer<typeof NewsletterInput>
+
+/** Inscrição registrada (simulação: nenhum e-mail é enviado). */
+export const NewsletterSubscription = z.object({ email: z.string(), subscribedAt: IsoDateTime })
+export type NewsletterSubscription = z.infer<typeof NewsletterSubscription>
+
 // ---------- Login social (provedor simulado pela API de demonstração) ----------
 
 export const OAUTH_PROVIDERS = ['google', 'facebook'] as const

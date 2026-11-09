@@ -7,7 +7,8 @@ import TwitterIcon from '@/assets/icons/footer-twitter.svg?react'
 import YoutubeIcon from '@/assets/icons/footer-youtube.svg?react'
 import LogoKurio from '@/assets/icons/logo-kurio.svg?react'
 import { OutOfScopeLink } from '@/components/out-of-scope-link'
-import { notAvailable, type OutOfScopeSection } from '@/lib/out-of-scope'
+import { type OutOfScopeSection } from '@/lib/out-of-scope'
+import { NewsletterForm } from './newsletter-form'
 
 const FEATURES = [
   { letter: 'W', title: 'Segurança da carteira', text: 'Proteja sua carteira e colecione arte digital verificada com confiança.' },
@@ -50,30 +51,7 @@ export function SiteFooter() {
             <p className="text-sm leading-[22px] text-sand">{f.text}</p>
           </div>
         ))}
-        <form
-          className="flex flex-[1.35] flex-col gap-3 lg:px-4"
-          onSubmit={(e) => {
-            e.preventDefault()
-            notAvailable('A newsletter')
-          }}
-        >
-          <h2 className="text-lg leading-[18px] font-bold">Antecipe-se ao próximo lançamento</h2>
-          <div className="flex">
-            <label htmlFor="newsletter-email" className="sr-only">
-              E-mail para a newsletter
-            </label>
-            <input
-              id="newsletter-email"
-              type="email"
-              placeholder="digite seu e-mail..."
-              className="h-10 min-w-0 flex-1 rounded-l-md bg-surface-dark px-3 text-sm text-cream placeholder:text-khaki"
-            />
-            <button type="submit" className="h-10 rounded-r-md bg-brand px-4 text-base font-bold text-ink hover:bg-brand-accent">
-              Enviar
-            </button>
-          </div>
-          <p className="text-xs leading-[22px] text-sand">Receba lançamentos selecionados, histórias de criadores e novidades do mercado.</p>
-        </form>
+        <NewsletterForm />
       </div>
 
       {/* Faixa da marca */}

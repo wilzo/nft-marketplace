@@ -171,6 +171,8 @@ export interface DbState {
   walletConnections: WalletConnectionRecord[]
   oauthIdentities: OAuthIdentityRecord[]
   oauthRequests: OAuthRequestRecord[]
+  /** Inscrições da newsletter do rodapé (simulação). */
+  newsletter: { email: string; subscribedAt: string }[]
   /** Contadores para ids determinísticos. */
   counters: Record<string, number>
 }

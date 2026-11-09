@@ -10,6 +10,8 @@ import {
   IDEMPOTENCY_HEADER,
   type LoginInput,
   NftDetail,
+  type NewsletterInput,
+  NewsletterSubscription,
   OAuthAuthorization,
   type OAuthCallbackInput,
   type OAuthProvider,
@@ -84,6 +86,10 @@ export const ordersApi = {
     call(Order, { method: 'POST', url: '/orders', data, headers: { [IDEMPOTENCY_HEADER]: idempotencyKey } }),
   get: (id: string, { signal }: Opts = {}) => call(Order, { method: 'GET', url: `/orders/${encodeURIComponent(id)}`, signal }),
   list: (status?: OrderStatus, { signal }: Opts = {}) => call(OrderList, { method: 'GET', url: '/orders', params: { status }, signal }),
+}
+
+export const newsletterApi = {
+  subscribe: (data: NewsletterInput) => call(NewsletterSubscription, { method: 'POST', url: '/newsletter', data }),
 }
 
 export const profileApi = {
