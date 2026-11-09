@@ -2,7 +2,7 @@ import { hashPassword } from '../lib/crypto'
 import type { DbState, UserRecord } from '../db/types'
 import { createNftFixtures } from './nfts'
 
-export const DB_SCHEMA_VERSION = 2
+export const DB_SCHEMA_VERSION = 3
 
 /** Credenciais fictícias documentadas no README. */
 export const FIXTURE_PASSWORD = 'Kurio2026!'

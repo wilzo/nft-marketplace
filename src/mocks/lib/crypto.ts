@@ -13,7 +13,7 @@ function toBase64(bytes: ArrayBuffer | Uint8Array) {
 export async function hashPassword(password: string, salt: string): Promise<string> {
   const key = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits'])
   const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', hash: 'SHA-256', salt: encoder.encode(salt), iterations: 60_000 },
+    { name: 'PBKDF2', hash: 'SHA-256', salt: encoder.encode(salt), iterations: 20_000 },
     key,
     256,
   )

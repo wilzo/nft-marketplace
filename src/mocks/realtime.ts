@@ -96,6 +96,7 @@ export function publishNftUpdated(nft: NftRecord) {
       price: summary.price,
       previousPrice: summary.previousPrice,
       available: summary.available,
+      defaultEditionId: summary.defaultEditionId,
       editions: nft.editions.map((e) => ({ id: e.id, price: e.price, available: e.available })),
     },
   }

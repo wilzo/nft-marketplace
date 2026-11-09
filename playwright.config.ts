@@ -7,6 +7,10 @@ const baseURL = `http://localhost:${PORT}`
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
+  // Cada teste sobe o MSW + banco simulado no navegador; 2 workers mantêm a execução estável em máquinas modestas.
+  workers: 2,
+  timeout: 45_000,
+  expect: { timeout: 10_000 },
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: [['html', { open: 'never' }], ['list']],

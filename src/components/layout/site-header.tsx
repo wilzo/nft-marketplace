@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useCart } from '@/features/cart/queries'
-import { useViewerScope } from '@/features/session/use-viewer'
+import { useCurrentUser, useViewerScope } from '@/features/session/use-viewer'
+import { UserMenu } from './user-menu'
 import { notAvailable } from '@/lib/out-of-scope'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +21,8 @@ const activeItem =
 /** Header desktop (≥ lg), conforme o componente "Header With Divider" do Figma. */
 export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const href = useRouterState({ select: (s) => s.location.href })
+  const user = useCurrentUser()
   const [searchOpen, setSearchOpen] = useState(false)
   const scope = useViewerScope()
   const cart = useCart(scope)
@@ -72,12 +75,16 @@ export function SiteHeader() {
               </span>
             )}
           </Link>
-          <Button asChild className="h-[35px] w-[100px] gap-1 rounded-md text-base font-medium">
-            <Link to="/entrar">
-              <LogoutIcon aria-hidden className="size-5" />
-              Entrar
-            </Link>
-          </Button>
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Button asChild className="h-[35px] w-[100px] gap-1 rounded-md text-base font-medium">
+              <Link to="/entrar" search={{ redirect: href === '/' ? undefined : href }}>
+                <LogoutIcon aria-hidden className="size-5" />
+                Entrar
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
       <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />

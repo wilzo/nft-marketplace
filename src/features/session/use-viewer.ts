@@ -1,9 +1,20 @@
+import { useQuery } from '@tanstack/react-query'
 import type { ViewerScope } from '@/lib/query-keys'
+import { sessionQuery } from './session'
+
+export function useSession() {
+  return useQuery(sessionQuery)
+}
+
+/** Usuário autenticado (ou null para visitante). */
+export function useCurrentUser() {
+  return useSession().data?.user ?? null
+}
 
 /**
- * Escopo do visitante/usuário atual para as chaves de cache privadas.
- * Etapa 3: sempre visitante. A etapa 4 passa a derivar do usuário autenticado.
+ * Escopo das chaves de cache privadas: id do usuário ou 'guest'.
+ * Trocar de usuário muda o escopo, então nenhum dado de um usuário é servido a outro.
  */
 export function useViewerScope(): ViewerScope {
-  return 'guest'
+  return useCurrentUser()?.id ?? 'guest'
 }

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login, mockApi, openWithScenario, waitForApp } from './support/mock-api'
+import { login, mockApi, openWithScenario, waitForApp, waitForRealtime } from './support/mock-api'
 
 /**
  * Valida a camada de mocks (etapa 2): contratos REST nos handlers MSW e eventos via socket.io-client.
@@ -13,6 +13,7 @@ test.describe('camada de mocks', () => {
   test('nft.updated chega pelo Socket.IO e atualiza a interface, ignorando duplicatas e eventos antigos', async ({ page }) => {
     const card = (price: string) => page.getByRole('link', { name: `Emerald Ape #042, ${price} ETH` })
     await expect(card('1.19')).toBeVisible()
+    await waitForRealtime(page)
 
     await mockApi(page, 'PATCH', '/__mock/nfts/emerald-ape-042', { body: { price: '2.5' } })
     await expect(card('2.50')).toBeVisible()
@@ -31,7 +32,7 @@ test.describe('camada de mocks', () => {
 
   test('reconecta após desconexão do servidor e volta a receber eventos', async ({ page }) => {
     await expect(page.getByRole('link', { name: 'Emerald Ape #042, 1.19 ETH' })).toBeVisible()
-    await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length).toBe(1)
+    await waitForRealtime(page)
     await mockApi(page, 'POST', '/__mock/realtime/disconnect')
     await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length, { timeout: 10_000 }).toBe(1)
     await mockApi(page, 'PATCH', '/__mock/nfts/emerald-ape-042', { body: { price: '1.5' } })
@@ -120,6 +121,7 @@ test.describe('camada de mocks', () => {
 
   test('preço alterado durante a confirmação exige nova cotação', async ({ page }) => {
     await mockApi(page, 'PUT', '/__mock/scenario', { body: { name: 'preco-alterado', overrides: { latency: { mode: 'none' } } } })
+    await waitForRealtime(page)
     const token = await login(page)
     const quote = await mockApi(page, 'POST', '/quotes', { token, body: {} })
     const body = {

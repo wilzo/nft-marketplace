@@ -81,6 +81,8 @@ export const NftSummary = z.object({
   /** Preço anterior, quando houve redução (exibido riscado). */
   previousPrice: EthAmount.nullable(),
   rare: z.boolean(),
+  /** Edição usada em ações rápidas (card → carrinho): a mais barata disponível. */
+  defaultEditionId: z.string(),
   /** Soma das unidades disponíveis em todas as edições. */
   available: z.number().int().min(0),
   listedAt: IsoDateTime,

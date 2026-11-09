@@ -186,6 +186,7 @@ export const NftUpdatedEvent = EventBase.extend({
     price: EthAmount,
     previousPrice: EthAmount.nullable(),
     available: z.number().int().min(0),
+    defaultEditionId: z.string(),
     editions: z.array(z.object({ id: z.string(), price: EthAmount, available: z.number().int().min(0) })),
   }),
 })

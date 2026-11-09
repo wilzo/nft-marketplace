@@ -7,6 +7,8 @@ import { SiteHeader } from '@/components/layout/site-header'
 import { Toaster } from '@/components/ui/sonner'
 import { env } from '@/config/env'
 import { useRealtimeSync } from '@/features/realtime/use-realtime-sync'
+import { useSessionSync } from '@/features/session/use-session-sync'
+import { cn } from '@/lib/utils'
 
 export interface RouterContext {
   queryClient: QueryClient
@@ -21,10 +23,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 })
 
 function RootLayout() {
+  useSessionSync()
   useRealtimeSync()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  // Login/cadastro no mobile são telas cheias (sem navegação e rodapé, como no Figma).
+  const isAuth = pathname === '/entrar' || pathname === '/cadastro'
   // O detalhe no mobile tem barra de compra própria no lugar da navegação inferior.
-  const hideTabBar = pathname.startsWith('/nft/')
+  const hideTabBar = isAuth || pathname.startsWith('/nft/')
 
   return (
     <div className="flex min-h-dvh flex-col bg-background px-4 pt-6 text-foreground sm:px-6">
@@ -38,9 +43,12 @@ function RootLayout() {
       <div className="flex-1">
         <Outlet />
       </div>
-      <SiteFooter />
+      <div className={cn(isAuth && 'max-lg:hidden')}>
+        <SiteFooter />
+      </div>
       {!hideTabBar && <MobileTabBar />}
-      <Toaster position="top-center" richColors closeButton />
+      {/* No mobile, abaixo da barra superior (voltar/favoritar) para não encobrir controles. */}
+      <Toaster position="top-center" richColors closeButton mobileOffset={{ top: 76 }} />
       {ScenarioPanel && (
         <Suspense fallback={null}>
           <ScenarioPanel />

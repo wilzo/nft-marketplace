@@ -9,7 +9,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 1 | Leitura do Figma + setup | ✅ Concluída |
 | 2 | Contratos tipados + camada de mocks (banco simulado, cenários, reset, rede, Socket.IO) | ✅ Concluída (inclui painel de cenários) |
 | 3 | Catálogo e detalhe do NFT | ✅ Concluída (favoritos entram na etapa 4) |
-| 4 | Autenticação e sessão | ⬜ |
+| 4 | Autenticação e sessão | ✅ Concluída (inclui favoritos com atualização otimista) |
 | 5 | Carrinho e cotação | ⬜ |
 | 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ⬜ |
 | 7 | Perfil e carteiras | ⬜ |
@@ -144,13 +144,33 @@ Decisões/desvios a documentar no ARCHITECTURE.md:
 - Ícones de coração e "scan" da tab bar vêm do lucide (não foram exportados do Figma).
 - Header desktop a partir de lg (1024); abaixo disso, layout mobile com tab bar e filtros em drawer.
 
-### Próximo passo (etapa 4)
+## Etapa 4: o que foi feito
 
-Sessão (`useSession` com Query em `qk.private.session`, token em `client-storage`), login/cadastro com validação e erros da API,
-retorno ao fluxo anterior (`?redirect=`), proteção de rotas privadas (`beforeLoad`), expiração via `onSessionLoss`,
-logout/troca de usuário limpando `[private]` e reconectando o Socket.IO (`realtime.connect({token,userId})`),
-`useViewerScope` derivado do usuário, merge do carrinho do visitante (`cartApi.merge`) e favoritos com atualização otimista + rollback
-(botão no detalhe e coração nos cards mobile).
+| Parte | Arquivos |
+| --- | --- |
+| Sessão | `src/features/session/session.ts` (`sessionQuery`, `requireAuth`, `startSession`, `clearSession`, `redirectSearchSchema` com `redirect` e `expirada`) |
+| Hooks | `src/features/session/{use-viewer,mutations,use-session-sync}.ts` (`useSession`, `useViewerScope`, login/cadastro/logout, expiração por 401 e por timer, reconexão do Socket.IO) |
+| Telas | `src/features/auth/{auth-screen,auth-forms}.tsx`, `src/routes/{entrar,cadastro}.tsx` (modal no desktop, tela cheia no mobile) |
+| Formulários | `src/components/form/form-field.tsx` (FormField, PasswordField, FormAlert), `src/lib/use-api-form.ts` (`applyApiError`: fieldErrors da API → campos) |
+| Favoritos | `src/features/favorites/{favorites.ts,favorite-button.tsx}`, `src/routes/favoritos.tsx` (otimista + rollback por item + revalidação) |
+| Card | ações rápidas no hover/foco (carrinho, favoritar, ver) e coração no mobile; contrato ganhou `defaultEditionId` |
+| Header | `src/components/layout/user-menu.tsx` (avatar, Meu perfil, Carteiras, Favoritos, Sair) |
+| Rotas privadas | `staticData: { private: true }` + `beforeLoad: requireAuth` em favoritos, perfil, carteiras, pagamento |
+| Testes | `e2e/auth.spec.ts`, `e2e/support/auth.ts` |
+
+Decisões e armadilhas:
+- **Toast emitido antes do `<Toaster>` montar é descartado pelo Sonner.** Expiração ao carregar uma rota privada redireciona com `?expirada=1` e a tela de login mostra o aviso inline (`role="status"`); toast só para expiração em página pública.
+- **Rollback otimista não pode restaurar snapshot `undefined`** (`setQueryData(undefined)` é ignorado): o rollback desfaz só a alteração do item e `onSettled` revalida.
+- No mobile os toasts ficam a 76px do topo (`mobileOffset`) para não encobrir voltar/favoritar.
+- PBKDF2 do mock com 20k iterações (custo de CPU nos testes paralelos); `DB_SCHEMA_VERSION` = 3.
+- Playwright: 2 workers, timeout 45 s, expect 10 s (execução estável nesta máquina; sem retries locais).
+- Logout no mobile fica no Perfil (etapa 7); o teste de logout roda só no desktop por enquanto.
+
+### Próximo passo (etapa 5)
+
+Tela de carrinho (desktop e mobile do Figma): itens com quantidade (limites da edição), remoção, cupom (aplicar/remover, inválido/expirado),
+resumo (subtotal, desconto, taxa de rede, total) a partir de `POST /quotes`, skeleton do resumo, avisos de preço/disponibilidade
+alterados via `nft.updated` (status por item + `/cart/acknowledge`), persistência após refresh/login, "Conectar e finalizar" → /pagamento.
 
 ## Comandos
 

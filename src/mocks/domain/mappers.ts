@@ -1,5 +1,5 @@
 import { NETWORK_LABELS, type NftDetail, type NftSummary, type User, type Wallet } from '@/api/contracts'
-import { displayPrice } from '../fixtures/nfts'
+import { defaultEdition, displayPrice } from '../fixtures/nfts'
 import type { NftRecord, UserRecord, WalletRecord } from '../db/types'
 
 /** Conversões registro interno → contrato público (nunca expõe hash de senha, sessões etc.). */
@@ -17,6 +17,7 @@ export function toNftSummary(n: NftRecord): NftSummary {
     price: displayPrice(n),
     previousPrice: n.previousPrice,
     rare: n.rare,
+    defaultEditionId: defaultEdition(n).id,
     available: n.editions.reduce((sum, e) => sum + e.available, 0),
     listedAt: n.listedAt,
     version: n.version,

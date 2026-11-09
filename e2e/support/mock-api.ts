@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 
 export interface MockResponse<T = unknown> {
   status: number
@@ -58,4 +58,9 @@ export async function openWithScenario(page: Page, scenario = 'sem-latencia', pa
 /** Aguarda o MSW e a aplicação ficarem prontos (após goto/reload). */
 export async function waitForApp(page: Page) {
   await page.waitForFunction(() => document.documentElement.dataset.app === 'ready' && !!navigator.serviceWorker?.controller)
+}
+
+/** Aguarda o socket.io-client da página estar conectado ao servidor simulado. */
+export async function waitForRealtime(page: Page, connections = 1) {
+  await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length).toBeGreaterThanOrEqual(connections)
 }

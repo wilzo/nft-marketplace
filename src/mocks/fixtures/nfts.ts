@@ -138,8 +138,13 @@ export function createNftFixtures(): NftRecord[] {
   return nfts
 }
 
+/** Edição padrão: a mais barata entre as disponíveis (ou entre todas, se esgotado). */
+export function defaultEdition(nft: NftRecord) {
+  const pool = nft.editions.some((e) => e.available > 0) ? nft.editions.filter((e) => e.available > 0) : nft.editions
+  return pool.reduce((min, e) => (compareEth(e.price, min.price) < 0 ? e : min))
+}
+
 /** Menor preço entre edições disponíveis (ou entre todas, se esgotado). */
 export function displayPrice(nft: NftRecord): string {
-  const pool = nft.editions.some((e) => e.available > 0) ? nft.editions.filter((e) => e.available > 0) : nft.editions
-  return pool.map((e) => e.price).reduce((min, p) => (compareEth(p, min) < 0 ? p : min))
+  return defaultEdition(nft).price
 }

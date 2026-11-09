@@ -6,7 +6,14 @@ import { realtime } from '@/lib/realtime'
 
 function patchSummary<T extends NftSummary>(item: T, e: NftUpdatedEvent): T {
   if (item.id !== e.resource.id || item.version >= e.version) return item
-  return { ...item, price: e.data.price, previousPrice: e.data.previousPrice, available: e.data.available, version: e.version }
+  return {
+    ...item,
+    price: e.data.price,
+    previousPrice: e.data.previousPrice,
+    available: e.data.available,
+    defaultEditionId: e.data.defaultEditionId,
+    version: e.version,
+  }
 }
 
 /** Aplica `nft.updated` em todas as consultas que exibem o NFT (catálogo, destaques, relacionados, detalhe). */

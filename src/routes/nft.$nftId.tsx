@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link, useNavigate, useRouter } from '@tanstack/react-router'
-import { ChevronLeft, Heart, Star } from 'lucide-react'
+import { ChevronLeft, Star } from 'lucide-react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { EditionKind, NETWORK_LABELS, type NftDetail } from '@/api/contracts'
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAddToCart } from '@/features/cart/mutations'
+import { FavoriteButton } from '@/features/favorites/favorite-button'
 import { nftDetailQuery, useNftDetail } from '@/features/catalog/queries'
 import { Gallery } from '@/features/nft-detail/components/gallery'
 import { EditionPicker, QuantityStepper } from '@/features/nft-detail/components/purchase'
@@ -107,12 +108,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
       <Button size="cta" className="w-[130px] text-sm" disabled={unavailable || addToCart.isPending} onClick={() => buy(true)}>
         {addToCart.isPending ? 'Adicionando…' : 'COMPRAR'}
       </Button>
-      <Button asChild variant="outline" size="cta" className="w-[130px] px-3 text-sm font-medium">
-        <Link to="/entrar">
-          <Heart aria-hidden className="size-5" />
-          Favoritar
-        </Link>
-      </Button>
+      <FavoriteButton nftId={nft.id} name={nft.name} variant="button" />
     </div>
   )
 
@@ -128,9 +124,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
         >
           <ChevronLeft aria-hidden className="size-5" />
         </button>
-        <Link to="/entrar" aria-label="Favoritar" className="grid size-9 place-items-center rounded-full border border-line bg-surface-card text-brand">
-          <Heart aria-hidden className="size-4" />
-        </Link>
+        <FavoriteButton nftId={nft.id} name={nft.name} variant="icon" className="size-9 border border-line bg-surface-card" />
       </div>
 
       <nav aria-label="Trilha de navegação" className="mb-3 hidden pt-8 lg:block">

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { mockApi, openWithScenario } from './support/mock-api'
+import { mockApi, openWithScenario, waitForRealtime } from './support/mock-api'
 
 const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1440) < 1024
 
@@ -7,7 +7,10 @@ const isMobile = (page: Page) => (page.viewportSize()?.width ?? 1440) < 1024
 async function withFilters(page: Page, fn: () => Promise<void>) {
   if (isMobile(page)) await page.getByRole('button', { name: /^Filtros/ }).click()
   await fn()
-  if (isMobile(page)) await page.keyboard.press('Escape')
+  if (isMobile(page)) {
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('dialog')).toBeHidden()
+  }
 }
 
 const cards = (page: Page) => page.locator('#catalogo ul > li article')
@@ -116,7 +119,7 @@ test.describe('detalhe do NFT (etapa 3)', () => {
   test('preço alterado em tempo real é anunciado no detalhe', async ({ page }) => {
     await openWithScenario(page, 'sem-latencia', '/nft/emerald-ape-042')
     await expect(page.getByRole('heading', { name: 'Emerald Ape #042', level: 1 })).toBeVisible()
-    await expect.poll(async () => (await mockApi(page, 'GET', '/__mock/realtime')).body.connections.length).toBe(1)
+    await waitForRealtime(page)
     await mockApi(page, 'PATCH', '/__mock/nfts/emerald-ape-042', { body: { price: '1.5' } })
     await expect(page.getByRole('status').filter({ hasText: 'O preço desta edição foi atualizado de 1.19 para 1.50 ETH.' })).toBeVisible()
   })
