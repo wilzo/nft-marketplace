@@ -6,7 +6,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 
 | # | Etapa | Status |
 | --- | --- | --- |
-| 1 | Leitura do Figma + setup | 🟡 Setup concluído; Figma parcial (limite do plano) |
+| 1 | Leitura do Figma + setup | ✅ Concluída |
 | 2 | Contratos tipados + camada de mocks (banco simulado, cenários, reset, rede, Socket.IO) | ⬜ |
 | 3 | Catálogo e detalhe do NFT | ⬜ |
 | 4 | Autenticação e sessão | ⬜ |
@@ -38,6 +38,8 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 - **MSW fixado em 2.x**: `@mswjs/socket.io-binding@0.2.0` tem peer `msw@^2.10.2`; o MSW 3 é incompatível.
 - npm 11 bloqueia scripts de postinstall; o worker do MSW é gerado com `npx msw init public --save`.
 - `cn` (pacote oficial `shadcn-ui/cn`) substitui `clsx` + `tailwind-merge` em `src/lib/utils.ts`.
+- **GitHub:** https://github.com/wilzo/nft-marketplace (criado **privado**; tornar público antes da entrega).
+- Ícones SVG viram componentes via `vite-plugin-svgr` (`?react`); imagens otimizadas com `sharp`.
 - **Deploy (Vercel):** projeto `wilzos-projects/nft-marketplace`, produção em https://nft-marketplace-xi-self.vercel.app (MSW e rewrite de SPA verificados). Deploy: `vercel deploy --prod --yes`.
 - CLI da Vercel está em `%APPDATA%\npm\vercel.cmd` (fora do PATH do Git Bash).
 
@@ -49,15 +51,15 @@ Arquivo de trabalho (cópia com acesso de edição): `Zo3ZHEbgu7rj2rggs6ueKR`
 | Frame | Node | Tamanho | Screenshot em `docs/figma/screens` |
 | --- | --- | --- | --- |
 | Desktop / Início | 2:2 | 1440×3668 | desktop-inicio.png |
-| Desktop / Detalhes do NFT | 10:244 | 1440×2246 | ❌ falta |
-| Desktop / Carrinho de NFTs | 11:1278 | 1440×1754 | ❌ falta |
+| Desktop / Detalhes do NFT | 10:244 | 1440×2246 | desktop-detalhes.png |
+| Desktop / Carrinho de NFTs | 11:1278 | 1440×1754 | desktop-carrinho.png |
 | Desktop / Pagamento | 11:2862 | 1440×1657 | desktop-pagamento.png |
 | Desktop / Confirmação de Pedido | 11:4385 | 1440×1657 | desktop-confirmacao.png |
 | Desktop / Login | 9:115 | 1440×1981 | desktop-login.png |
 | Desktop / Cadastro | 9:1022 | 1440×1981 | desktop-cadastro.png |
 | Desktop / Perfil do Colecionador | 9:1238 | 1440×1080 | desktop-perfil.png |
-| Desktop / Carteiras | 9:1670 | 1440×1080 | ❌ falta |
-| Mobile / Início | 14:5226 | 414×896 | ❌ falta |
+| Desktop / Carteiras | 9:1670 | 1440×1080 | desktop-carteiras.png |
+| Mobile / Início | 14:5226 | 414×896 | mobile-inicio.png |
 | Mobile / Detalhes do NFT | 15:5536 | 414×896 | mobile-detalhes.png |
 | Mobile / Carrinho de NFTs | 16:360 | 414×896 | mobile-carrinho.png |
 | Mobile / Pagamento | 16:748 | 414×896 | mobile-pagamento.png |
@@ -67,9 +69,8 @@ Arquivo de trabalho (cópia com acesso de edição): `Zo3ZHEbgu7rj2rggs6ueKR`
 `docs/figma/file.json`: arquivo completo via REST API (`GET /v1/files/:key`, token `FIGMA_TOKEN` em `.env.local`, escopo `file_content:read`), com textos, estilos, cores, fontes, efeitos e referências de imagem.
 `docs/figma/metadata.xml`: árvore completa (ids, nomes, posições e tamanhos) de todos os frames.
 
-**Bloqueio atual:** o MCP do Figma atingiu o limite de chamadas do plano Starter. Falta extrair os tokens
-(cores, tipografia, espaçamentos, raios, sombras), os textos exatos e os assets (imagens, ícones, logo, fontes),
-além dos 4 screenshots marcados acima.
+Tokens, tipografia e assets: ver [docs/figma/TOKENS.md](figma/TOKENS.md). Tema aplicado em `src/index.css`.
+O MCP do Figma (plano Starter) bateu o limite mensal; use a REST API com `FIGMA_TOKEN` (`.env.local`) se precisar de mais dados.
 
 ## Comandos
 
