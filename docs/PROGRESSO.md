@@ -64,6 +64,7 @@ Arquivo de trabalho (cópia com acesso de edição): `Zo3ZHEbgu7rj2rggs6ueKR`
 | Mobile / Login | 16:1022 | 414×896 | mobile-login.png |
 | Mobile / Cadastro | 16:1228 | 414×896 | mobile-cadastro.png |
 
+`docs/figma/file.json`: arquivo completo via REST API (`GET /v1/files/:key`, token `FIGMA_TOKEN` em `.env.local`, escopo `file_content:read`), com textos, estilos, cores, fontes, efeitos e referências de imagem.
 `docs/figma/metadata.xml`: árvore completa (ids, nomes, posições e tamanhos) de todos os frames.
 
 **Bloqueio atual:** o MCP do Figma atingiu o limite de chamadas do plano Starter. Falta extrair os tokens
