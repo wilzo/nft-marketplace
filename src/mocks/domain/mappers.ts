@@ -1,0 +1,70 @@
+import type { NftDetail, NftSummary, User, Wallet } from '@/api/contracts'
+import { displayPrice } from '../fixtures/nfts'
+import type { NftRecord, UserRecord, WalletRecord } from '../db/types'
+
+/** Conversões registro interno → contrato público (nunca expõe hash de senha, sessões etc.). */
+
+export function toNftSummary(n: NftRecord): NftSummary {
+  return {
+    id: n.id,
+    name: n.name,
+    tokenId: n.tokenId,
+    image: n.image,
+    collection: n.collection,
+    creator: n.creator,
+    category: n.category,
+    network: n.network,
+    price: displayPrice(n),
+    previousPrice: n.previousPrice,
+    rare: n.rare,
+    available: n.editions.reduce((sum, e) => sum + e.available, 0),
+    listedAt: n.listedAt,
+    version: n.version,
+  }
+}
+
+export function toNftDetail(n: NftRecord): NftDetail {
+  return {
+    ...toNftSummary(n),
+    summary: `Um colecionável digital finalizado à mão da coleção ${n.collection}, verificado na rede, com arte desbloqueável e acesso para colecionadores.`,
+    description:
+      `${n.name} é uma obra digital finalizada à mão da coleção ${n.collection}. Cada atributo fica armazenado nos metadados do token e verificado na rede. ` +
+      `A obra explora identidade, movimento e luz em um mundo digital sem fronteiras. A propriedade inclui a arte em alta resolução, lançamentos exclusivos ` +
+      `para colecionadores e um registro permanente de procedência registrada na rede. ${n.creator} recebe ${n.royaltyPercent}% de direitos autorais nas ` +
+      `vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.`,
+    attributes: n.attributes,
+    contractAddress: n.contractAddress,
+    standard: n.standard,
+    royaltyPercent: n.royaltyPercent,
+    rating: n.rating,
+    editions: n.editions,
+    gallery: n.gallery,
+  }
+}
+
+export function toUser(u: UserRecord): User {
+  return {
+    id: u.id,
+    username: u.username,
+    displayName: u.displayName,
+    email: u.email,
+    ensName: u.ensName,
+    walletNickname: u.walletNickname,
+    avatarUrl: u.avatarUrl,
+    updatedAt: u.updatedAt,
+  }
+}
+
+export function toWallet(w: WalletRecord): Wallet {
+  return {
+    id: w.id,
+    slot: w.slot,
+    displayName: w.displayName,
+    nickname: w.nickname,
+    network: w.network,
+    address: w.address,
+    walletType: w.walletType,
+    ensName: w.ensName,
+    updatedAt: w.updatedAt,
+  }
+}

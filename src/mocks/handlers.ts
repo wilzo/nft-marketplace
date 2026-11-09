@@ -1,9 +1,25 @@
-import { http, HttpResponse } from 'msw'
-import { env } from '@/config/env'
+import { authHandlers, favoriteHandlers } from './handlers/auth'
+import { catalogHandlers } from './handlers/catalog'
+import { cartHandlers, orderHandlers, quoteHandlers } from './handlers/commerce'
+import { profileHandlers, walletHandlers } from './handlers/account'
+import { controlHandlers } from './handlers/control'
+import { networkConditions } from './handlers/network'
+import { realtimeHandler } from './realtime'
 
-const api = (path: string) => `${env.apiBaseUrl}${path}`
-
-/** Handlers REST. O banco simulado, cenários e Socket.IO entram na etapa 2. */
+/**
+ * Ordem importa: `networkConditions` roda primeiro (latência/offline/falhas) e cai para o handler do recurso.
+ * O mesmo conjunto é usado em desenvolvimento, no build de demonstração e nos testes.
+ */
 export const handlers = [
-  http.get(api('/health'), () => HttpResponse.json({ status: 'ok' })),
+  networkConditions,
+  ...controlHandlers,
+  ...authHandlers,
+  ...favoriteHandlers,
+  ...catalogHandlers,
+  ...cartHandlers,
+  ...quoteHandlers,
+  ...orderHandlers,
+  ...profileHandlers,
+  ...walletHandlers,
+  realtimeHandler,
 ]
