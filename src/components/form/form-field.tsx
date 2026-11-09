@@ -55,7 +55,7 @@ export function FormField({ label, hideLabel, error, hint, suffix, trailing, req
   const hintId = `${id}-hint`
   const describedBy = [error && errorId, hint && hintId].filter(Boolean).join(' ') || undefined
   return (
-    <div className={cn('flex flex-col gap-2.5', hideLabel && 'gap-1.5', className)}>
+    <div className={cn('flex min-w-0 flex-col gap-2.5', hideLabel && 'gap-1.5', className)}>
       <FieldLabel htmlFor={id} required={required} hidden={hideLabel}>
         {label}
       </FieldLabel>
@@ -110,7 +110,7 @@ export function PasswordField(props: Omit<FormFieldProps, 'type' | 'suffix' | 't
 export function EnsField({ error, required = true, ...props }: Omit<React.ComponentProps<'input'>, 'id'> & { error?: string; required?: boolean }) {
   const id = useId()
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex min-w-0 flex-col gap-2.5">
       <FieldLabel htmlFor={id} required={required}>
         Nome ENS
       </FieldLabel>

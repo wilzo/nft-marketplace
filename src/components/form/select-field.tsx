@@ -27,7 +27,7 @@ export function SelectField<T extends FieldValues>({
   disabled?: boolean
 }) {
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex min-w-0 flex-col gap-2.5">
       <FieldLabel htmlFor={id} required>
         {label}
       </FieldLabel>

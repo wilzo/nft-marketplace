@@ -149,7 +149,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
 
         <section aria-labelledby="nft-title" className="flex min-w-0 flex-1 flex-col gap-5 rounded-t-[28px] bg-surface-card p-6 lg:rounded-none lg:bg-transparent lg:p-0">
           <div className="flex flex-col gap-3 border-b border-brand/30 pb-3">
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <h1 id="nft-title" className="text-xl leading-tight font-bold lg:text-[28px] lg:leading-[37px]">
                 {nft.name}
               </h1>
@@ -257,7 +257,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
             <TabsTrigger
               key={value}
               value={value}
-              className="h-auto flex-none rounded-none border-0 border-b-[3px] border-transparent bg-transparent px-0 pb-2 text-base text-cream shadow-none data-[state=active]:border-brand data-[state=active]:bg-transparent data-[state=active]:font-bold data-[state=active]:text-brand-accent dark:data-[state=active]:bg-transparent lg:text-lg"
+              className="h-auto max-w-full min-w-0 flex-none rounded-none border-0 text-left whitespace-normal border-b-[3px] border-transparent bg-transparent px-0 pb-2 text-base text-cream shadow-none data-[state=active]:border-brand data-[state=active]:bg-transparent data-[state=active]:font-bold data-[state=active]:text-brand-accent dark:data-[state=active]:bg-transparent lg:text-lg"
             >
               {label}
             </TabsTrigger>
@@ -301,7 +301,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
       {/* Mobile: barra de compra fixa (Figma: Qtd. − 1 + · preço · "Comprar NFT" · carrinho) */}
       <div className="fixed inset-x-0 bottom-0 z-40 rounded-t-[28px] bg-surface-card px-6 pt-5 pb-6 shadow-raised lg:hidden">
         <div className="mx-auto flex max-w-[480px] flex-col gap-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <div className="flex items-center gap-3">
               <span className="text-sm font-bold text-sand">Qtd.</span>
               <QuantityStepper id="qty-mobile" size="sm" value={quantity} max={Math.max(1, limit)} onChange={setQuantity} disabled={unavailable} />

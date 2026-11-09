@@ -145,7 +145,7 @@ export function SiteFooter() {
       {/* Linha da marca (Figma) + crédito do autor no mesmo estilo; cada parte quebra como um bloco inteiro. */}
       <p className="flex flex-wrap justify-center gap-x-2 py-2 text-center text-sm leading-[30px]">
         <span>© 2026 Kurio. Propriedade digital para todos.</span>
-        <span className="whitespace-nowrap">
+        <span>
           <span aria-hidden className="mr-2 hidden sm:inline">
             ·
           </span>

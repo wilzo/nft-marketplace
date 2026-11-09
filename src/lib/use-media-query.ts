@@ -13,4 +13,8 @@ export function useMediaQuery(query: string) {
   )
 }
 
-export const DESKTOP_QUERY = '(min-width: 1024px)'
+/**
+ * Breakpoint do layout desktop = `lg` do Tailwind (64rem). Em rem, como o CSS: com a fonte do navegador ampliada,
+ * CSS e JS trocam de layout juntos (com px, o JS montava partes do desktop sobre o CSS mobile).
+ */
+export const DESKTOP_QUERY = '(min-width: 64rem)'

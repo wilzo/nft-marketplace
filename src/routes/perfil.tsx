@@ -25,7 +25,7 @@ function ProfilePage() {
     <AccountLayout>
       <h1 className="mb-6 text-base font-bold">Perfil do colecionador</h1>
       {profile.isPending ? (
-        <div aria-hidden className="grid gap-6 lg:grid-cols-2">
+        <div aria-hidden className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {Array.from({ length: 6 }, (_, i) => (
             <Skeleton key={i} className="h-16" />
           ))}
@@ -109,7 +109,7 @@ function ProfileForms({ user }: { user: User }) {
   return (
     <form noValidate onSubmit={(e) => void save(e)} aria-label="Perfil do colecionador" className="flex flex-col gap-10">
       {alert && <FormAlert>{alert}</FormAlert>}
-      <div className="grid gap-x-7 gap-y-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-7 gap-y-6 lg:grid-cols-2">
         <FormField label="Nome de exibição" required autoComplete="name" error={pe.displayName?.message} {...profileForm.register('displayName')} />
         <FormField label="Nome de usuário" required autoComplete="username" error={pe.username?.message} {...profileForm.register('username')} />
         <FormField label="E-mail" required type="email" autoComplete="email" error={pe.email?.message} {...profileForm.register('email')} />
@@ -166,7 +166,7 @@ function AvatarField({ user }: { user: User }) {
   return (
     <div className="flex flex-col gap-2.5">
       <FieldLabel htmlFor="avatar-input">Avatar</FieldLabel>
-      <div className="flex items-center gap-6">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         {user.avatarUrl ? (
           <img src={user.avatarUrl} alt="Seu avatar" className="size-[50px] rounded-full border border-line object-cover" />
         ) : (

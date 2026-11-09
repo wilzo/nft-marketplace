@@ -24,7 +24,7 @@ export function CollectorFields({ form, wallet, hasSecondary, layout }: { form: 
   const usingSecondary = useWatch({ control: form.control, name: 'walletSlot' }) === 'secondary'
   return (
     <div className="flex flex-col gap-6">
-      <div className={cn('grid gap-x-6 gap-y-5', layout === 'desktop' && 'grid-cols-2')}>
+      <div className={cn('grid gap-x-6 gap-y-5', layout === 'desktop' ? 'grid-cols-2' : 'grid-cols-1')}>
         <FormField label="Nome de exibição" required autoComplete="name" error={errors.displayName?.message} {...form.register('displayName')} />
         <FormField label="Nome de usuário" required autoComplete="username" error={errors.username?.message} {...form.register('username')} />
         <SelectField

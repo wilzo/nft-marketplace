@@ -60,7 +60,7 @@ function WalletsPage() {
     <AccountLayout>
       <h1 className="sr-only">Carteiras</h1>
       {wallets.isPending ? (
-        <div aria-hidden className="grid gap-6 lg:grid-cols-2">
+        <div aria-hidden className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {Array.from({ length: 8 }, (_, i) => (
             <Skeleton key={i} className="h-16" />
           ))}
@@ -174,7 +174,7 @@ function WalletForm({ slot, wallet, initial }: { slot: WalletSlot; wallet: Walle
   return (
     <form noValidate onSubmit={submit} aria-label={slot === 'primary' ? 'Carteira principal' : 'Carteira secundária'} className="flex flex-col gap-8">
       {alert && <FormAlert>{alert}</FormAlert>}
-      <div className="grid gap-x-7 gap-y-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-7 gap-y-5 lg:grid-cols-2">
         <FormField label="Nome de exibição" required error={errors.displayName?.message} {...form.register('displayName')} />
         <FormField label="Apelido da carteira" required error={errors.nickname?.message} {...form.register('nickname')} />
         <SelectField

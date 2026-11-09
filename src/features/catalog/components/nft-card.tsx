@@ -70,7 +70,7 @@ export function NftCard({ nft, priority = false, className }: { nft: NftSummary;
           {nft.name}
         </Link>
       </h3>
-      <p className="mt-3 flex items-baseline gap-3 pl-2 lg:pl-0">
+      <p className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 pl-2 lg:pl-0">
         <span className="text-lg leading-4 font-bold text-brand-accent">{formatEth(nft.price)} ETH</span>
         {nft.previousPrice && (
           <span className="text-lg leading-4 text-khaki line-through">

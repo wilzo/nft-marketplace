@@ -153,7 +153,7 @@ const PROMOS = [
 /** Dois cards promocionais (Figma "Promos": 586×250, arte à esquerda, texto à direita). */
 export function Promos() {
   return (
-    <section aria-label="Coleções em destaque" className="grid gap-7 lg:grid-cols-2">
+    <section aria-label="Coleções em destaque" className="grid grid-cols-1 gap-7 lg:grid-cols-2">
       {PROMOS.map((p) => (
         <article key={p.title} className="flex h-[200px] overflow-hidden rounded-lg bg-surface-card sm:h-[250px]">
           <NftImage image={p.image} alt="" sizes="(min-width: 1024px) 292px, 45vw" className="h-full w-1/2 rounded-[18px] object-cover" />
@@ -189,7 +189,7 @@ export function Journal() {
         </h2>
         <p className="text-sm leading-[18px] text-sand">Histórias, guias e insights para colecionadores sobre o universo da propriedade digital.</p>
       </header>
-      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {POSTS.map((p) => (
           <li key={p.title} className="flex flex-col overflow-hidden rounded-lg bg-surface-card">
             <NftImage image={p.image} alt="" sizes="(min-width: 1024px) 268px, 90vw" className="aspect-auto h-[195px] w-full object-cover" />

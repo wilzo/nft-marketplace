@@ -44,7 +44,7 @@ export function NftCarousel({ title, items, id }: { title: string; items: NftSum
         ))}
       </ul>
       {pages > 1 && (
-        <div role="group" aria-label={`Páginas de ${title}`} className="flex justify-center gap-5">
+        <div role="group" aria-label={`Páginas de ${title}`} className="flex flex-wrap justify-center gap-5">
           {Array.from({ length: pages }, (_, i) => (
             <button
               key={i}

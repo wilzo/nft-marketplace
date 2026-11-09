@@ -32,7 +32,8 @@ const buttonVariants = cva(
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
         /** CTAs do Figma (EXPLORAR, COMPRAR, Aplicar): 40px, 16px bold, raio 6 */
-        cta: "h-10 gap-2 rounded-md px-7 text-base",
+        // min-h (não h fixo) + quebra de linha: com texto ampliado o rótulo quebra em vez de vazar da tela
+        cta: "min-h-10 max-w-full gap-2 rounded-md px-7 py-2 text-base whitespace-normal text-center",
       },
     },
     defaultVariants: {

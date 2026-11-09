@@ -105,6 +105,10 @@
   html {
     @apply font-sans antialiased;
   }
+  /* fieldset tem min-width: min-content por padrão: com texto ampliado ele vazava da tela */
+  fieldset {
+    min-width: 0;
+  }
   body {
     @apply bg-background text-foreground;
   }
