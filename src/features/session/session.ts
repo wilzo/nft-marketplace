@@ -59,10 +59,12 @@ export const redirectSearchSchema = z.object({
 
 /** Guarda das rotas privadas (beforeLoad): sem sessão → /entrar?redirect=<rota atual com busca>. */
 export async function requireAuth({ context, location }: { context: { queryClient: QueryClient }; location: { href: string } }) {
+  // Havia token salvo antes da validação e a API o recusou → a sessão expirou (independe da ordem dos efeitos).
+  const hadToken = !!sessionToken.get()
   const session = await context.queryClient.ensureQueryData(sessionQuery)
   if (!session) {
-    // Havia token salvo mas a API o recusou: a sessão expirou.
-    const expired = consumeExpiredNotice()
+    const expired = hadToken && !sessionToken.get()
+    if (expired) consumeExpiredNotice()
     throw redirect({ to: '/entrar', search: { redirect: location.href, expirada: expired ? 1 : undefined } })
   }
   return { session }

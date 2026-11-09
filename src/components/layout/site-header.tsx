@@ -5,7 +5,7 @@ import LogoutIcon from '@/assets/icons/curved-logout.svg?react'
 import SearchIcon from '@/assets/icons/header-search.svg?react'
 import LogoKurio from '@/assets/icons/logo-kurio.svg?react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useCart } from '@/features/cart/queries'
 import { useCurrentUser, useViewerScope } from '@/features/session/use-viewer'
@@ -64,9 +64,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex h-[35px] items-center gap-7">
-          <button type="button" aria-label="Buscar NFTs" onClick={() => setSearchOpen(true)} className="text-cream hover:text-brand-accent">
-            <SearchIcon aria-hidden className="size-5" />
-          </button>
+          <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
           <Link to="/carrinho" className="relative text-cream" aria-label={`Carrinho, ${count} ${count === 1 ? 'item' : 'itens'}`}>
             <CartIcon aria-hidden className="h-[26px] w-6" />
             {count > 0 && (
@@ -87,7 +85,6 @@ export function SiteHeader() {
           )}
         </div>
       </div>
-      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   )
 }
@@ -97,6 +94,12 @@ function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (op
   const [value, setValue] = useState('')
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {/* DialogTrigger: ao fechar, o Radix devolve o foco a este botão */}
+      <DialogTrigger asChild>
+        <button type="button" aria-label="Buscar NFTs" className="text-cream hover:text-brand-accent">
+          <SearchIcon aria-hidden className="size-5" />
+        </button>
+      </DialogTrigger>
       <DialogContent className="border-line bg-surface-card sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Buscar NFTs</DialogTitle>

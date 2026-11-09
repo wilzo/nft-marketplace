@@ -40,3 +40,6 @@ dist-ssr
 .env*
 !.env.example
 !.env.no-mocks
+
+# Scripts temporários locais
+*.tmp.mjs

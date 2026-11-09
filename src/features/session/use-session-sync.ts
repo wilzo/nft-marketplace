@@ -22,8 +22,10 @@ export function useSessionSync() {
   const expiresAt = session.data?.expiresAt
 
   useEffect(() => {
-    if (consumeExpiredNotice()) toast.warning(SESSION_EXPIRED_MESSAGE, { id: SESSION_EXPIRED_TOAST })
-  }, [session.dataUpdatedAt])
+    // Página privada: o redirecionamento leva ao login com o aviso inline (?expirada=1); aqui só páginas públicas.
+    const isPrivate = router.state.matches.some((m) => m.staticData?.private)
+    if (!isPrivate && consumeExpiredNotice()) toast.warning(SESSION_EXPIRED_MESSAGE, { id: SESSION_EXPIRED_TOAST })
+  }, [session.dataUpdatedAt, router])
 
   useEffect(() => {
     const expire = () => {

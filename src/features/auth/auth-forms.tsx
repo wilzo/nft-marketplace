@@ -38,6 +38,7 @@ export function LoginForm({ variant, onSuccess }: { variant: Variant; onSuccess:
         type="email"
         autoComplete="email"
         placeholder="contato@email.com"
+        autoFocus
         className={fieldClass(variant)}
         error={errors.email?.message}
         {...form.register('email')}
@@ -87,6 +88,7 @@ export function RegisterForm({ variant, onSuccess }: { variant: Variant; onSucce
         hideLabel
         autoComplete="username"
         placeholder="Nome de usuário"
+        autoFocus
         className={fieldClass(variant)}
         error={errors.username?.message}
         {...form.register('username')}

@@ -13,7 +13,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 5 | Carrinho e cotação | ✅ Concluída |
 | 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ✅ Concluída |
 | 7 | Perfil e carteiras | ✅ Concluída |
-| 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ⬜ |
+| 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ✅ Concluída (matriz em [docs/TESTES.md](TESTES.md)) |
 | 9 | Auditoria Lighthouse (3 medições, mediana, relatórios) | ⬜ |
 | 10 | README.md, ARCHITECTURE.md e deploy final | ⬜ |
 
@@ -227,12 +227,41 @@ Decisões:
   (o servidor rejeita o mesmo endereço nas duas).
 - `applyApiError`: erro indicado pela API num campo aparece só no campo (sem aviso geral duplicado).
 
-### Próximo passo (etapa 8)
+## Revisão de fidelidade ao Figma (feita junto com a etapa 8)
 
-Completar a matriz dos 12 cenários de teste do desafio (a maioria já coberta pelos specs das etapas 3–7) e adicionar:
-regressão visual (`toHaveScreenshot`) de início, detalhe, carrinho e pagamento em desktop e mobile com dados estáveis
-(cenário `sem-latencia`, relógio fixo, animações desligadas), baselines versionadas; navegação por teclado e foco de diálogos (cenário 11);
-documentar a matriz cenário → spec. Relatório HTML e traces já configurados.
+A pedido, todos os desvios visuais foram removidos — a interface agora reproduz os frames:
+- Catálogo com **239 NFTs** e as contagens exatas das coleções do Figma (33, 12, 65, 39, 23, 17, 19, 13, 18); itens do filtro em laranja
+  com a contagem em negrito, sem caixa de seleção visível (checkbox nativo `sr-only`; selecionado = negrito + fundo).
+- Todos os NFTs com as 4 edições; **1/50 é a edição padrão** e tem o preço do card (`defaultEditionId`); 1/1 esgotada só fora dos 9 NFTs do Figma.
+- Detalhe: textos idênticos (inclusive "Kurio Editions" e os rótulos "Contrato"/"Direitos autorais" como no frame), galeria com a mesma arte
+  (2ª miniatura selecionada), mobile com imagem única (deslize) e o resumo curto "1/50"; relacionados curados (Cosmic Bloom, Violet Nomad,
+  Ivory Baron, Golden Beat, Golden Signal) completados até 15 itens (3 páginas).
+- Carrinho com só "ID do token" no desktop e desconto "(-) 00.00"; login/cadastro sem textos extras, modal sem escurecimento e com a home atrás.
+- Perfil com **um único "Salvar"** (dados + senha) e Nome ENS/Apelido obrigatórios (`EnsField` com o seletor ".eth").
+- Carteiras com **todos os campos do frame** (contrato `Wallet` ganhou `profileName`, `secondaryAddress`, `referralCode`, `email`; ENS obrigatório).
+- Pagamento com os campos/obrigatórios do frame (Código de indicação e Nome ENS obrigatórios), "Carteira e rede" como a lista de rádios do
+  Figma (escolher o provedor conecta a carteira), mobile como o frame (carteiras cadastradas, "Trocar carteira", W/M/Coinbase, Total).
+- Confirmação como modal sobre fundo sólido; data "29 Jul, 2026".
+- Painel de cenários **oculto por padrão** (ativar com `?painel=1`, desativar com `?painel=0`).
+
+Inconsistências do próprio Figma (registradas no ARCHITECTURE.md): as contagens de rede (119/78/86 = 283) não fecham com as de coleção
+(239) — distribuídas proporcionalmente (100/66/73); o frame mobile do pagamento não tem os campos do colecionador — ficam recolhidos em
+"Dados do colecionador" (estado não desenhado), abrindo sozinhos em caso de erro.
+
+Outras correções: validação dos formulários no envio (`mode: 'onSubmit'`) — a validação no blur deslocava o layout por ancoragem de
+rolagem e o clique no botão se perdia; foco devolvido ao botão da busca ao fechar o diálogo (`DialogTrigger`); foco inicial no 1º campo do login/cadastro.
+
+## Etapa 8: o que foi feito
+
+- `e2e/visual.spec.ts`: regressão visual de início, detalhe, carrinho e pagamento (desktop e mobile), baselines em `e2e/visual.spec.ts-snapshots/`.
+- `e2e/keyboard.spec.ts`: skip link, foco visível, diálogo de busca (focus trap + retorno do foco), drawer de filtros, grupo de edições com setas, login por teclado.
+- `docs/TESTES.md`: matriz dos 12 cenários → specs, isolamento, controle de tempo/eventos, artefatos.
+- Script `npm run test:e2e:visual`.
+
+### Próximo passo (etapa 9)
+
+Lighthouse em início e detalhe, perfis mobile e desktop, 3 medições por página/perfil com mediana (build otimizado, cenário padrão dos mocks);
+configuração versionada, relatórios HTML/JSON, versões/ambiente, LCP/CLS/TBT e análise de resultados abaixo das metas.
 
 ## Comandos
 
