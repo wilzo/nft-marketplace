@@ -65,12 +65,17 @@ export function toApiError(error: unknown): ApiError {
         retryable: e.retryable,
       })
     }
-    return new ApiError({
-      kind: 'http',
-      status: error.response.status,
-      message: 'Algo deu errado. Tente novamente.',
-      retryable: error.response.status >= 500,
-    })
+    // Resposta fora do envelope da API: registra para diagnóstico e explica a causa provável.
+    const { status, data, headers } = error.response
+    console.error('[api] resposta fora do contrato', { method: error.config?.method, url: error.config?.url, status, data })
+    const isHtml = String(headers?.['content-type'] ?? '').includes('text/html') || (typeof data === 'string' && data.trimStart().startsWith('<'))
+    const mswException = data && typeof data === 'object' && 'message' in data && typeof (data as { message: unknown }).message === 'string'
+    const message = isHtml || status === 404 || status === 405
+      ? 'A API simulada não respondeu nesta página (o service worker dos mocks não está ativo). Recarregue a página e tente de novo.'
+      : mswException
+        ? `Erro interno da API simulada: ${(data as { message: string }).message}`
+        : `Algo deu errado (HTTP ${status}). Tente novamente.`
+    return new ApiError({ kind: 'http', status, code: 'INTERNAL_ERROR', message, retryable: status >= 500 })
   }
   return new ApiError({ kind: 'invalid-response', message: error instanceof Error ? error.message : 'Erro inesperado', retryable: false })
 }
