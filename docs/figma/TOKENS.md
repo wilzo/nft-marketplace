@@ -1,6 +1,6 @@
 # Tokens e assets do Figma (Kurio)
 
-Fonte: `docs/figma/file.json` (snapshot via REST API) e screenshots em `docs/figma/screens/`.
+Fonte: estilos nomeados do arquivo Figma do desafio (extraídos pela API REST do Figma durante o desenvolvimento).
 Implementação: `src/index.css` (`@theme`) e variáveis do shadcn/ui.
 
 ## Cores (estilos nomeados)

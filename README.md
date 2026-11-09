@@ -281,7 +281,7 @@ src/
   routes/       rotas do TanStack Router (uma por tela)
 e2e/            specs Playwright + helpers e baselines visuais
 lighthouse/     configuração, resultados, relatórios e análise
-docs/           enunciado, progresso, matriz de testes, material extraído do Figma
+docs/           enunciado, matriz de testes, tokens do Figma e artes originais (docs/figma)
 ```
 
 Detalhes em [ARCHITECTURE.md](ARCHITECTURE.md).
