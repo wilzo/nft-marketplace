@@ -146,12 +146,46 @@ let active: ScenarioConfig = buildScenario(DEFAULT_SCENARIO)
 /** Contagem de falhas já aplicadas por regra (para `times`). Não persiste: reinicia a cada carga. */
 const failureHits = new Map<number, number>()
 
+/** Cenário salvo por outra versão (campos ausentes, nome desconhecido, JSON inválido) → completado/descartado. */
+function parseScenario(raw: string | null): ScenarioConfig | null {
+  if (!raw) return null
+  try {
+    const saved = JSON.parse(raw) as Partial<ScenarioConfig> | null
+    if (!saved || typeof saved.name !== 'string' || !(saved.name in SCENARIO_PRESETS)) return null
+    const base = buildScenario(saved.name)
+    return {
+      ...base,
+      ...saved,
+      latency: saved.latency ?? base.latency,
+      failures: Array.isArray(saved.failures) ? saved.failures : base.failures,
+      checkout: { ...base.checkout, ...saved.checkout },
+      wallet: { ...base.wallet, ...saved.wallet },
+      realtime: { ...base.realtime, ...saved.realtime },
+    }
+  } catch {
+    return null
+  }
+}
+
+let listening = false
+
 export function loadScenario() {
   try {
-    const raw = localStorage.getItem(SCENARIO_STORAGE_KEY)
-    if (raw) active = JSON.parse(raw) as ScenarioConfig
+    active = parseScenario(localStorage.getItem(SCENARIO_STORAGE_KEY)) ?? buildScenario(DEFAULT_SCENARIO)
   } catch {
     active = buildScenario(DEFAULT_SCENARIO)
+  }
+  // Outra aba trocou o cenário: esta aba passa a usar o mesmo.
+  if (!listening && typeof window !== 'undefined') {
+    listening = true
+    window.addEventListener('storage', (event) => {
+      if (event.key !== SCENARIO_STORAGE_KEY) return
+      const next = parseScenario(event.newValue)
+      if (next) {
+        active = next
+        failureHits.clear()
+      }
+    })
   }
 }
 

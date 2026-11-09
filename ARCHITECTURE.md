@@ -166,7 +166,13 @@ aos testes que a rede está pronta.
 
 ## 10. Camada de mocks
 
-- **Banco** em `localStorage` (`kurio:mock-db`, versão de schema — mudanças de seed recriam o banco). `transact()`
+- **Banco** em `localStorage` (`kurio:mock-db`). Ao carregar, o banco salvo só é adotado se tiver o `schemaVersion` atual
+  **e** a forma esperada; versão antiga, banco parcial ou JSON inválido são descartados e recriados a partir do seed.
+  O cenário salvo (`kurio:mock-scenario`) é completado com os valores padrão do preset.
+- **Várias abas:** cada aba mantém uma cópia do banco em memória. Um listener do evento `storage` adota o banco
+  gravado por outra aba — sem isso, uma aba antiga regravava o banco inteiro e apagava a sessão recém-criada em outra
+  (causa do bug "o login não fica", coberto por `e2e/login-regression.spec.ts`).
+- **Gravação:** `transact()`
   aplica mudanças e persiste, inclusive quando o handler lança erro depois de alterar o estado (necessário, por
   exemplo, no cenário "preço alterado", que muda o catálogo e responde 409).
 - **Seed determinístico:** 239 NFTs com as contagens do Figma, 4 edições cada, ids e preços estáveis, dois usuários
