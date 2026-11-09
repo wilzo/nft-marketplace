@@ -125,9 +125,11 @@ function PriceFilter({
   onApply: (min: string | undefined, max: string | undefined) => void
 }) {
   const bounds: [number, number] = range ? [toCents(range.min), toCents(range.max)] : [2, 1230]
+  // Valores da URL fora da faixa do catálogo são limitados a ela (o slider nunca mostra mínimo > máximo).
+  const clamp = (c: number) => Math.min(bounds[1], Math.max(bounds[0], c))
   const fromSearch = (): [number, number] => [
-    search.minPrice ? toCents(search.minPrice) : bounds[0],
-    search.maxPrice ? toCents(search.maxPrice) : bounds[1],
+    search.minPrice ? clamp(toCents(search.minPrice)) : bounds[0],
+    search.maxPrice ? clamp(toCents(search.maxPrice)) : bounds[1],
   ]
   const [value, setValue] = useState<[number, number]>(fromSearch)
   // Sincroniza com a URL (voltar/avançar, limpar filtros) e com a faixa da API, sem efeito.
