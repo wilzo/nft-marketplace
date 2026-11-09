@@ -288,7 +288,8 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
 - **Acessibilidade:** skip link, foco visível, diálogos com *focus trap* e retorno do foco, grupos de rádio com setas,
   `aria-live` para mudanças de preço/status, alvos ≥ 24 px, contraste AA. Dicas de formato dos campos ficam em texto
   só para leitores de tela (o Figma não as mostra).
-- **Breakpoint** em 1024 px: abaixo dele, layout mobile do Figma (tab bar, filtros em gaveta, carrinho e pagamento
+- **Breakpoint** em 64rem (1024 px com a fonte padrão), igual no CSS (Tailwind `lg`) e no JS (`DESKTOP_QUERY`): com a fonte
+  do navegador ampliada os dois trocam de layout juntos. Abaixo dele, layout mobile do Figma (tab bar, filtros em gaveta, carrinho e pagamento
   em tela cheia); acima, layout desktop.
 - **Menu do usuário logado** (avatar → Meu perfil, Carteiras, Favoritos, Sair): o Figma não desenha o header logado.
 - **Hero** com arte estática (não espera a API, protegendo o LCP); os links apontam aos destaques retornados pela API.

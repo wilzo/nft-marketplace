@@ -1,5 +1,7 @@
 # Kurio — Marketplace de NFTs
 
+[![CI](https://github.com/wilzo/nft-marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/wilzo/nft-marketplace/actions/workflows/ci.yml)
+
 SPA em React + TypeScript que implementa o desafio [docs/DESAFIO.md](docs/DESAFIO.md) a partir dos frames do Figma:
 catálogo com filtros na URL, detalhe com edições, autenticação, favoritos, carrinho com cotação da API, pagamento com
 pedidos idempotentes, confirmação em tempo real (Socket.IO), perfil e carteiras.
@@ -88,8 +90,15 @@ Para rodar um teste específico: `npx playwright test e2e/checkout.spec.ts --pro
 ### Larguras avaliadas
 
 - **390 px** e **1440 px**: projetos `mobile-chromium` (390×844) e `desktop-chromium` (1440×900) — toda a suíte roda nos dois.
-- **768 px** (tablet): usa o layout mobile do Figma (o desktop começa em 1024 px). `e2e/responsive.spec.ts` abre todas as
-  telas (públicas e privadas) em 768, 390 e 1440 px e falha se houver rolagem horizontal.
+- **768 px** (tablet): usa o layout mobile do Figma (o desktop começa em 64rem = 1024 px). `e2e/responsive.spec.ts` abre todas
+  as telas (públicas e privadas) em 768, 390 e 1440 px e falha se houver rolagem horizontal.
+- **Zoom:** as mesmas telas em 320 px (equivale a zoom de 400%) e com a fonte do navegador em 200% (1280 e 390 px).
+
+### Baselines visuais e CI
+
+As baselines da regressão visual existem para Windows (`*-win32.png`) e Linux (`*-linux.png`). O
+[workflow de CI](.github/workflows/ci.yml) roda typecheck, lint e a suíte completa num Linux limpo, dentro da imagem oficial
+do Playwright, a cada push. Em macOS, gere as baselines uma vez com `npm run test:e2e:update -- e2e/visual.spec.ts`.
 
 ### Relatório e traces do Playwright
 

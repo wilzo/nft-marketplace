@@ -22,9 +22,9 @@ jobs:
     env:
       CI: 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -39,7 +39,7 @@ jobs:
 
       - name: Publicar baselines de Linux
         if: ${{ inputs.update_snapshots }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: linux-snapshots
           path: e2e/visual.spec.ts-snapshots/*-linux.png
@@ -49,7 +49,7 @@ jobs:
 
       - name: Relatório HTML
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-report
           path: playwright-report
@@ -57,7 +57,7 @@ jobs:
 
       - name: Traces e screenshots das falhas
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-results
           path: test-results

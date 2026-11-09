@@ -40,8 +40,16 @@ npm run test:e2e:report     # abre o relatório HTML (playwright-report/)
 | 12 | Skeletons em carregamento lento, feedback de falha e recuperação | `catalog.spec.ts` › skeletons durante carregamento lento; falha da API…; `cart.spec.ts` › skeleton do resumo |
 
 Regressão visual (`visual.spec.ts`): **início, detalhe, carrinho e pagamento** em desktop e mobile.
-Baselines versionadas em `e2e/visual.spec.ts-snapshots/` (geradas em Windows/Chromium; em outro SO o Playwright usa o sufixo da
-plataforma e as baselines precisam ser geradas uma vez com `npm run test:e2e:update -- e2e/visual.spec.ts`).
+Baselines versionadas em `e2e/visual.spec.ts-snapshots/` para **Windows** (`*-win32.png`) e **Linux** (`*-linux.png`, geradas no
+CI dentro da imagem oficial `mcr.microsoft.com/playwright:v1.65.0-noble`). Em macOS, gere uma vez com
+`npm run test:e2e:update -- e2e/visual.spec.ts` (ou rode a suíte na mesma imagem Docker do CI).
+
+**CI:** [.github/workflows/ci.yml](../.github/workflows/ci.yml) roda typecheck, lint e a suíte completa num Linux limpo a cada
+push, publicando o relatório HTML (e traces das falhas) como artefatos. "Run workflow" com `update_snapshots` regera as
+baselines de Linux.
+
+**Zoom e reflow** (`responsive.spec.ts`): todas as telas, públicas e privadas, em 320 px (zoom de 400%, WCAG 1.4.10),
+768, 390 e 1440 px, e com a fonte do navegador em 200% (WCAG 1.4.4) em 1280 e 390 px — nenhuma rolagem horizontal.
 
 Também: `smoke.spec.ts` (aplicação sobe com o MSW, 404), `mock-layer.spec.ts` (contratos REST e eventos da camada de mocks)
 e `responsive.spec.ts` (telas públicas e privadas sem rolagem horizontal em 768, 390 e 1440 px).
