@@ -77,7 +77,20 @@ Conexão: `io(VITE_SOCKET_URL, { transports: ['websocket'], auth: { token } })`.
 | `order.updated` | `{ type: 'order', id }` | `status` (`pending`/`confirmed`/`declined`), `txHash`, `failureReason`; `userId` no envelope | Dono do pedido |
 
 Envelope comum: `eventId` (estável entre reentregas), `occurredAt` e `version` (versão do recurso após a mudança).
-Todo evento é validado com zod (`RealtimeEvent`); eventos inválidos são descartados.
+Todo evento é validado com zod (`RealtimeEvent`); eventos inválidos são descartados. Em `nft.updated`, `price` é o preço da
+edição padrão e `available` é o total das edições; o detalhe por edição está em `editions[]`.
+
+### Transporte no ambiente de mocks
+
+- O `socket.io-client` real abre um WebSocket para `VITE_SOCKET_URL`; o MSW intercepta esse WebSocket
+  (`ws.link('wss://realtime.kurio.test/*')`) e o `@mswjs/socket.io-binding` traduz os pacotes Engine.IO/Socket.IO para
+  o servidor simulado (`src/mocks/realtime.ts`). Os eventos nascem no servidor simulado (mudanças no banco via REST
+  ou API de controle) — **nenhum evento é criado pela interface**.
+- Cliente: `RealtimeClient` (`src/lib/realtime.ts`), importado sob demanda depois que o MSW sobe; reconexão automática
+  (0,5 s → 3 s); a cada troca de sessão desconecta e conecta de novo com o token novo.
+- Servidor simulado: autentica pelo token do CONNECT, guarda o usuário da conexão, entrega `order.updated` só ao dono,
+  mantém histórico para `replay` (duplicado/antigo) e responde ao cenário `tempo-real-fora` recusando conexões.
+- Limitações do binding: ver seção 12.
 
 ## 4. Sessão
 
@@ -209,7 +222,22 @@ aos testes que a rede está pronta.
   e publicação de eventos com versão.
 - **Testes** usam a API de controle para preparar estado e disparar eventos, sem *sleeps* arbitrários.
 
-## 11. Limitações conhecidas
+## 11. O que é simulado e como
+
+Tudo abaixo é servido pelo MSW a partir do banco simulado; a aplicação só conhece os contratos REST/Socket.IO e não tem
+nenhum caminho alternativo para "modo demonstração" (`VITE_ENABLE_MOCKS` só decide se o MSW sobe e se o painel de cenários
+existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE_URL`/`VITE_SOCKET_URL` e falham sem um backend.
+
+| Domínio | Simulação |
+| --- | --- |
+| Autenticação | Usuários com senha em PBKDF2-SHA256 (salt por usuário; nunca em claro), sessões com token aleatório e expiração (TTL do cenário; `sessao-curta` = 30 s), 401 para token inválido/expirado. |
+| Login social | Provedores Google/Facebook fictícios: pedido de consentimento de uso único, contas fictícias, criação/vínculo de conta, recusa (403), conflito com conta de senha (409), falha do provedor (`oauth-falha`, 502). Nenhuma chamada ao Google/Facebook. |
+| Carteiras | Cadastro principal/secundária validado no servidor (endereço 0x, ENS, mesmo endereço nas duas → erro de campo). Conexão por carteira + rede em `/wallet-connections` (recusa no cenário `carteira-recusada`), desconexão remove a conexão. Nenhuma extensão de carteira é acessada. |
+| Pagamento | Pedido idempotente criado como `pending` só com carteira conectada; liquidação após `settleDelayMs` (3 s no padrão) ou pela API de controle; resultado `confirmed` (remove do carrinho só os itens/quantidades comprados) ou `declined` (devolve o estoque reservado). Estados terminais não mudam. |
+| Transações | `txHash` determinístico (SHA-256 do id do pedido) e link de explorador gerados pelo servidor simulado na confirmação; a UI só exibe o que veio na resposta, marcado como referência simulada. Nenhuma blockchain é consultada. |
+| Catálogo e eventos | 239 NFTs persistidos; preço/estoque mudam pela API de controle ou pelos cenários de checkout e publicam `nft.updated` com versão. |
+
+## 12. Limitações conhecidas
 
 **Binding Socket.IO do MSW (`@mswjs/socket.io-binding` 0.2):**
 - Só transporte **WebSocket** (sem long-polling); o cliente usa `transports: ['websocket']`.
@@ -230,7 +258,7 @@ aos testes que a rede está pronta.
 - Páginas editoriais, atividade, ofertas, downloads, suporte, compartilhamento e outras ações sem fluxo no Figma
   exibem o aviso "não está disponível nesta demonstração".
 
-## 12. Decisões de UX
+## 13. Decisões de UX
 
 - **Estados não desenhados** (carregando, vazio, erro, offline, sessão expirada, preço alterado, esgotado, pedido
   pendente/recusado) seguem os tokens e componentes do Figma: skeletons com as mesmas dimensões dos cards (sem CLS),
@@ -246,7 +274,32 @@ aos testes que a rede está pronta.
 - **Hero** com arte estática (não espera a API, protegendo o LCP); os links apontam aos destaques retornados pela API.
 - **Painel de cenários** fica oculto por padrão (`?painel=1`), para não interferir no layout do Figma.
 
-## 13. Desvios e inconsistências do Figma
+## 14. Acessibilidade (ajustes)
+
+- Skip link "Pular para o conteúdo", landmarks (`header`, `nav` nomeados, `main#conteudo`, `footer`) e hierarquia de
+  títulos sem saltos.
+- Diálogos (login/cadastro, busca, revisão do pedido, consentimento do login social, recibo) com *focus trap*, foco
+  inicial no primeiro campo útil e devolução do foco ao gatilho; gavetas (filtros) idem.
+- Formulários: rótulos associados (visíveis ou `sr-only` quando o Figma usa só *placeholder*), `aria-invalid` +
+  `aria-describedby` com a mensagem do erro, foco no primeiro campo inválido, erros da API no campo correspondente.
+- Estados dinâmicos anunciados: `role="alert"` para erros, `role="status"`/`aria-live` para preço alterado, status do
+  pedido, sessão expirada e resultado da busca; `aria-busy` nos carregamentos.
+- Controles: grupo de edições como rádios com setas, filtros como checkboxes nativos, quantidade com rótulos
+  "Aumentar/Diminuir quantidade", botões de ícone com nome acessível, `aria-pressed` em favoritos e paginação.
+- Alvos de toque ≥ 24 px (pontos dos carrosséis, ícones de compartilhar), contraste AA (texto de erro em coral),
+  `prefers-reduced-motion` desliga animações e *shimmer*. Lighthouse Accessibility = 100 nas 4 medições.
+
+## 15. Substituições de assets
+
+| Asset | Origem |
+| --- | --- |
+| Artes dos NFTs | 4 imagens do Figma (1254 px) convertidas em WebP 320/640/960 com `srcset` (`npm run assets:images`); originais em `docs/figma/source-images/`. Os 239 NFTs reutilizam essas 4 artes (o Figma só tem 4). |
+| Ícones | 31 SVG exportados do Figma (`src/assets/icons/`, cor via `currentColor`). Sem equivalente exportável, vêm do lucide-react no mesmo traço: coração (favoritos), *scan* da tab bar, estrela da avaliação, setas/chevrons, +/−, fechar, alertas e *spinner*. |
+| Logo e fonte | Logo "KURIO" exportado com contorno; Roboto Mono servida localmente (`@fontsource-variable/roboto-mono`). |
+| Favicon | Derivado da marca (não existe no Figma). |
+| Avatares | Inicial do nome do usuário até o envio de uma foto (o Figma usa fotos de banco de imagens). |
+
+## 16. Desvios e inconsistências do Figma
 
 | Item | Figma | Implementação | Motivo |
 | --- | --- | --- | --- |

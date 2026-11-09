@@ -15,17 +15,19 @@ reais via Axios e `socket.io-client`, que o MSW intercepta.
 
 ## Stack
 
+Versões instaladas (`package-lock.json`):
+
 | Área | Tecnologia |
 | --- | --- |
-| UI | React 19, TypeScript 7, Tailwind CSS 4, shadcn/ui (Radix) |
-| Roteamento | TanStack Router (rotas por arquivo, *code splitting*, busca validada com zod) |
-| Dados | TanStack Query 5, Axios (REST), socket.io-client 4 |
-| Contratos | zod 4 (compartilhados entre cliente e mocks) |
-| Formulários | react-hook-form + zod |
-| Mocks | MSW 2.15 + `@mswjs/socket.io-binding` |
-| Testes | Playwright (desktop 1440×900 e mobile 390×844, regressão visual) |
-| Auditoria | Lighthouse 13 (script versionado) |
-| Build | Vite 8, oxlint |
+| UI | React 19.3.1, TypeScript 7.0.2, Tailwind CSS 4.3.5, shadcn/ui (Radix UI 1.8.1) |
+| Roteamento | TanStack Router 1.170.46 (rotas por arquivo, *code splitting*, busca validada com zod) |
+| Dados | TanStack Query 5.107.1, Axios 1.21.0 (REST), socket.io-client 4.8.4 |
+| Contratos | zod 4.6.7 (compartilhados entre cliente e mocks) |
+| Formulários | react-hook-form 7.91.0 + zod |
+| Mocks | MSW 2.15.0 + `@mswjs/socket.io-binding` 0.2.0 |
+| Testes | Playwright 1.65.0 (desktop 1440×900, mobile 390×844, tablet 768 por teste de layout, regressão visual) |
+| Auditoria | Lighthouse 13.6.0 (script versionado) |
+| Build | Vite 8.3.7, oxlint 1.92.0 |
 
 ## Requisitos
 
@@ -78,6 +80,20 @@ Copie [.env.example](.env.example) para `.env.local` se quiser alterar algo.
 | `npm run assets:images` / `assets:icons` | Regeram as artes WebP responsivas e os ícones SVG a partir dos originais do Figma. |
 
 Para rodar um teste específico: `npx playwright test e2e/checkout.spec.ts --project=desktop-chromium`.
+
+### Larguras avaliadas
+
+- **390 px** e **1440 px**: projetos `mobile-chromium` (390×844) e `desktop-chromium` (1440×900) — toda a suíte roda nos dois.
+- **768 px** (tablet): usa o layout mobile do Figma (o desktop começa em 1024 px). `e2e/responsive.spec.ts` abre todas as
+  telas (públicas e privadas) em 768, 390 e 1440 px e falha se houver rolagem horizontal.
+
+### Relatório e traces do Playwright
+
+`playwright.config.ts` usa `reporter: html` + `list` e `trace: 'retain-on-failure'` (mais screenshot da falha):
+
+- relatório HTML: `playwright-report/` → `npm run test:e2e:report`;
+- trace de cada teste que falhou: `test-results/<teste>/trace.zip` → `npx playwright show-trace test-results/<teste>/trace.zip`
+  (também abre clicando no teste dentro do relatório HTML). Ambos os diretórios ficam fora do Git.
 
 ## Credenciais fictícias
 
@@ -206,6 +222,21 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | Várias abas abertas | Abra o site em duas abas, entre numa delas e use a outra | A sessão continua válida nas duas (o banco simulado é sincronizado entre abas). |
 
 Todos esses fluxos têm teste automatizado — ver [docs/TESTES.md](docs/TESTES.md).
+
+## Lighthouse
+
+Mediana de 3 medições por página e perfil (`npm run lighthouse`), build de produção com o cenário padrão dos mocks.
+Análise completa em [lighthouse/ANALISE.md](lighthouse/ANALISE.md); medições individuais em [lighthouse/RESULTADOS.md](lighthouse/RESULTADOS.md).
+
+| Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP | CLS | TBT |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Início | mobile | 55 | 100 | 100 | 100 | 6,00 s | 0 | 987 ms |
+| Início | desktop | 98 | 100 | 100 | 100 | 1,10 s | 0,003 | 75 ms |
+| Detalhe | mobile | 65 | 100 | 100 | 100 | 4,72 s | 0 | 747 ms |
+| Detalhe | desktop | 98 | 100 | 100 | 100 | 1,05 s | 0 | 0 ms |
+
+A meta de Performance mobile (≥ 90) não é atingida: o MSW e o banco simulado rodam na *thread* principal da página sob
+CPU 4× mais lenta. Causas e caminhos em [lighthouse/ANALISE.md](lighthouse/ANALISE.md).
 
 ## Deploy
 

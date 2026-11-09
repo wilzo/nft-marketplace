@@ -283,6 +283,21 @@ rolagem e o clique no botão se perdia; foco devolvido ao botão da busca ao fec
 
 Pontos a observar numa continuação: Performance mobile do Lighthouse (55/65) — caminhos em `lighthouse/ANALISE.md`.
 
+## Revisão pós-entrega (prioridades 1–5)
+
+- **P1 — login "não funcionava":** com duas abas abertas, a aba antiga regravava o banco simulado inteiro e apagava a
+  sessão recém-criada (o usuário caía em "sessão expirou"). Correção: evento `storage` sincroniza o banco e o cenário
+  entre abas; banco parcial/corrompido e cenário de versão anterior são descartados/normalizados.
+  Teste: `e2e/login-regression.spec.ts`.
+- **P2 — login social simulado:** `POST /auth/oauth/:provider/authorize` + `POST /auth/oauth/:provider`, diálogo de
+  consentimento, conflito com conta de senha, cenário `oauth-falha` (`DB_SCHEMA_VERSION` = 5). Teste: `e2e/social-login.spec.ts`.
+- **P3 — auditoria:** nada fora do MSW simulava respostas/eventos; única regra só na UI era "pedido exige carteira
+  conectada" → agora o servidor exige (409 `WALLET_NOT_CONNECTED`). 403 com tela "Acesso negado". `dev:no-mocks` chama
+  `/api` e `wss://realtime.kurio.test` de verdade e falha sem backend. Teste: `e2e/simulated-apis.spec.ts`.
+- **P4 — fluxos de falha:** tabela do README completa; troca de usuário testada sem reload (cache + Socket.IO).
+- **P5 — documentação:** 768 px (`e2e/responsive.spec.ts`), traces, Lighthouse e versões no README; ARCHITECTURE com
+  "O que é simulado", transporte Socket.IO, acessibilidade e assets; matriz em `docs/TESTES.md`.
+
 ## Comandos
 
 ```bash
