@@ -130,6 +130,16 @@ export function CatalogSection({ search, data, isPending, isError, error, isRefr
                   Tentar novamente
                 </Button>
               </div>
+            ) : data && data.items.length === 0 && data.total > 0 ? (
+              <div className="flex flex-col items-start gap-4 rounded-lg bg-surface-card p-6">
+                <p className="font-bold">Esta página não existe.</p>
+                <p className="text-sm text-sand">
+                  Há {data.total} NFTs para esta busca, em {data.totalPages} {data.totalPages === 1 ? 'página' : 'páginas'}.
+                </p>
+                <Button size="cta" variant="outline" onClick={() => onChange({})}>
+                  Ir para a primeira página
+                </Button>
+              </div>
             ) : data && data.items.length === 0 ? (
               <div className="flex flex-col items-start gap-4 rounded-lg bg-surface-card p-6">
                 <p className="font-bold">Nenhum NFT encontrado.</p>
