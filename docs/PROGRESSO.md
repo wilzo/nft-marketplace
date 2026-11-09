@@ -14,7 +14,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ✅ Concluída |
 | 7 | Perfil e carteiras | ✅ Concluída |
 | 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ✅ Concluída (matriz em [docs/TESTES.md](TESTES.md)) |
-| 9 | Auditoria Lighthouse (3 medições, mediana, relatórios) | ⬜ |
+| 9 | Auditoria Lighthouse (3 medições, mediana, relatórios) | ✅ Concluída ([lighthouse/ANALISE.md](../lighthouse/ANALISE.md)) |
 | 10 | README.md, ARCHITECTURE.md e deploy final | ⬜ |
 
 ## Etapa 1: o que foi feito
@@ -258,10 +258,22 @@ rolagem e o clique no botão se perdia; foco devolvido ao botão da busca ao fec
 - `docs/TESTES.md`: matriz dos 12 cenários → specs, isolamento, controle de tempo/eventos, artefatos.
 - Script `npm run test:e2e:visual`.
 
-### Próximo passo (etapa 9)
+## Etapa 9: o que foi feito
 
-Lighthouse em início e detalhe, perfis mobile e desktop, 3 medições por página/perfil com mediana (build otimizado, cenário padrão dos mocks);
-configuração versionada, relatórios HTML/JSON, versões/ambiente, LCP/CLS/TBT e análise de resultados abaixo das metas.
+- `lighthouse/config.mjs` (configuração versionada), `scripts/lighthouse.mjs` (preview do build, 3 medições/página/perfil em Chrome novo,
+  medianas, LCP/CLS/TBT), `lighthouse/RESULTADOS.md` (gerado), `lighthouse/summary.json`, `lighthouse/reports/*.report.{html,json}`,
+  `lighthouse/ANALISE.md` (causas e justificativas). Script: `npm run lighthouse` (`LH_RUNS=1` para medição rápida).
+- Medianas: desktop 98/100/100/100 nas duas páginas; mobile início 55 e detalhe 65 em Performance (Accessibility, Best Practices e SEO = 100).
+- Otimizações: inicialização progressiva (`src/lib/boot.ts`: requisições e socket aguardam o MSW; params `?cenario`/`?painel` lidos antes do Router
+  em `src/mocks/boot-params.ts`), conteúdo com `min-h-dvh` (CLS 0,288 → 0), hero por breakpoint, header desktop lazy, alvos de toque ≥ 24 px,
+  `role="img"` nas estrelas, `h2` no painel de detalhes, `robots.txt`.
+- Desvio mínimo do Figma por acessibilidade: espaço entre os pontos dos carrosséis 8 → 16 px (alvos de 24 px, WCAG 2.5.8).
+
+### Próximo passo (etapa 10)
+
+README.md (setup, variáveis, credenciais, cenários e reset, comandos, como reproduzir falhas) e ARCHITECTURE.md (contratos REST e eventos,
+sessão, carrinho, cache/retries, reconciliação REST × Socket.IO, limitações do binding, decisões de UX e desvios do Figma), deploy final e
+conferência a partir de um checkout limpo.
 
 ## Comandos
 

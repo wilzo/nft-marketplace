@@ -1,0 +1,415 @@
+{
+  "environment": {
+    "date": "2026-11-09T17:49:12.355Z",
+    "lighthouse": "13.6.0",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+    "node": "v24.18.0",
+    "os": "Windows_NT 10.0.26200 (x64)",
+    "cpu": "Intel(R) Processor U300 × 6",
+    "memoryGb": 8,
+    "server": "vite preview (build de produção) em http://localhost:4175",
+    "mocks": "MSW ativo, cenário padrão (\"padrao\": latência fixa de 150 ms por requisição REST)",
+    "throttling": {
+      "mobile": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "desktop": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      }
+    }
+  },
+  "targets": {
+    "performance": 90,
+    "accessibility": 95,
+    "best-practices": 95,
+    "seo": 90
+  },
+  "groups": [
+    {
+      "page": "inicio",
+      "path": "/",
+      "profile": "mobile",
+      "median": {
+        "performance": 55,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100,
+        "lcpMs": 6005,
+        "cls": 0,
+        "tbtMs": 987
+      },
+      "runs": [
+        {
+          "page": "inicio",
+          "profile": "mobile",
+          "run": 1,
+          "scores": {
+            "performance": 55,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 6096,
+          "cls": 0,
+          "tbtMs": 1043,
+          "fcpMs": 914,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          },
+          "formFactor": "mobile"
+        },
+        {
+          "page": "inicio",
+          "profile": "mobile",
+          "run": 2,
+          "scores": {
+            "performance": 53,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 6005,
+          "cls": 0,
+          "tbtMs": 987,
+          "fcpMs": 2464,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          },
+          "formFactor": "mobile"
+        },
+        {
+          "page": "inicio",
+          "profile": "mobile",
+          "run": 3,
+          "scores": {
+            "performance": 59,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 5601,
+          "cls": 0,
+          "tbtMs": 661,
+          "fcpMs": 2513,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          },
+          "formFactor": "mobile"
+        }
+      ]
+    },
+    {
+      "page": "inicio",
+      "path": "/",
+      "profile": "desktop",
+      "median": {
+        "performance": 98,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100,
+        "lcpMs": 1097,
+        "cls": 0.003,
+        "tbtMs": 75
+      },
+      "runs": [
+        {
+          "page": "inicio",
+          "profile": "desktop",
+          "run": 1,
+          "scores": {
+            "performance": 98,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 1074,
+          "cls": 0.003,
+          "tbtMs": 76,
+          "fcpMs": 241,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "requestLatencyMs": 0,
+            "downloadThroughputKbps": 0,
+            "uploadThroughputKbps": 0,
+            "cpuSlowdownMultiplier": 1
+          },
+          "formFactor": "desktop"
+        },
+        {
+          "page": "inicio",
+          "profile": "desktop",
+          "run": 2,
+          "scores": {
+            "performance": 97,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 1157,
+          "cls": 0.003,
+          "tbtMs": 75,
+          "fcpMs": 255,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "requestLatencyMs": 0,
+            "downloadThroughputKbps": 0,
+            "uploadThroughputKbps": 0,
+            "cpuSlowdownMultiplier": 1
+          },
+          "formFactor": "desktop"
+        },
+        {
+          "page": "inicio",
+          "profile": "desktop",
+          "run": 3,
+          "scores": {
+            "performance": 98,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 1097,
+          "cls": 0.003,
+          "tbtMs": 34,
+          "fcpMs": 251,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "requestLatencyMs": 0,
+            "downloadThroughputKbps": 0,
+            "uploadThroughputKbps": 0,
+            "cpuSlowdownMultiplier": 1
+          },
+          "formFactor": "desktop"
+        }
+      ]
+    },
+    {
+      "page": "detalhe",
+      "path": "/nft/emerald-ape-042",
+      "profile": "mobile",
+      "median": {
+        "performance": 65,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100,
+        "lcpMs": 4717,
+        "cls": 0,
+        "tbtMs": 747
+      },
+      "runs": [
+        {
+          "page": "detalhe",
+          "profile": "mobile",
+          "run": 1,
+          "scores": {
+            "performance": 66,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 4640,
+          "cls": 0,
+          "tbtMs": 727,
+          "fcpMs": 908,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          },
+          "formFactor": "mobile"
+        },
+        {
+          "page": "detalhe",
+          "profile": "mobile",
+          "run": 2,
+          "scores": {
+            "performance": 63,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 4717,
+          "cls": 0,
+          "tbtMs": 880,
+          "fcpMs": 915,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          },
+          "formFactor": "mobile"
+        },
+        {
+          "page": "detalhe",
+          "profile": "mobile",
+          "run": 3,
+          "scores": {
+            "performance": 65,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 4720,
+          "cls": 0,
+          "tbtMs": 747,
+          "fcpMs": 920,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 150,
+            "throughputKbps": 1638.4,
+            "requestLatencyMs": 562.5,
+            "downloadThroughputKbps": 1474.5600000000002,
+            "uploadThroughputKbps": 675,
+            "cpuSlowdownMultiplier": 4
+          },
+          "formFactor": "mobile"
+        }
+      ]
+    },
+    {
+      "page": "detalhe",
+      "path": "/nft/emerald-ape-042",
+      "profile": "desktop",
+      "median": {
+        "performance": 98,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100,
+        "lcpMs": 1047,
+        "cls": 0,
+        "tbtMs": 0
+      },
+      "runs": [
+        {
+          "page": "detalhe",
+          "profile": "desktop",
+          "run": 1,
+          "scores": {
+            "performance": 98,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 1047,
+          "cls": 0,
+          "tbtMs": 0,
+          "fcpMs": 242,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "requestLatencyMs": 0,
+            "downloadThroughputKbps": 0,
+            "uploadThroughputKbps": 0,
+            "cpuSlowdownMultiplier": 1
+          },
+          "formFactor": "desktop"
+        },
+        {
+          "page": "detalhe",
+          "profile": "desktop",
+          "run": 2,
+          "scores": {
+            "performance": 98,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 1132,
+          "cls": 0,
+          "tbtMs": 32,
+          "fcpMs": 256,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "requestLatencyMs": 0,
+            "downloadThroughputKbps": 0,
+            "uploadThroughputKbps": 0,
+            "cpuSlowdownMultiplier": 1
+          },
+          "formFactor": "desktop"
+        },
+        {
+          "page": "detalhe",
+          "profile": "desktop",
+          "run": 3,
+          "scores": {
+            "performance": 99,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 100
+          },
+          "lcpMs": 1037,
+          "cls": 0,
+          "tbtMs": 0,
+          "fcpMs": 252,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+          "lighthouseVersion": "13.6.0",
+          "throttling": {
+            "rttMs": 40,
+            "throughputKbps": 10240,
+            "requestLatencyMs": 0,
+            "downloadThroughputKbps": 0,
+            "uploadThroughputKbps": 0,
+            "cpuSlowdownMultiplier": 1
+          },
+          "formFactor": "desktop"
+        }
+      ]
+    }
+  ]
+}

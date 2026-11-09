@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { env } from '@/config/env'
 import { toApiError, type ApiError } from './api-error'
+import { whenNetworkReady } from './boot'
 import { guestCartId, sessionToken } from './client-storage'
 
 export const CART_HEADER = 'X-Cart-Id'
@@ -17,7 +18,9 @@ export const http = axios.create({
   paramsSerializer: { indexes: null },
 })
 
-http.interceptors.request.use((config) => {
+http.interceptors.request.use(async (config) => {
+  // Aguarda a camada de mocks (MSW) estar pronta: nenhuma requisição sai antes dela.
+  await whenNetworkReady()
   const token = sessionToken.get()
   if (token) config.headers.set('Authorization', `Bearer ${token}`)
   const cartId = guestCartId.get()

@@ -3,11 +3,12 @@ import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { MobileTabBar } from '@/components/layout/mobile-tab-bar'
 import { SiteFooter } from '@/components/layout/site-footer'
-import { SiteHeader } from '@/components/layout/site-header'
 import { Toaster } from '@/components/ui/sonner'
 import { env } from '@/config/env'
+import { PANEL_STORAGE_KEY } from '@/mocks/boot-params'
 import { useRealtimeSync } from '@/features/realtime/use-realtime-sync'
 import { useSessionSync } from '@/features/session/use-session-sync'
+import { DESKTOP_QUERY, useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 
 export interface RouterContext {
@@ -20,11 +21,14 @@ export interface RouterContext {
  */
 function panelEnabled() {
   try {
-    return localStorage.getItem('kurio:scenario-panel') === '1'
+    return localStorage.getItem(PANEL_STORAGE_KEY) === '1'
   } catch {
     return false
   }
 }
+/** Header desktop (menu, busca, Floating UI) carregado só no desktop — no mobile ele não é exibido. */
+const SiteHeader = lazy(() => import('@/components/layout/site-header').then((m) => ({ default: m.SiteHeader })))
+
 const ScenarioPanel = env.mocksEnabled ? lazy(() => import('@/features/dev/scenario-panel')) : null
 
 export const Route = createRootRouteWithContext<RouterContext>()({
@@ -35,6 +39,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootLayout() {
   useSessionSync()
   useRealtimeSync()
+  const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   // Login/cadastro no mobile são telas cheias (sem navegação e rodapé, como no Figma).
   const isAuth = pathname === '/entrar' || pathname === '/cadastro'
@@ -49,15 +54,21 @@ function RootLayout() {
       >
         Pular para o conteúdo
       </a>
-      <SiteHeader />
-      <div className="flex-1">
+      {isDesktop && (
+        // Espaço reservado com a altura do header: sem deslocamento de layout ao carregar
+        <Suspense fallback={<div aria-hidden className="mx-auto h-[45px] w-full max-w-(--container-content) border-b border-brand/30" />}>
+          <SiteHeader />
+        </Suspense>
+      )}
+      {/* Altura mínima de uma tela: o rodapé não aparece durante o carregamento para depois ser empurrado (CLS) */}
+      <div className="min-h-dvh flex-1">
         <Outlet />
       </div>
       {/* Login, cadastro, carrinho e pagamento são telas cheias no mobile (Figma): sem rodapé. */}
       <div className={cn((isAuth || pathname === '/carrinho' || pathname === '/pagamento') && 'max-lg:hidden')}>
         <SiteFooter />
       </div>
-      {!hideTabBar && <MobileTabBar />}
+      {!hideTabBar && !isDesktop && <MobileTabBar />}
       {/* No mobile, abaixo da barra superior (voltar/favoritar) para não encobrir controles. */}
       <Toaster position="top-center" richColors closeButton mobileOffset={{ top: 76 }} />
       {ScenarioPanel && panelEnabled() && (

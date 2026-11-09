@@ -6,6 +6,7 @@ import { NftImage } from '@/components/nft-image'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { notAvailable } from '@/lib/out-of-scope'
+import { DESKTOP_QUERY, useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 
 /**
@@ -19,11 +20,12 @@ const HERO_SLIDES: { image: NftImageKey; fallbackId: string }[] = [
 ]
 
 export function Hero({ highlights }: { highlights: Highlights | undefined }) {
+  const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [slide, setSlide] = useState(0)
   const ids = highlights ? [highlights.hero.id, highlights.spotlight.id, highlights.related[0]?.id ?? HERO_SLIDES[2].fallbackId] : null
   const current = HERO_SLIDES[slide]
   const dots = (
-    <div role="group" aria-label="Destaques" className="flex gap-2">
+    <div role="group" aria-label="Destaques" className="flex gap-4">
       {HERO_SLIDES.map((s, i) => (
         <button
           key={s.image}
@@ -31,16 +33,21 @@ export function Hero({ highlights }: { highlights: Highlights | undefined }) {
           aria-label={`Destaque ${i + 1} de ${HERO_SLIDES.length}`}
           aria-pressed={i === slide}
           onClick={() => setSlide(i)}
-          className={cn('size-2 rounded-full bg-brand transition-opacity', i === slide ? 'opacity-100' : 'opacity-50 hover:opacity-80')}
-        />
+          // Área de toque de 24px; o ponto visível mantém 8px (Figma)
+          className="group/dot -m-2 grid size-6 place-items-center"
+        >
+          <span aria-hidden className={cn('size-2 rounded-full bg-brand transition-opacity', i === slide ? 'opacity-100' : 'opacity-50 group-hover/dot:opacity-80')} />
+        </button>
       ))}
     </div>
   )
 
   return (
     <section aria-labelledby="hero-title">
-      {/* Desktop (Figma "Hero": texto 600px + arte 450×450 r24) */}
-      <div className="relative hidden h-[450px] items-center gap-[110px] overflow-hidden pl-10 lg:flex">
+      {/* Só a variante do breakpoint atual é renderizada (a imagem eager do outro layout não é baixada) */}
+      {isDesktop ? (
+      /* Desktop (Figma "Hero": texto 600px + arte 450×450 r24) */
+      <div className="relative flex h-[450px] items-center gap-[110px] overflow-hidden pl-10">
         <div className="flex w-[600px] shrink-0 flex-col gap-11">
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-1">
@@ -73,16 +80,17 @@ export function Hero({ highlights }: { highlights: Highlights | undefined }) {
         </Link>
       </div>
 
-      {/* Mobile (Figma "Hero Banner": 366×190 r12, texto + 2 artes) */}
-      <div className="relative flex h-[190px] overflow-hidden rounded-xl bg-linear-to-br from-surface-dark via-surface-raised to-surface-card p-4 lg:hidden">
+      ) : (
+      /* Mobile (Figma "Hero Banner": 366×190 r12, texto + 2 artes) */
+      <div className="relative flex h-[190px] overflow-hidden rounded-xl bg-linear-to-br from-surface-dark via-surface-raised to-surface-card p-4">
         <div aria-hidden className="absolute -top-8 -left-20 size-62 rounded-full bg-brand/10" />
         <div className="relative flex min-w-0 flex-1 flex-col">
           <p className="text-xs font-medium tracking-[0.05em]">Bem-vindo à Kurio</p>
-          <h1 id="hero-title-mobile" className="mt-2 text-lg leading-7 font-bold">
+          <h1 id="hero-title" className="mt-2 text-lg leading-7 font-bold">
             SEJA DONO DA CULTURA DIGITAL
           </h1>
           <p className="mt-1 text-xs leading-5 text-sand">Descubra NFTs selecionados de criadores do mundo todo.</p>
-          <Link to="/" hash="catalogo" className="mt-auto flex items-center gap-2 text-xs font-bold text-brand">
+          <Link to="/" hash="catalogo" className="-my-1 mt-auto flex min-h-6 items-center gap-2 self-start py-1 text-xs font-bold text-brand">
             EXPLORAR <ArrowRight aria-hidden className="size-4 text-brand" />
           </Link>
         </div>
@@ -97,6 +105,7 @@ export function Hero({ highlights }: { highlights: Highlights | undefined }) {
         </div>
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2">{dots}</div>
       </div>
+      )}
     </section>
   )
 }

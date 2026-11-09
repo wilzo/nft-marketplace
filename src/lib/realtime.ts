@@ -1,6 +1,7 @@
 import type { Socket } from 'socket.io-client'
 import { REALTIME_EVENTS, RealtimeEvent } from '@/api/contracts'
 import { env } from '@/config/env'
+import { whenNetworkReady } from './boot'
 
 export type RealtimeStatus = 'idle' | 'connecting' | 'connected' | 'disconnected'
 type EventOf<T extends RealtimeEvent['type']> = Extract<RealtimeEvent, { type: T }>
@@ -47,6 +48,7 @@ export class RealtimeClient {
     this.pending = true
     this.setStatus('connecting')
 
+    await whenNetworkReady()
     const { io } = await import('socket.io-client')
     this.pending = false
     if (attempt !== this.attempt) return // sessão mudou durante o import

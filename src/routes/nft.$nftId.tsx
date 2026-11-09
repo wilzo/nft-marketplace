@@ -165,7 +165,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
                 {formatEth(edition.price)} ETH
               </p>
               <p className="hidden items-center gap-1 text-[15px] lg:flex">
-                <span className="flex" aria-label={`Nota ${nft.rating.average.toFixed(1)} de 5`}>
+                <span className="flex" role="img" aria-label={`Nota ${nft.rating.average.toFixed(1)} de 5`}>
                   {Array.from({ length: 5 }, (_, i) => (
                     <Star key={i} aria-hidden className={cn('size-[15px] text-khaki', i < Math.round(nft.rating.average) && 'fill-khaki')} />
                   ))}
@@ -225,11 +225,11 @@ function DetailView({ nft }: { nft: NftDetail }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Compartilhar no LinkedIn (abre em nova aba)"
-              className="text-cream hover:text-brand-accent"
+              className="grid size-6 place-items-center text-cream hover:text-brand-accent"
             >
               <LinkedinIcon aria-hidden className="h-[14px] w-auto" />
             </a>
-            <a href={`mailto:?subject=${encodeURIComponent(nft.name)}&body=${encodeURIComponent(url)}`} aria-label="Compartilhar por e-mail" className="text-cream hover:text-brand-accent">
+            <a href={`mailto:?subject=${encodeURIComponent(nft.name)}&body=${encodeURIComponent(url)}`} aria-label="Compartilhar por e-mail" className="grid size-6 place-items-center text-cream hover:text-brand-accent">
               <svg aria-hidden viewBox="0 0 24 24" className="size-[18px] fill-none stroke-current stroke-2">
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="m3 7 9 6 9-6" />
@@ -240,7 +240,7 @@ function DetailView({ nft }: { nft: NftDetail }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Compartilhar no Twitter (abre em nova aba)"
-              className="text-cream hover:text-brand-accent"
+              className="grid size-6 place-items-center text-cream hover:text-brand-accent"
             >
               <TwitterIcon aria-hidden className="h-3 w-auto" />
             </a>
@@ -271,15 +271,15 @@ function DetailView({ nft }: { nft: NftDetail }) {
           ))}
           {/* Rótulos e conteúdos exatamente como no Figma */}
           <div>
-            <h3 className="font-bold text-cream">Rede:</h3>
+            <h2 className="text-sm font-bold text-cream">Rede:</h2>
             <p>Cunhado na {NETWORK_LABELS[nft.network]} com procedência imutável e metadados armazenados no IPFS.</p>
           </div>
           <div>
-            <h3 className="font-bold text-cream">Contrato:</h3>
+            <h2 className="text-sm font-bold text-cream">Contrato:</h2>
             <p>Direitos autorais do criador: {nft.royaltyPercent}% nas vendas secundárias, pagos automaticamente pelos mercados compatíveis.</p>
           </div>
           <div>
-            <h3 className="font-bold text-cream">Direitos autorais:</h3>
+            <h2 className="text-sm font-bold text-cream">Direitos autorais:</h2>
             <p>
               {shortContract} • Contrato inteligente {nft.standard} verificado.
             </p>

@@ -44,7 +44,7 @@ export function NftCarousel({ title, items, id }: { title: string; items: NftSum
         ))}
       </ul>
       {pages > 1 && (
-        <div role="group" aria-label={`Páginas de ${title}`} className="flex justify-center gap-2">
+        <div role="group" aria-label={`Páginas de ${title}`} className="flex justify-center gap-5">
           {Array.from({ length: pages }, (_, i) => (
             <button
               key={i}
@@ -52,8 +52,10 @@ export function NftCarousel({ title, items, id }: { title: string; items: NftSum
               aria-label={`Página ${i + 1} de ${pages}`}
               aria-pressed={i === page}
               onClick={() => scroller.current?.scrollTo({ left: i * scroller.current.clientWidth })}
-              className={cn('size-3 rounded-full border border-brand', i === page && 'bg-brand')}
-            />
+              className="-m-1.5 grid size-6 place-items-center"
+            >
+              <span aria-hidden className={cn('size-3 rounded-full border border-brand', i === page && 'bg-brand')} />
+            </button>
           ))}
         </div>
       )}
