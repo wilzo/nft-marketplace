@@ -2,6 +2,7 @@
   "name": "nft-marketplace",
   "private": true,
   "version": "0.0.0",
+  "author": "Wilson Hernandes <wilson.hernandesjunior@gmail.com> (https://github.com/wilzo)",
   "type": "module",
   "scripts": {
     "dev": "vite",

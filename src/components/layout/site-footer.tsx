@@ -142,7 +142,25 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <p className="py-2 text-center text-sm leading-[30px]">© 2026 Kurio. Propriedade digital para todos.</p>
+      {/* Linha da marca (Figma) + crédito do autor no mesmo estilo; cada parte quebra como um bloco inteiro. */}
+      <p className="flex flex-wrap justify-center gap-x-2 py-2 text-center text-sm leading-[30px]">
+        <span>© 2026 Kurio. Propriedade digital para todos.</span>
+        <span className="whitespace-nowrap">
+          <span aria-hidden className="mr-2 hidden sm:inline">
+            ·
+          </span>
+          Desenvolvido por{' '}
+          <a
+            href="https://github.com/wilzo"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Wilson Hernandes no GitHub (abre em nova aba)"
+            className="inline-flex min-h-6 items-center rounded-sm underline underline-offset-4 hover:text-brand-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Wilson Hernandes
+          </a>
+        </span>
+      </p>
     </footer>
   )
 }

@@ -339,6 +339,7 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
 | Header logado, estados de erro/vazio/carregando | Não desenhados | Criados com os tokens do Figma | Exigidos pelo desafio. |
 | Ícones de coração e da tab bar | Não exportáveis | lucide-react, mesmo traço e tamanho | Ausentes dos assets do arquivo. |
 | Seções sem tela (Criadores, Aprenda, suporte, atividade, ofertas, downloads, ajuda, Diário…) | Apenas visuais | Links mantidos, levando à página informativa `/secao-indisponivel` (sem criar as seções) | Fora do escopo do desafio; comportamento coerente sem sucesso falso. |
+| Linha de copyright do rodapé | Só o texto da marca ("© 2026 Kurio. Propriedade digital para todos.") | Mesmo texto + "· Desenvolvido por Wilson Hernandes" (link para o GitHub, nova aba), mesma tipografia, cor e tamanho; quebra como bloco inteiro no mobile | Identificação da autoria do desafio. |
 | Página "seção indisponível" | Não existe | Criada com os tokens do projeto (título, texto, CTA) | Destino coerente para os links acima. |
 
 Os demais elementos (textos, tokens de cor, tipografia Roboto Mono, raios, sombras, espaçamentos, ordem dos blocos

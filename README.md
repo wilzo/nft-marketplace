@@ -13,6 +13,10 @@ reais via Axios e `socket.io-client`, que o MSW intercepta.
 - **Arquitetura e decisões:** [ARCHITECTURE.md](ARCHITECTURE.md)
 - **Matriz de testes:** [docs/TESTES.md](docs/TESTES.md) · **Lighthouse:** [lighthouse/ANALISE.md](lighthouse/ANALISE.md)
 
+## Autor
+
+**Wilson Hernandes** — GitHub: [github.com/wilzo](https://github.com/wilzo)
+
 ## Stack
 
 Versões instaladas (`package-lock.json`):
