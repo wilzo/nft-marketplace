@@ -182,10 +182,16 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | Rollback otimista | `/?cenario=favoritos-falha`, favorite um NFT | O coração volta ao estado anterior e um aviso é exibido. |
 | Sessão expirada | `/?cenario=sessao-curta`, entre e aguarde 30 s (ou `POST /api/__mock/sessions/expire`) | Ida ao login com aviso "sessão expirou" e retorno à mesma URL após entrar; o rascunho do pagamento é preservado. |
 | Rota privada sem sessão | Abra `/perfil` deslogado | Redireciona a `/entrar?redirect=/perfil`. |
+| Conflito de cadastro | `/cadastro` com o e-mail `ana@kurio.dev` | "Este e-mail já está cadastrado" no campo E-mail (409 da API), com foco nele. |
+| Cupom inválido × expirado | Carrinho → código `NAOEXISTE`, depois `EXPIRADO` | Mensagens distintas ("Código promocional inválido" / "Este código promocional expirou") no campo; o resumo não muda. |
+| Acesso a pedido de outro usuário (403) | Como Ana, confirme um pedido e anote `/pedidos/<id>`; saia, entre como `bruno@kurio.dev` e abra a mesma URL | "Acesso negado" sem nenhum dado do pedido; a API responde 403 `FORBIDDEN`. |
+| Carrinho do visitante ao entrar | Deslogado, adicione um NFT ao carrinho; entre como `bruno@kurio.dev` | O item continua no carrinho (merge do carrinho do visitante). |
+| Logout / troca de usuário | Entre como Ana, saia e entre como Bruno (sem recarregar) | Favoritos, carrinho e pedidos são os do Bruno; o Socket.IO reconecta com o token do Bruno. |
 | Preço alterado | `/?cenario=preco-alterado`, carrinho → pagamento → revisar → confirmar | 409 com nova cotação; o usuário aceita os novos preços e confirma de novo. |
 | Item esgotado | `/?cenario=esgotado`, mesmo caminho | Conflito de disponibilidade; a revisão oferece **Revisar carrinho**, onde o item aparece como esgotado e a finalização fica bloqueada até removê-lo. |
 | Timeout com idempotência | `/?cenario=timeout-pedido`, confirme o pedido | Após 10 s o botão vira **Tentar novamente**; o reenvio usa a mesma `Idempotency-Key` e abre **o mesmo pedido** (sem duplicar). |
 | Pagamento recusado | `/?cenario=pagamento-recusado`, confirme | O pedido passa de pendente a recusado em tempo real, com o motivo. |
+| Desconexão da carteira | Pagamento → escolha **MetaMask** → **Desconectar** | A conexão é removida na API (`DELETE /wallet-connections/:id`); confirmar exige reconectar e um pedido sem conexão é recusado (409 `WALLET_NOT_CONNECTED`). |
 | Carteira recusada | `/?cenario=carteira-recusada`, escolha um provedor no pagamento | A recusa aparece abaixo das opções de carteira e a confirmação fica bloqueada; é possível tentar de novo. |
 | Login social — sucesso | `/cadastro` → **Continuar com Google** → Carla Nunes → **Continuar** | Conta criada e sessão aberta; repetir em `/entrar` entra na mesma conta. |
 | Login social — cancelamento | **Continuar com Facebook** → **Cancelar** (ou Esc) | "Você cancelou o acesso pelo Facebook"; nenhuma conta ou sessão criada; foco volta ao botão. |
@@ -193,8 +199,11 @@ Sempre partindo de `?cenario=<nome>` (ou do painel). Faça login como `ana@kurio
 | Login social — provedor fora | `/entrar?cenario=oauth-falha` → **Continuar com Google** | "O provedor de login não respondeu…"; nenhum diálogo nem sessão. |
 | Tempo real fora | `/?cenario=tempo-real-fora`, faça um pedido | Sem Socket.IO, o pedido é acompanhado por *polling* (5 s) até confirmar. |
 | Preço em tempo real | Abra `/nft/emerald-ape-042` e rode o `PATCH` do exemplo acima | Preço atualizado na tela com aviso; carrinho e cotação revalidados. |
+| Queda do Socket.IO com pedido pendente | Com um pedido pendente: `PUT /api/__mock/scenario` `{ "name": "tempo-real-fora" }`, `POST /api/__mock/realtime/disconnect`, `POST /api/__mock/orders/<id>/settle`; depois volte ao cenário `padrao` | O evento de confirmação se perde, mas a tela confirma ao reconectar (dados invalidados e relidos via REST) ou pelo *polling* — sem criar outra compra. |
+| Chave de idempotência com outro conteúdo | No console: `POST /api/orders` duas vezes com o mesmo header `Idempotency-Key` e corpos diferentes (ver `e2e/mock-layer.spec.ts`) | A 2ª resposta é 409 `IDEMPOTENCY_CONFLICT`; a mesma chave com o mesmo corpo devolve o mesmo pedido. |
 | Evento duplicado/antigo | `POST /api/__mock/realtime/replay` com `duplicate` ou `stale` | Ignorado (dedupe por `eventId` e por versão). |
 | Refresh durante pedido | Confirme um pedido e recarregue `/pedidos/<id>` | O pedido continua pendente e confirma sozinho (liquidação retomada). |
+| Várias abas abertas | Abra o site em duas abas, entre numa delas e use a outra | A sessão continua válida nas duas (o banco simulado é sincronizado entre abas). |
 
 Todos esses fluxos têm teste automatizado — ver [docs/TESTES.md](docs/TESTES.md).
 

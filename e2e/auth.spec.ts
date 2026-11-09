@@ -1,6 +1,10 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { isMobile, loginViaUi, sessionToken, submitLogin } from './support/auth'
 import { mockApi, openWithScenario } from './support/mock-api'
+
+/** Usuários associados às conexões Socket.IO abertas (null = visitante). */
+const realtimeUsers = (page: Page) => async () =>
+  ((await mockApi(page, 'GET', '/__mock/realtime')).body.connections as { userId: string | null }[]).map((c) => c.userId)
 
 test.describe('conta e sessão (etapa 4)', () => {
   test.beforeEach(async ({ page }) => {
@@ -90,10 +94,28 @@ test.describe('conta e sessão (etapa 4)', () => {
     }
     await expect(page).toHaveURL('/')
     expect(await sessionToken(page)).toBeNull()
+    // Socket.IO reconectado sem token: não recebe mais eventos privados da Ana.
+    await expect.poll(realtimeUsers(page)).toEqual([null])
 
-    await loginViaUi(page, 'bruno@kurio.dev', '/favoritos')
+    // Troca de usuário SEM recarregar a página: o que importa é a limpeza do cache feita pela aplicação.
+    if (isMobile(page)) {
+      await page.getByRole('link', { name: 'Favoritos' }).click() // rota privada → login → volta aos favoritos
+      await submitLogin(page, 'bruno@kurio.dev')
+    } else {
+      await page.getByRole('link', { name: 'Entrar' }).click()
+      await submitLogin(page, 'bruno@kurio.dev')
+      await expect(page).not.toHaveURL(/\/entrar/)
+      await page.getByRole('button', { name: 'Conta de Bruno Mendes' }).click()
+      await page.getByRole('menuitem', { name: 'Favoritos' }).click()
+    }
+    await expect(page).toHaveURL(/\/favoritos$/)
     await expect(page.getByText('Você ainda não favoritou nenhum NFT.')).toBeVisible()
     await expect(page.getByRole('link', { name: /^Emerald Ape #042/ })).toHaveCount(0)
+    await expect.poll(realtimeUsers(page)).toEqual(['usr_bruno'])
+
+    // Carrinho e carteiras são os do Bruno (vazios), não os da Ana em cache.
+    await page.getByRole('link', { name: /^Carrinho/ }).first().click()
+    await expect(page.getByText('Seu carrinho está vazio.')).toBeVisible()
   })
 
   test('favoritos: atualização otimista, rollback na falha e persistência', async ({ page }) => {
