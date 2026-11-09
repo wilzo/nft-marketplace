@@ -5,7 +5,7 @@ import ArrowRight from '@/assets/icons/curved-arrow-right.svg?react'
 import { NftImage } from '@/components/nft-image'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { notAvailable } from '@/lib/out-of-scope'
+import { OutOfScopeLink } from '@/components/out-of-scope-link'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 
@@ -199,14 +199,13 @@ export function Journal() {
               </p>
               <h3 className="text-base leading-[21px] font-bold">{p.title}</h3>
               <p className="text-xs leading-4 font-medium text-sand">{p.text}</p>
-              <button
-                type="button"
-                onClick={() => notAvailable('O Diário da Cunhagem')}
+              <OutOfScopeLink
+                section="diario-da-cunhagem"
                 className="mt-auto self-start text-xs font-bold text-brand-accent hover:underline"
                 aria-label={`Ler mais: ${p.title}`}
               >
                 Ler mais →
-              </button>
+              </OutOfScopeLink>
             </div>
           </li>
         ))}

@@ -7,7 +7,7 @@ import LogoutIcon from '@/assets/icons/curved-logout.svg?react'
 import LocationIcon from '@/assets/icons/light-outline-location.svg?react'
 import UserIcon from '@/assets/icons/user.svg?react'
 import { useLogout } from '@/features/session/mutations'
-import { notAvailable } from '@/lib/out-of-scope'
+import { OutOfScopeLink } from '@/components/out-of-scope-link'
 import { cn } from '@/lib/utils'
 import { Heart } from 'lucide-react'
 
@@ -40,9 +40,9 @@ export function AccountLayout({ children }: { children: React.ReactNode }) {
             </Link>
           </li>
           <li>
-            <button type="button" className={item} onClick={() => notAvailable('A página Atividade')}>
+            <OutOfScopeLink section="atividade" className={item}>
               <ActivityIcon aria-hidden className="size-5" /> Atividade
-            </button>
+            </OutOfScopeLink>
           </li>
           <li>
             <Link to="/favoritos" className={item}>
@@ -50,19 +50,19 @@ export function AccountLayout({ children }: { children: React.ReactNode }) {
             </Link>
           </li>
           <li>
-            <button type="button" className={item} onClick={() => notAvailable('A página Ofertas')}>
+            <OutOfScopeLink section="ofertas" className={item}>
               <ImageIcon aria-hidden className="size-5" /> Ofertas
-            </button>
+            </OutOfScopeLink>
           </li>
           <li>
-            <button type="button" className={item} onClick={() => notAvailable('A página Arquivos baixados')}>
+            <OutOfScopeLink section="arquivos-baixados" className={item}>
               <DownloadIcon aria-hidden className="size-5" /> Arquivos baixados
-            </button>
+            </OutOfScopeLink>
           </li>
           <li>
-            <button type="button" className={item} onClick={() => notAvailable('O Suporte')}>
+            <OutOfScopeLink section="suporte" className={item}>
               <DangerIcon aria-hidden className="size-5" /> Suporte
-            </button>
+            </OutOfScopeLink>
           </li>
           <li className="lg:border-t lg:border-line">
             <button type="button" className={cn(item, 'font-bold')} onClick={() => logout.mutate()} disabled={logout.isPending}>

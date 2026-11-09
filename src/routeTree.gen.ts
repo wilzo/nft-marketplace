@@ -17,6 +17,7 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as PagamentoRouteImport } from './routes/pagamento'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as SecaoIndisponivelRouteImport } from './routes/secao-indisponivel'
 import { Route as NftNftIdRouteImport } from './routes/nft.$nftId'
 import { Route as PedidosOrderIdRouteImport } from './routes/pedidos.$orderId'
 
@@ -60,6 +61,11 @@ const PerfilRoute = PerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SecaoIndisponivelRoute = SecaoIndisponivelRouteImport.update({
+  id: '/secao-indisponivel',
+  path: '/secao-indisponivel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NftNftIdRoute = NftNftIdRouteImport.update({
   id: '/nft/$nftId',
   path: '/nft/$nftId',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/favoritos': typeof FavoritosRoute
   '/pagamento': typeof PagamentoRoute
   '/perfil': typeof PerfilRoute
+  '/secao-indisponivel': typeof SecaoIndisponivelRoute
   '/nft/$nftId': typeof NftNftIdRoute
   '/pedidos/$orderId': typeof PedidosOrderIdRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/favoritos': typeof FavoritosRoute
   '/pagamento': typeof PagamentoRoute
   '/perfil': typeof PerfilRoute
+  '/secao-indisponivel': typeof SecaoIndisponivelRoute
   '/nft/$nftId': typeof NftNftIdRoute
   '/pedidos/$orderId': typeof PedidosOrderIdRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/favoritos': typeof FavoritosRoute
   '/pagamento': typeof PagamentoRoute
   '/perfil': typeof PerfilRoute
+  '/secao-indisponivel': typeof SecaoIndisponivelRoute
   '/nft/$nftId': typeof NftNftIdRoute
   '/pedidos/$orderId': typeof PedidosOrderIdRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/pagamento'
     | '/perfil'
+    | '/secao-indisponivel'
     | '/nft/$nftId'
     | '/pedidos/$orderId'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/pagamento'
     | '/perfil'
+    | '/secao-indisponivel'
     | '/nft/$nftId'
     | '/pedidos/$orderId'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/pagamento'
     | '/perfil'
+    | '/secao-indisponivel'
     | '/nft/$nftId'
     | '/pedidos/$orderId'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   FavoritosRoute: typeof FavoritosRoute
   PagamentoRoute: typeof PagamentoRoute
   PerfilRoute: typeof PerfilRoute
+  SecaoIndisponivelRoute: typeof SecaoIndisponivelRoute
   NftNftIdRoute: typeof NftNftIdRoute
   PedidosOrderIdRoute: typeof PedidosOrderIdRoute
 }
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/secao-indisponivel': {
+      id: '/secao-indisponivel'
+      path: '/secao-indisponivel'
+      fullPath: '/secao-indisponivel'
+      preLoaderRoute: typeof SecaoIndisponivelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/nft/$nftId': {
       id: '/nft/$nftId'
       path: '/nft/$nftId'
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritosRoute: FavoritosRoute,
   PagamentoRoute: PagamentoRoute,
   PerfilRoute: PerfilRoute,
+  SecaoIndisponivelRoute: SecaoIndisponivelRoute,
   NftNftIdRoute: NftNftIdRoute,
   PedidosOrderIdRoute: PedidosOrderIdRoute,
 }

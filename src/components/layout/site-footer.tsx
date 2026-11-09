@@ -6,7 +6,8 @@ import LinkedinIcon from '@/assets/icons/footer-linkedin.svg?react'
 import TwitterIcon from '@/assets/icons/footer-twitter.svg?react'
 import YoutubeIcon from '@/assets/icons/footer-youtube.svg?react'
 import LogoKurio from '@/assets/icons/logo-kurio.svg?react'
-import { notAvailable } from '@/lib/out-of-scope'
+import { OutOfScopeLink } from '@/components/out-of-scope-link'
+import { notAvailable, type OutOfScopeSection } from '@/lib/out-of-scope'
 
 const FEATURES = [
   { letter: 'W', title: 'Segurança da carteira', text: 'Proteja sua carteira e colecione arte digital verificada com confiança.' },
@@ -26,11 +27,11 @@ const SOCIALS = [
 
 const linkClass = 'text-sm leading-[30px] text-cream hover:text-brand-accent'
 
-function Unavailable({ label }: { label: string }) {
+function Unavailable({ section, label }: { section: OutOfScopeSection; label: string }) {
   return (
-    <button type="button" className={linkClass} onClick={() => notAvailable(label)}>
+    <OutOfScopeLink section={section} className={linkClass}>
       {label}
-    </button>
+    </OutOfScopeLink>
   )
 }
 
@@ -99,10 +100,14 @@ export function SiteFooter() {
                 Meu perfil
               </Link>
             </li>
-            <li><Unavailable label="Minha coleção" /></li>
-            <li><Unavailable label="Atividade" /></li>
-            <li><Unavailable label="Estúdio do criador" /></li>
-            <li><Unavailable label="Lista de interesse" /></li>
+            <li><Unavailable section="minha-colecao" label="Minha coleção" /></li>
+            <li><Unavailable section="atividade" label="Atividade" /></li>
+            <li><Unavailable section="estudio-do-criador" label="Estúdio do criador" /></li>
+            <li>
+              <Link to="/favoritos" className={linkClass}>
+                Lista de interesse
+              </Link>
+            </li>
           </ul>
         </nav>
         <nav aria-labelledby="footer-ajuda">
@@ -110,15 +115,15 @@ export function SiteFooter() {
             Central de ajuda
           </h2>
           <ul className="flex flex-col items-start">
-            <li><Unavailable label="Central de ajuda" /></li>
-            <li><Unavailable label="Como comprar NFTs" /></li>
+            <li><Unavailable section="central-de-ajuda" label="Central de ajuda" /></li>
+            <li><Unavailable section="como-comprar" label="Como comprar NFTs" /></li>
             <li>
               <Link to="/carteiras" className={linkClass}>
                 Carteira e segurança
               </Link>
             </li>
-            <li><Unavailable label="Política do mercado" /></li>
-            <li><Unavailable label="Denunciar item" /></li>
+            <li><Unavailable section="politica-do-mercado" label="Política do mercado" /></li>
+            <li><Unavailable section="denunciar-item" label="Denunciar item" /></li>
           </ul>
         </nav>
         <nav aria-labelledby="footer-colecoes">

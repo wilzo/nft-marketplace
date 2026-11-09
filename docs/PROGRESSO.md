@@ -130,7 +130,7 @@ Cenários: `padrao`, `sem-latencia`, `vazio`, `lento`, `latencia-variavel`, `off
 | Detalhe | `src/routes/nft.$nftId.tsx` (`?edicao=`, NFT inexistente, edição indisponível, limite, aviso de preço em tempo real, barra de compra mobile), `src/features/nft-detail/*` |
 | Tempo real → cache | `src/features/realtime/use-realtime-sync.ts` (`nft.updated` em listas/destaques/relacionados/detalhe; invalida carrinho; `onReconnect` reconcilia) |
 | Carrinho (mínimo) | `src/features/cart/{queries,mutations}.ts` (contador no header, "COMPRAR" adiciona e leva a /carrinho) |
-| Fora do escopo | `src/lib/out-of-scope.ts` (toast "não está disponível nesta demonstração") |
+| Fora do escopo | `src/lib/out-of-scope.ts` + `/secao-indisponivel` (página informativa; ver ARCHITECTURE → Decisões de UX) |
 | Painel de cenários | `src/features/dev/scenario-panel.tsx` + `src/api/mock-control.ts` (aplicar cenário / restaurar tudo) |
 | Testes | `e2e/catalog.spec.ts` (filtros+histórico, busca/vazio, skeleton, erro+retry, detalhe, tempo real) |
 

@@ -4,7 +4,7 @@ import { LoginInput, RegisterInput } from '@/api/contracts'
 import { FormAlert, FormField, PasswordField } from '@/components/form/form-field'
 import { Button } from '@/components/ui/button'
 import { useLogin, useRegister } from '@/features/session/mutations'
-import { notAvailable } from '@/lib/out-of-scope'
+import { OutOfScopeLink } from '@/components/out-of-scope-link'
 import { applyApiError, useFormAlert } from '@/lib/use-api-form'
 import { cn } from '@/lib/utils'
 
@@ -52,9 +52,9 @@ export function LoginForm({ variant, onSuccess, defaultEmail }: { variant: Varia
         error={errors.password?.message}
         {...form.register('password')}
       />
-      <button type="button" onClick={() => notAvailable('A recuperação de senha')} className="self-end text-sm text-brand-accent hover:underline">
+      <OutOfScopeLink section="recuperar-senha" className="self-end text-sm text-brand-accent hover:underline">
         Esqueceu a senha?
-      </button>
+      </OutOfScopeLink>
       <Button type="submit" className={cn(submitClass(variant), 'mt-3')} disabled={login.isPending}>
         {login.isPending ? 'Entrando…' : 'Entrar'}
       </Button>

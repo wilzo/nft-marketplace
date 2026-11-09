@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { useCart } from '@/features/cart/queries'
 import { useCurrentUser, useViewerScope } from '@/features/session/use-viewer'
 import { UserMenu } from './user-menu'
-import { notAvailable } from '@/lib/out-of-scope'
+import { OutOfScopeLink } from '@/components/out-of-scope-link'
 import { cn } from '@/lib/utils'
 
 const navItem =
@@ -51,14 +51,14 @@ export function SiteHeader() {
               </Link>
             </li>
             <li>
-              <button type="button" className={navItem} onClick={() => notAvailable('A página Criadores')}>
+              <OutOfScopeLink section="criadores" className={navItem}>
                 Criadores
-              </button>
+              </OutOfScopeLink>
             </li>
             <li>
-              <button type="button" className={navItem} onClick={() => notAvailable('A página Aprenda')}>
+              <OutOfScopeLink section="aprenda" className={navItem}>
                 Aprenda
-              </button>
+              </OutOfScopeLink>
             </li>
           </ul>
         </nav>

@@ -258,8 +258,10 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
 - Pagamento, conexão de carteira e liquidação são simulados (nenhuma chamada a blockchain).
 - **Performance mobile do Lighthouse (55–65)** abaixo da meta: o MSW e o banco simulado rodam na *thread* principal
   sob CPU 4× mais lenta. Desktop 98 e as demais categorias 100. Análise em [lighthouse/ANALISE.md](lighthouse/ANALISE.md).
-- Páginas editoriais, atividade, ofertas, downloads, suporte, compartilhamento e outras ações sem fluxo no Figma
-  exibem o aviso "não está disponível nesta demonstração".
+- Páginas editoriais (Criadores, Aprenda, Diário da Cunhagem), atividade, ofertas, downloads, suporte, central de
+  ajuda e recuperação de senha não fazem parte da entrega: levam à página informativa `/secao-indisponivel` (ver
+  Decisões de UX). A newsletter informa que não está disponível. Compartilhar usa links externos reais (LinkedIn,
+  Twitter, e-mail).
 
 ## 13. Decisões de UX
 
@@ -275,6 +277,16 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
   em tela cheia); acima, layout desktop.
 - **Menu do usuário logado** (avatar → Meu perfil, Carteiras, Favoritos, Sair): o Figma não desenha o header logado.
 - **Hero** com arte estática (não espera a API, protegendo o LCP); os links apontam aos destaques retornados pela API.
+- **Seções fora do escopo** (opção "página informativa"): Criadores e Aprenda (header), Minha coleção, Atividade,
+  Estúdio do criador, Central de ajuda, Como comprar NFTs, Política do mercado, Denunciar item (rodapé), Atividade,
+  Ofertas, Arquivos baixados, Suporte (menu da conta, inclusive a faixa mobile), "Esqueceu a senha?" (login) e "Ler
+  mais" (Diário da Cunhagem) continuam **visíveis como no Figma** e são **links reais** para
+  `/secao-indisponivel?secao=<chave>`: título "<Seção> não faz parte desta versão", explicação de que nenhuma ação foi
+  realizada e botão **Voltar ao catálogo**. Escolhida em vez de "Em breve" com `aria-disabled` porque não altera o
+  visual dos frames, funciona igual com mouse, toque, teclado e leitor de tela (é um link comum, com destino
+  anunciado), nunca leva a 404/página em branco e não aparenta sucesso. Mapa único em `src/lib/out-of-scope.ts`;
+  teste em `e2e/out-of-scope.spec.ts`. A newsletter (envio de formulário, não navegação) mostra um aviso de
+  indisponibilidade. "Lista de interesse" leva aos favoritos (equivalente existente).
 - **Painel de cenários** fica oculto por padrão (`?painel=1`), para não interferir no layout do Figma.
 
 ## 14. Acessibilidade (ajustes)
@@ -312,7 +324,8 @@ existe). Com `npm run dev:no-mocks`, as mesmas chamadas vão para `VITE_API_BASE
 | Texto de erro | Laranja escuro | Coral do próprio tema | Contraste AA sobre o fundo escuro. |
 | Header logado, estados de erro/vazio/carregando | Não desenhados | Criados com os tokens do Figma | Exigidos pelo desafio. |
 | Ícones de coração e da tab bar | Não exportáveis | lucide-react, mesmo traço e tamanho | Ausentes dos assets do arquivo. |
-| Ações sem fluxo (blog, suporte, compartilhar…) | Apenas visuais | Aviso "não disponível nesta demonstração" | Fora do escopo do desafio. |
+| Seções sem tela (Criadores, Aprenda, suporte, atividade, ofertas, downloads, ajuda, Diário…) | Apenas visuais | Links mantidos, levando à página informativa `/secao-indisponivel` (sem criar as seções) | Fora do escopo do desafio; comportamento coerente sem sucesso falso. |
+| Página "seção indisponível" | Não existe | Criada com os tokens do projeto (título, texto, CTA) | Destino coerente para os links acima. |
 
 Os demais elementos (textos, tokens de cor, tipografia Roboto Mono, raios, sombras, espaçamentos, ordem dos blocos
 em cada breakpoint) seguem os frames — conferidos por regressão visual (`e2e/visual.spec.ts`). Material extraído do
