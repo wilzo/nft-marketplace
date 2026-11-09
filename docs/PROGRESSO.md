@@ -12,7 +12,7 @@ Enunciado completo: [docs/DESAFIO.md](DESAFIO.md). Este arquivo é o ponto de re
 | 4 | Autenticação e sessão | ✅ Concluída (inclui favoritos com atualização otimista) |
 | 5 | Carrinho e cotação | ✅ Concluída |
 | 6 | Pagamento, pedidos idempotentes, confirmação e tempo real | ✅ Concluída |
-| 7 | Perfil e carteiras | ⬜ |
+| 7 | Perfil e carteiras | ✅ Concluída |
 | 8 | Testes Playwright (12 cenários + regressão visual, desktop/mobile) | ⬜ |
 | 9 | Auditoria Lighthouse (3 medições, mediana, relatórios) | ⬜ |
 | 10 | README.md, ARCHITECTURE.md e deploy final | ⬜ |
@@ -209,12 +209,30 @@ Decisões:
 - "Código de indicação" e "Nome ENS" opcionais (no Figma têm asterisco) — decisão de UX; dados da carteira vêm da carteira cadastrada (somente leitura).
 - Mobile: ordem resumo → formulário → carteira/confirmar; carrinho e pagamento sem rodapé e sem tab bar (telas cheias, como no Figma).
 
-### Próximo passo (etapa 7)
+## Etapa 7: o que foi feito
 
-Perfil do colecionador (frame "Desktop / Perfil do Colecionador"): menu lateral (Dados do perfil, Carteiras, Sair; demais itens fora do escopo),
-edição de dados (`PATCH /profile`, conflitos por campo), avatar (`PUT/DELETE /profile/avatar`, validação de tipo/tamanho), alteração de senha
-(`POST /profile/password`); Carteiras (frame "Desktop / Carteiras"): cadastro/edição da principal e secundária (`PUT /wallets/:slot`, "Igual à carteira principal",
-estado vazio "Você ainda não adicionou uma carteira secundária."); versões mobile; "Sair" no mobile (destrava o teste de logout mobile).
+| Parte | Arquivos |
+| --- | --- |
+| Layout da conta | `src/features/account/account-layout.tsx` (menu "Meu perfil"; mobile: faixa rolável com "Sair") |
+| Perfil | `src/routes/perfil.tsx` (dados, avatar, alterar senha), `src/features/account/profile.ts` (queries/mutations, `prepareAvatar`) |
+| Carteiras | `src/routes/carteiras.tsx` (principal e secundária, "Igual à carteira principal", estados vazios) |
+| Testes | `e2e/account.spec.ts`; logout mobile habilitado em `e2e/auth.spec.ts` |
+
+Decisões:
+- "Lista de interesse" → /favoritos; Atividade, Ofertas, Arquivos baixados e Suporte avisam que estão fora do escopo.
+- Perfil: dois botões ("Salvar" dados e "Alterar senha") em vez do único "Salvar" do Figma, para o resultado de cada ação ficar claro.
+- Avatar validado (PNG/JPEG/WebP, até 2 MB) e reduzido no navegador para 256px WebP antes do envio (data URL pequena no mock).
+- Carteiras: campos do contrato `WalletInput` (nome, apelido, rede, tipo, endereço 0x, ENS). "Nome do perfil", "E-mail" e "Código de indicação"
+  do frame pertencem ao perfil do colecionador/pagamento e não à carteira. "Igual à carteira principal" copia tudo menos o endereço
+  (o servidor rejeita o mesmo endereço nas duas).
+- `applyApiError`: erro indicado pela API num campo aparece só no campo (sem aviso geral duplicado).
+
+### Próximo passo (etapa 8)
+
+Completar a matriz dos 12 cenários de teste do desafio (a maioria já coberta pelos specs das etapas 3–7) e adicionar:
+regressão visual (`toHaveScreenshot`) de início, detalhe, carrinho e pagamento em desktop e mobile com dados estáveis
+(cenário `sem-latencia`, relógio fixo, animações desligadas), baselines versionadas; navegação por teclado e foco de diálogos (cenário 11);
+documentar a matriz cenário → spec. Relatório HTML e traces já configurados.
 
 ## Comandos
 

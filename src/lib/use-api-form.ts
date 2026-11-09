@@ -17,7 +17,8 @@ export function applyApiError<T extends FieldValues>(error: unknown, setError: U
     first = false
     handled = true
   }
-  return handled && apiError.code === 'VALIDATION_ERROR' ? null : apiError.message
+  // Erro já mostrado (e focado) no campo: sem aviso geral duplicado.
+  return handled ? null : apiError.message
 }
 
 /** Estado da mensagem geral do formulário. */

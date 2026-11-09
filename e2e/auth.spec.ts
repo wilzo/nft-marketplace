@@ -76,14 +76,19 @@ test.describe('conta e sessão (etapa 4)', () => {
   })
 
   test('logout e troca de usuário não expõem dados do usuário anterior', async ({ page }) => {
-    test.skip(isMobile(page), 'No mobile, o "Sair" fica no Perfil (etapa 7).')
     await loginViaUi(page, 'ana@kurio.dev', '/favoritos')
     await expect(page.getByRole('link', { name: /^Emerald Ape #042/ })).toBeVisible()
 
-    await page.getByRole('button', { name: 'Conta de Ana Colecionadora' }).click()
-    await page.getByRole('menuitem', { name: 'Sair' }).click()
+    if (isMobile(page)) {
+      // Mobile: "Sair" no menu do perfil
+      await page.goto('/perfil')
+      await page.getByRole('button', { name: 'Sair' }).click()
+    } else {
+      await page.getByRole('button', { name: 'Conta de Ana Colecionadora' }).click()
+      await page.getByRole('menuitem', { name: 'Sair' }).click()
+      await expect(page.getByRole('link', { name: 'Entrar' })).toBeVisible()
+    }
     await expect(page).toHaveURL('/')
-    await expect(page.getByRole('link', { name: 'Entrar' })).toBeVisible()
     expect(await sessionToken(page)).toBeNull()
 
     await loginViaUi(page, 'bruno@kurio.dev', '/favoritos')
